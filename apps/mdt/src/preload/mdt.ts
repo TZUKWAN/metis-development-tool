@@ -23,6 +23,11 @@ const mdtApi = {
   recoveryCheck: (root: string) => invoke('mdt:recovery-check', { root }),
   recoveryDiscard: (root: string) => invoke('mdt:recovery-discard', { root }),
 
+  capabilityList: () => invoke('mdt:capability-list'),
+  secretList: () => invoke('mdt:secret-list'),
+  secretSet: (name: string, value: string) => invoke('mdt:secret-set', { name, value }),
+  secretDelete: (name: string) => invoke('mdt:secret-delete', { name }),
+
   buildStart: (task?: string) => invoke('mdt:build-start', { task }),
   buildCancel: () => invoke('mdt:build-cancel'),
   buildAvailability: () => invoke('mdt:build-availability'),

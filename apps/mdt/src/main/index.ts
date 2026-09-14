@@ -2,6 +2,7 @@ import { BrowserWindow, app } from 'electron'
 import path from 'node:path'
 
 import { attachBuildEvents, registerMdtBuildIpc } from './mdt-builder'
+import { registerMdtCapabilityIpc, registerMdtSecretIpc } from './mdt-capabilities-ipc'
 import { registerMdtIoIpc } from './mdt-io'
 import { startSlidesStandalone } from './slides-main'
 
@@ -12,6 +13,8 @@ registerMdtIoIpc({
   getWindow: () => BrowserWindow.getAllWindows()[0],
   recentFile: path.join(app.getPath('userData'), 'mdt-recent.json'),
 })
+registerMdtCapabilityIpc()
+registerMdtSecretIpc()
 registerMdtBuildIpc({
   // the generated workspace lives inside the project directory
   projectsRoot: () => undefined,

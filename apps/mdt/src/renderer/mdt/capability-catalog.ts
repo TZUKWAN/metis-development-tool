@@ -1,13 +1,27 @@
-/** Static catalog of built-in capability manifests for the renderer (P09.03). */
+/**
+ * Capability catalog for the renderer (P09.03/P09.04).
+ *
+ * Manifests arrive via IPC from the main-process registry — the renderer
+ * never bundles the capability adapters (they use Node APIs).
+ */
+import { useEffect, useState } from 'react'
+
 import type { CapabilityManifest } from '@mdt/capabilities'
 
-// Imported at build time via the bundled registry so the renderer shows the
-// same manifests the runtime enforces. Vite bundles this as plain data —
-// no Node APIs are touched by the manifests themselves.
-import { CapabilityRegistry, registerBuiltins } from '@mdt/capabilities'
-
-const registry = registerBuiltins(new CapabilityRegistry())
-
-export const capabilityCatalog: Map<string, CapabilityManifest> = new Map(
-  registry.manifests().map((m) => [m.id, m]),
-)
+/** Manifests fetched from the registry over IPC (main process). */
+export function useCapabilityCatalog(): Map<string, CapabilityManifest> {
+  const [catalog, setCatalog] = useState<Map<string, CapabilityManifest>>(new Map())
+  useEffect(() => {
+    let cancelled = false
+    void window.mdtApi?.capabilityList().then((r) => {
+      const payload = r as { manifests?: CapabilityManifest[] }
+      if (!cancelled && payload.manifests) {
+        setCatalog(new Map(payload.manifests.map((m) => [m.id, m])))
+      }
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+  return catalog
+}

@@ -9,7 +9,7 @@ import type React from 'react'
 import { useMemo, useState } from 'react'
 
 import { useMdtStore } from './store'
-import { capabilityCatalog } from './capability-catalog'
+import { useCapabilityCatalog } from './capability-catalog'
 
 export function AgentsPanel(): React.ReactElement {
   const project = useMdtStore((s) => s.project)
@@ -21,6 +21,7 @@ export function AgentsPanel(): React.ReactElement {
   const setDefaultAgent = useMdtStore((s) => s.setDefaultAgent)
   const [selectedId, setSelectedId] = useState<string | undefined>()
   const [blockers, setBlockers] = useState<string[] | undefined>()
+  const capabilityCatalog = useCapabilityCatalog()
 
   const selected = useMemo(
     () => project?.agents.find((a) => a.id === selectedId) ?? project?.agents[0],
@@ -202,6 +203,7 @@ export function AgentsPanel(): React.ReactElement {
 function AddCapability({ onAdd }: { onAdd: (instanceId: string) => void }): React.ReactElement {
   const project = useMdtStore((s) => s.project)
   const addInstance = useMdtStore((s) => s.addCapabilityInstance)
+  const capabilityCatalog = useCapabilityCatalog()
   const [adding, setAdding] = useState(false)
   return (
     <div>
