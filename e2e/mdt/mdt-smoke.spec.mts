@@ -32,10 +32,10 @@ test.afterAll(async () => {
 test('app boots with the MDT welcome screen (P03.12)', async () => {
   const dialog = page.getByRole('dialog', { name: /welcome to metis development tool/i })
   await expect(dialog).toBeVisible({ timeout: 30_000 })
-  await expect(dialog.getByText('New Project')).toBeVisible()
-  await expect(dialog.getByText('Open Project')).toBeVisible()
-  await expect(dialog.getByText('Recent Projects')).toBeVisible()
-  await expect(dialog.getByText('Docs')).toBeVisible()
+  await expect(dialog.getByRole('heading', { name: 'New Project' })).toBeVisible()
+  await expect(dialog.getByRole('heading', { name: 'Open Project' })).toBeVisible()
+  await expect(dialog.getByRole('heading', { name: 'Recent Projects' })).toBeVisible()
+  await expect(dialog.getByRole('heading', { name: 'Docs' })).toBeVisible()
 })
 
 test('welcome screen closes into the designer (Start designing)', async () => {
@@ -52,5 +52,5 @@ test('MDT dock exposes Agents / Interactions / Semantics / Build tabs (P06.01)',
     await expect(tablist.getByRole('tab', { name })).toBeVisible()
   }
   await tablist.getByRole('tab', { name: 'Build' }).click()
-  await expect(tablist).toContainText('Codex')
+  await expect(page.getByText('Open a project first.')).toBeVisible()
 })

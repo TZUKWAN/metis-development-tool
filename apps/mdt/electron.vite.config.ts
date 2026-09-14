@@ -47,6 +47,13 @@ export default defineConfig({
     plugins: [
       externalizeDepsPlugin({
         exclude: [
+          '@mdt/schema',
+          '@mdt/project',
+          '@mdt/codex',
+          '@mdt/capabilities',
+          '@mdt/design',
+          '@mdt/pi-runtime',
+          '@mdt/preview',
           '@genoffice/pptx-engine',
           '@genoffice/pptx-ops',
           '@genoffice/pptx-render',

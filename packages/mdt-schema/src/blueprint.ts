@@ -5,9 +5,8 @@
  * so the same project always yields the same hash and meaningless diffs
  * are impossible.
  */
-import { createHash } from 'node:crypto'
-
 import { stableStringify, type JsonValue } from './json'
+import { sha256Hex } from './sha256'
 import type {
   Agent,
   Asset,
@@ -70,5 +69,5 @@ export function blueprintCanonicalJson(blueprint: BuildBlueprint): string {
 
 /** SHA-256 of the canonical form — equal for equal blueprints, always. */
 export function blueprintHash(blueprint: BuildBlueprint): string {
-  return createHash('sha256').update(blueprintCanonicalJson(blueprint)).digest('hex')
+  return sha256Hex(blueprintCanonicalJson(blueprint))
 }

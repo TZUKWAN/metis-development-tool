@@ -9,7 +9,7 @@ import { buttonElement, emptyProject, homePage, researchAgent, textElement } fro
 
 function mustParse(raw: unknown): ProjectRoot {
   const result = parseProject(raw)
-  if (!result.ok) throw new Error(`fixture failed to parse: ${result.error}`)
+  if (!result.ok) throw new Error()
   return result.project
 }
 
