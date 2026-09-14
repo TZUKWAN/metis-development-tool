@@ -31,7 +31,10 @@
     "dev:mdt": "npm run dev -w @mdt/app",
     "test:mdt": "npm run test -w @mdt/app",
     "typecheck:mdt": "npm run typecheck -w @mdt/app",
-    "build:mdt": "npm run build -w @mdt/app"
+    "build:mdt": "npm run build -w @mdt/app",
+    "dist:win": "npm run notices && npm run build:mdt && npm run dist:win -w @mdt/app",
+    "dist:mac": "npm run notices && npm run build:mdt && npm run dist:mac -w @mdt/app",
+    "dist:linux": "npm run notices && npm run build:mdt && npm run dist:linux -w @mdt/app"
   },
   "dependencies": {
     "ws": "^8.21.1"

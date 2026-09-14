@@ -15,7 +15,8 @@
     "test:watch": "vitest",
     "dist:mac": "electron-vite build && electron-builder --mac",
     "dist:win": "electron-vite build && electron-builder --win",
-    "dist:dir": "electron-vite build && electron-builder --dir"
+    "dist:dir": "electron-vite build && electron-builder --dir",
+    "dist:linux": "electron-vite build && electron-builder --linux"
   },
   "devDependencies": {
     "@genoffice/i18n": "*",
