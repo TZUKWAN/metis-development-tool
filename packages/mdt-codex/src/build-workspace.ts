@@ -64,11 +64,13 @@ export function diffSummary(workspace: PreparedWorkspace): { changed: string[]; 
   return { changed: nameOnly.split('\n').filter(Boolean), stat }
 }
 
-/** Commit the build result on its branch; returns the build commit sha. */
+/** Commit the build result on its branch; returns the build commit sha.
+ * A turn that changed nothing resolves to the base commit — the scaffold
+ * itself passed the gates, so the build still applies (with an empty diff). */
 export function commitBuild(workspace: PreparedWorkspace, message: string): string {
   git(workspace.root, ['add', '-A'])
   const nothing = git(workspace.root, ['status', '--porcelain'])
-  if (nothing.length === 0) throw new WorkspaceError('build produced no changes')
+  if (nothing.length === 0) return workspace.baseCommit
   git(workspace.root, ['commit', '-m', message])
   return git(workspace.root, ['rev-parse', 'HEAD'])
 }
