@@ -1,0 +1,102 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`builder prompt (P10.08) > prompt snapshot > builder-prompt.txt 1`] = `
+"# MDT Builder Task
+
+## Task
+
+Add a citations panel to the Research page.
+
+## Inputs
+
+- Blueprint: \`build/blueprint.json\` (BuildBlueprint v1, schema v1)
+- Project: Research Assistant (01990000-7000-7000-8000-000000000001)
+- Blueprint hash (sha256, canonical JSON): \`886b651e3e08e2b142fcb0c30ad1eb3ee96e23670bfefc8180d12afd6414f6b8\`
+- Generator: @mdt/generator v0.1.0, target=web-agent
+
+### Pages
+- Home (01990000-7000-7000-8000-010000000001) type=page 1440x1024
+- Research (01990000-7000-7000-8000-010000000002) type=page 1440x1024
+- Details (01990000-7000-7000-8000-010000000003) type=page 1440x1024
+- New Research (01990000-7000-7000-8000-010000000004) type=modal 640x320
+
+### Agents (Pi)
+- Research Agent (01990000-7000-7000-8000-030000000001): provider=openai model=gpt-5.1 api=openai-completions capabilities=[01990000-7000-7000-8000-040000000001, 01990000-7000-7000-8000-040000000002, 01990000-7000-7000-8000-040000000003]
+
+### Capability SDK (registry manifests)
+- ask_user v1.0.0: required args [kind, question] — Ask the user a question in the app UI and wait for the answer (text, confirm or select).
+- browser v1.0.0: required args [action] — Drive a real browser (open, navigate, click, type, screenshot, close) through an injected driver.
+- datetime v1.0.0: required args [operation] — Current time, timezone conversion and basic date arithmetic.
+- file_list v1.0.0: required args [] — List files and directories under a sandbox path, with depth and entry limits.
+- file_read v1.0.0: required args [path] — Read a file from the project sandbox as utf8 text or base64.
+- file_write v1.0.0: required args [path, content] — Create or (explicitly) overwrite a file inside the project sandbox.
+- http_request v1.0.0: required args [url] — Call an http(s) endpoint with full control over method, headers, query and body, with SSRF guards and response size limits.
+- json v1.0.0: required args [operation] — Parse, stringify, validate and query JSON documents.
+- mcp v1.0.0: required args [server, tool, config] — Call a tool on a configured MCP server (stdio JSON-RPC in 1.0). The server is an external integration spawned as a child process.
+- python v1.0.0: required args [script] — Run a Python script (isolated mode, script via stdin, extra args as sys.argv). Requires an explicit process permission grant.
+- shell v1.0.0: required args [command] — Run a command with arguments in the generated workspace (no shell interpolation). Requires an explicit process permission grant.
+- web_fetch v1.0.0: required args [url] — Fetch an http(s) URL and return readable text (title + tag-stripped body) or the raw body, with SSRF guards, redirect re-validation and hard size limits.
+- web_search v1.0.0: required args [query] — Search the web through a pluggable provider (DuckDuckGo html-lite by default) and return title/url/snippet results.
+
+## Architecture constraints (ADR-0006)
+
+- The app is a standalone Vite + React + TypeScript SPA plus a Node + Express
+  agent service. It must run with \`npm install && npm run dev\` and no MDT
+  runtime involvement.
+- Every MDT page renders from the blueprint: type=page → route,
+  modal/drawer/popover → overlay components on their host page. Elements keep
+  absolute-position layout from the design geometry and carry
+  \`data-mdt-id\` attributes (mapping lives in \`.mdt-map.json\`).
+- Interactions compile to handlers: navigate / openModal / openDrawer /
+  close / back / toggleVisibility / submit / sendToAgent / invokeCapability
+  (POST /api/capability/:instanceId) / setVariable / bindOutput.
+- Variables persist by scope: project/session → localStorage,
+  page → in-memory.
+
+## Pi constraints (ADR-0004, docs/upstream/PI_BASELINE.md)
+
+- The ONLY allowed agent runtime is \`@earendil-works/pi-agent-core\` at the
+  pinned version, with \`streamSimple\` from \`@earendil-works/pi-ai/compat\`
+  as the mandatory \`streamFn\`. Do not import the deprecated
+  \`@mariozechner/*\` scope. Do not reimplement the agent loop.
+- \`server/agents.config.json\` is the source of truth for agents (model
+  policy incl. compat flags, instructions, tool refs). Custom providers get
+  no env-var fallback inside Pi — keys come from this app's env via
+  \`getApiKey\` (MDT_PROVIDER_API_KEY_*).
+- Tools THROW on failure; never return error text as tool content. Events
+  shown to the UI are the normalized RuntimeEvent union — never raw Pi
+  events.
+
+## Capability SDK rules
+
+- Capability modules in \`server/capabilities/\` are self-contained plain JS
+  (manifest + \`execute(input, ctx)\`), generated and owned by the generator.
+  Keep their security guards intact: SSRF url guard, permission gates
+  (\`ctx.granted\`), secret redaction in logs, size caps, honoring
+  \`ctx.signal\`.
+
+## Acceptance commands
+
+All must pass before you report done:
+
+\`\`\`bash
+npm install
+npm run typecheck
+npm run test:unit
+npm run test:e2e     # SSE is mocked via Playwright routes — no real LLM
+npm run build
+\`\`\`
+
+## Forbidden actions
+
+- Do NOT run \`git commit\`, \`git push\`, or modify files outside this app.
+- Do NOT add npm dependencies beyond the template's set; never add
+  \`@openai/codex\`, \`@mdt/*\`, or AI provider SDKs.
+- Do NOT remove \`data-mdt-id\` attributes, .mdt-map.json, or
+  .mdt/generator-manifest.json (the patch boundary: regenerating restores
+  generator-owned files listed there).
+- Do NOT hardcode API keys, endpoints, or telemetry in source files.
+- Do NOT change the blueprint ids; they are stable identities used by the
+  designer, the map, and tests.
+"
+`;

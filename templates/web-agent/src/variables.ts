@@ -26,35 +26,29 @@ const PREFIX: Record<VariableScope, string> = {
 }
 
 /** localStorage can hold only strings — JSON round-trip everything else. */
-function readStorage(scope: VariableScope, id: string): { found: boolean; value?: unknown } {
-  if (scope === 'page') return { found: false } // in-memory, never persisted
-  try {
-    const raw = window.localStorage.getItem(PREFIX[scope] + id)
-    if (raw === null) return { found: false }
-    return { found: true, value: JSON.parse(raw) as unknown }
-  } catch {
-    return { found: false }
-  }
-}
-
-function writeStorage(scope: VariableScope, id: string, value: unknown): void {
-  if (scope === 'page') return
-  try {
-    window.localStorage.setItem(PREFIX[scope] + id, JSON.stringify(value ?? null))
-  } catch {
-    // storage full/blocked: variable still lives in memory for this session
-  }
+function usableStorage(
+  storage: Pick<Storage, 'getItem' | 'setItem'> | null | undefined,
+): Pick<Storage, 'getItem' | 'setItem'> | null {
+  return storage !== null &&
+    storage !== undefined &&
+    typeof storage.getItem === 'function' &&
+    typeof storage.setItem === 'function'
+    ? storage
+    : null
 }
 
 export class VariableStore {
   private readonly values = new Map<string, unknown>()
   private readonly listeners = new Set<VariableListener>()
+  private readonly storage: Pick<Storage, 'getItem' | 'setItem'> | null
 
   constructor(
     private readonly scope: VariableScope,
-    private readonly storage: Pick<Storage, 'getItem' | 'setItem'> | null =
+    storage: Pick<Storage, 'getItem' | 'setItem'> | null =
       typeof window === 'undefined' ? null : window.localStorage,
-  ) {}
+  ) {
+    this.storage = usableStorage(storage)
+  }
 
   /** Seed from storage once; missing keys fall back to the default value. */
   register(definition: VariableDefinition): void {

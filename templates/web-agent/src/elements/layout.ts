@@ -44,6 +44,14 @@ export function absoluteStyle(
   return css
 }
 
+/** Name used by generated code for raw elements (text/shape/image/icon). */
+export function mdtElementStyle(
+  geometry: MdtGeometry | undefined,
+  style: Record<string, unknown> | undefined,
+): CSSProperties {
+  return absoluteStyle(geometry, style)
+}
+
 export function mdtProps(base: MdtElementBaseProps): {
   'data-mdt-id': string
   style: CSSProperties

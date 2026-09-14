@@ -74,6 +74,11 @@ body {
   right: 0;
 }
 
+/* toggleVisibility target hidden state */
+.mdt-hidden {
+  display: none !important;
+}
+
 /* Semantic element styling */
 .mdt-button {
   background: var(--mdt-accent);

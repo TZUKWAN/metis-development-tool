@@ -1,0 +1,141 @@
+{
+  "agents": [
+    {
+      "capabilityInstanceIds": [
+        "01990000-7000-7000-8000-040000000001",
+        "01990000-7000-7000-8000-040000000002",
+        "01990000-7000-7000-8000-040000000003"
+      ],
+      "description": "Searches the web and summarizes",
+      "id": "01990000-7000-7000-8000-030000000001",
+      "instructions": "You are a meticulous research assistant. Always cite sources.",
+      "isDefault": true,
+      "memory": {
+        "enabled": false
+      },
+      "modelPolicy": {
+        "api": "openai-completions",
+        "compat": {
+          "supportsDeveloperRole": false,
+          "supportsReasoningEffort": false
+        },
+        "model": "gpt-5.1",
+        "provider": "openai",
+        "temperature": 0.2
+      },
+      "name": "Research Agent"
+    }
+  ],
+  "tools": [
+    {
+      "description": "Search the web through a pluggable provider (DuckDuckGo html-lite by default) and return title/url/snippet results.",
+      "id": "web_search",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "description": "result count, 1–10 (default 5)",
+            "type": "number"
+          },
+          "provider": {
+            "description": "provider id (default 'duckduckgo')",
+            "type": "string"
+          },
+          "query": {
+            "description": "search query",
+            "type": "string"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "type": "object"
+      },
+      "version": "1.0.0"
+    },
+    {
+      "description": "Fetch an http(s) URL and return readable text (title + tag-stripped body) or the raw body, with SSRF guards, redirect re-validation and hard size limits.",
+      "id": "web_fetch",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "allowLocal": {
+            "description": "explicit loopback opt-in for local dev/tests (default false)",
+            "type": "boolean"
+          },
+          "maxBytes": {
+            "description": "response size cap in bytes (default 1000000)",
+            "type": "number"
+          },
+          "raw": {
+            "description": "return the raw body instead of text-extracted (default false)",
+            "type": "boolean"
+          },
+          "timeoutMs": {
+            "description": "per-request timeout in ms (default 20000)",
+            "type": "number"
+          },
+          "url": {
+            "description": "absolute http(s) url to fetch",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "type": "object"
+      },
+      "version": "1.0.0"
+    },
+    {
+      "description": "Current time, timezone conversion and basic date arithmetic.",
+      "id": "datetime",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "description": "units for add (may be negative)",
+            "type": "number"
+          },
+          "compare": {
+            "description": "second ISO-8601 instant for diff",
+            "type": "string"
+          },
+          "operation": {
+            "description": "now | parse | add | diff",
+            "enum": [
+              "now",
+              "parse",
+              "add",
+              "diff"
+            ],
+            "type": "string"
+          },
+          "timezone": {
+            "description": "IANA timezone, e.g. Asia/Shanghai",
+            "type": "string"
+          },
+          "unit": {
+            "description": "unit for add",
+            "enum": [
+              "seconds",
+              "minutes",
+              "hours",
+              "days"
+            ],
+            "type": "string"
+          },
+          "value": {
+            "description": "ISO-8601 input for parse/add/diff",
+            "type": "string"
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "type": "object"
+      },
+      "version": "1.0.0"
+    }
+  ]
+}

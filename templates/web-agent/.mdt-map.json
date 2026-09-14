@@ -1,0 +1,186 @@
+{
+  "blueprintHash": "886b651e3e08e2b1",
+  "entries": {
+    "01990000-7000-7000-8000-010000000001": {
+      "kind": "page",
+      "file": "src/pages/HomePage.tsx",
+      "symbol": "HomePage",
+      "line": 55
+    },
+    "01990000-7000-7000-8000-010000000002": {
+      "kind": "page",
+      "file": "src/pages/ResearchPage.tsx",
+      "symbol": "ResearchPage",
+      "line": 41
+    },
+    "01990000-7000-7000-8000-010000000003": {
+      "kind": "page",
+      "file": "src/pages/DetailsPage.tsx",
+      "symbol": "DetailsPage",
+      "line": 28
+    },
+    "01990000-7000-7000-8000-010000000004": {
+      "kind": "overlay",
+      "file": "src/pages/NewResearchOverlay.tsx",
+      "symbol": "NewResearchOverlay",
+      "line": 29
+    },
+    "01990000-7000-7000-8000-020000000001": {
+      "kind": "element",
+      "file": "src/pages/HomePage.tsx",
+      "symbol": "HomePage",
+      "line": 59
+    },
+    "01990000-7000-7000-8000-020000000002": {
+      "kind": "element",
+      "file": "src/pages/HomePage.tsx",
+      "symbol": "HomePage",
+      "line": 65
+    },
+    "01990000-7000-7000-8000-020000000003": {
+      "kind": "element",
+      "file": "src/pages/HomePage.tsx",
+      "symbol": "HomePage",
+      "line": 76
+    },
+    "01990000-7000-7000-8000-020000000004": {
+      "kind": "element",
+      "file": "src/pages/HomePage.tsx",
+      "symbol": "HomePage",
+      "line": 82
+    },
+    "01990000-7000-7000-8000-020000000005": {
+      "kind": "element",
+      "file": "src/pages/HomePage.tsx",
+      "symbol": "HomePage",
+      "line": 88
+    },
+    "01990000-7000-7000-8000-020000000006": {
+      "kind": "element",
+      "file": "src/pages/ResearchPage.tsx",
+      "symbol": "ResearchPage",
+      "line": 43
+    },
+    "01990000-7000-7000-8000-02000000000c": {
+      "kind": "element",
+      "file": "src/pages/ResearchPage.tsx",
+      "symbol": "ResearchPage",
+      "line": 49
+    },
+    "01990000-7000-7000-8000-02000000000b": {
+      "kind": "element",
+      "file": "src/pages/ResearchPage.tsx",
+      "symbol": "ResearchPage",
+      "line": 55
+    },
+    "01990000-7000-7000-8000-020000000007": {
+      "kind": "element",
+      "file": "src/pages/DetailsPage.tsx",
+      "symbol": "DetailsPage",
+      "line": 30
+    },
+    "01990000-7000-7000-8000-020000000008": {
+      "kind": "element",
+      "file": "src/pages/DetailsPage.tsx",
+      "symbol": "DetailsPage",
+      "line": 36
+    },
+    "01990000-7000-7000-8000-020000000009": {
+      "kind": "element",
+      "file": "src/pages/NewResearchOverlay.tsx",
+      "symbol": "NewResearchOverlay",
+      "line": 32
+    },
+    "01990000-7000-7000-8000-02000000000a": {
+      "kind": "element",
+      "file": "src/pages/NewResearchOverlay.tsx",
+      "symbol": "NewResearchOverlay",
+      "line": 40
+    },
+    "01990000-7000-7000-8000-030000000001": {
+      "kind": "agent",
+      "file": "server/agents.config.json",
+      "symbol": "Research Agent",
+      "line": 10
+    },
+    "01990000-7000-7000-8000-040000000001": {
+      "kind": "capability-instance",
+      "file": "server/capabilities/web_search.js",
+      "symbol": "web_search",
+      "line": 22
+    },
+    "01990000-7000-7000-8000-040000000002": {
+      "kind": "capability-instance",
+      "file": "server/capabilities/web_fetch.js",
+      "symbol": "web_fetch",
+      "line": 34
+    },
+    "01990000-7000-7000-8000-040000000003": {
+      "kind": "capability-instance",
+      "file": "server/capabilities/datetime.js",
+      "symbol": "datetime",
+      "line": 43
+    },
+    "01990000-7000-7000-8000-060000000001": {
+      "kind": "variable",
+      "file": "src/generated-variables.ts",
+      "symbol": "Last Query",
+      "line": 12
+    },
+    "01990000-7000-7000-8000-060000000002": {
+      "kind": "variable",
+      "file": "src/generated-variables.ts",
+      "symbol": "Research Locale",
+      "line": 19
+    },
+    "01990000-7000-7000-8000-070000000001": {
+      "kind": "binding",
+      "file": "src/generated-variables.ts"
+    },
+    "01990000-7000-7000-8000-070000000002": {
+      "kind": "binding",
+      "file": "src/generated-variables.ts"
+    },
+    "01990000-7000-7000-8000-050000000001": {
+      "kind": "interaction",
+      "file": "src/pages/HomePage.tsx",
+      "symbol": "run_0",
+      "line": 38
+    },
+    "01990000-7000-7000-8000-050000000002": {
+      "kind": "interaction",
+      "file": "src/pages/HomePage.tsx",
+      "symbol": "run_1",
+      "line": 42
+    },
+    "01990000-7000-7000-8000-050000000007": {
+      "kind": "interaction",
+      "file": "src/pages/HomePage.tsx",
+      "symbol": "run_2",
+      "line": 46
+    },
+    "01990000-7000-7000-8000-050000000005": {
+      "kind": "interaction",
+      "file": "src/pages/ResearchPage.tsx",
+      "symbol": "run_3",
+      "line": 28
+    },
+    "01990000-7000-7000-8000-050000000006": {
+      "kind": "interaction",
+      "file": "src/pages/ResearchPage.tsx",
+      "symbol": "run_4"
+    },
+    "01990000-7000-7000-8000-050000000003": {
+      "kind": "interaction",
+      "file": "src/pages/DetailsPage.tsx",
+      "symbol": "run_5",
+      "line": 24
+    },
+    "01990000-7000-7000-8000-050000000004": {
+      "kind": "interaction",
+      "file": "src/pages/NewResearchOverlay.tsx",
+      "symbol": "run_6",
+      "line": 24
+    }
+  }
+}

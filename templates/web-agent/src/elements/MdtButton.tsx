@@ -12,7 +12,6 @@ export function MdtButton({ label, disabled, onClick, ...base }: MdtButtonProps)
     <button
       type="button"
       {...mdtProps({ ...base, className: base.className ?? 'mdt-button' })}
-      aria-label={base.style?.['aria-label'] as string | undefined}
       disabled={disabled === true}
       onClick={onClick}
     >

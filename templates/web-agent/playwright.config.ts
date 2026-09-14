@@ -9,13 +9,13 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   reporter: [['list']],
   use: {
-    baseURL: 'http://127.0.0.1:5174',
+    baseURL: 'http://localhost:5174',
     trace: 'off',
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
     command: 'npm run dev:web',
-    url: 'http://127.0.0.1:5174',
+    url: 'http://localhost:5174',
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },

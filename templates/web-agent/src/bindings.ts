@@ -43,3 +43,26 @@ export function resolveSource(source: BindingSource, ctx: ResolveContext): unkno
       return null
   }
 }
+
+/** Coerce an unknown binding value into a renderable list. */
+export function toArray(value: unknown): unknown[] {
+  if (Array.isArray(value)) return value
+  if (typeof value === 'string' && value.trim() !== '') {
+    try {
+      const parsed = JSON.parse(value) as unknown
+      if (Array.isArray(parsed)) return parsed
+    } catch {
+      // plain string: render as a single row
+    }
+    return [value]
+  }
+  return []
+}
+
+/** Coerce an unknown binding value into renderable table rows. */
+export function toArrayRecords(value: unknown): Record<string, unknown>[] {
+  return toArray(value).filter(
+    (entry): entry is Record<string, unknown> =>
+      typeof entry === 'object' && entry !== null && !Array.isArray(entry),
+  )
+}
