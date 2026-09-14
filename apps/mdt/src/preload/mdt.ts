@@ -24,6 +24,7 @@ const mdtApi = {
   recoveryDiscard: (root: string) => invoke('mdt:recovery-discard', { root }),
 
   capabilityList: () => invoke('mdt:capability-list'),
+  designSlides: () => invoke('mdt:design-slides'),
   secretList: () => invoke('mdt:secret-list'),
   secretSet: (name: string, value: string) => invoke('mdt:secret-set', { name, value }),
   secretDelete: (name: string) => invoke('mdt:secret-delete', { name }),

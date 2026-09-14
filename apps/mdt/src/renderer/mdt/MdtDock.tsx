@@ -12,6 +12,7 @@ import { BuildPanel } from './BuildPanel'
 import { InteractionCanvas } from './InteractionCanvas'
 import { Welcome } from './Welcome'
 import { useMdtStore } from './store'
+import { useDeckSync } from './use-deck-sync'
 
 type Tab = 'agents' | 'interactions' | 'build' | null
 
@@ -20,6 +21,7 @@ export function MdtDock(): React.ReactElement | null {
   const newProject = useMdtStore((s) => s.newProject)
   const [tab, setTab] = useState<Tab>('agents')
   const [showWelcome, setShowWelcome] = useState(true)
+  useDeckSync()
   const [recent, setRecent] = useState<{ path: string; name: string; lastOpenedAt: string }[]>([])
 
   useEffect(() => {

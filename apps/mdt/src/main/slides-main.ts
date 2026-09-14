@@ -218,6 +218,7 @@ import {
   type OpLogEntry,
   type Session,
 } from './session-state'
+import { registerMdtDesignIpc } from './mdt-design-bridge'
 import { listPrivateFontFaces, getPrivateFontData, registerEmbeddedFonts } from './fonts'
 import { listMetafileFonts } from './metafile-fonts'
 import {
@@ -982,6 +983,10 @@ let ipcRegistered = false
 export function registerSlidesIpc(): void {
   if (ipcRegistered) return
   ipcRegistered = true
+
+  // MDT design bridge: expose the deck as DesignPageRefs for the renderer's
+  // MDT project store (stable durable ids).
+  registerMdtDesignIpc(sessions)
 
   // AI-generated slide pages land in app-owned temp directories; sweep
   // expired ones at startup (never at land time — markers can be redeemed
