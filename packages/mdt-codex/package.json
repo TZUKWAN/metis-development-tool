@@ -1,0 +1,25 @@
+{
+  "name": "@mdt/codex",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "private": true,
+  "type": "module",
+  "description": "MDT bridge to the OpenAI Codex CLI: app-server JSON-RPC client, isolated build workspaces, build lifecycle (apply/rollback/cancel), structured JSONL build logs",
+  "exports": {
+    ".": "./src/index.ts",
+    "./testing": "./src/fake.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@mdt/schema": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.11"
+  }
+}
