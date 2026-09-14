@@ -4,6 +4,7 @@ import path from 'node:path'
 import { attachBuildEvents, registerMdtBuildIpc } from './mdt-builder'
 import { registerMdtCapabilityIpc, registerMdtSecretIpc } from './mdt-capabilities-ipc'
 import { registerMdtIoIpc } from './mdt-io'
+import { registerMdtPreviewIpc } from './mdt-preview-ipc'
 import { startSlidesStandalone } from './slides-main'
 
 // MDT surface: project IO, builder lifecycle (P05/P10). Registered before
@@ -15,6 +16,7 @@ registerMdtIoIpc({
 })
 registerMdtCapabilityIpc()
 registerMdtSecretIpc()
+registerMdtPreviewIpc()
 registerMdtBuildIpc({
   // the generated workspace lives inside the project directory
   projectsRoot: () => undefined,

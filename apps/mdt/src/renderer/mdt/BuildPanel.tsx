@@ -120,6 +120,21 @@ export function BuildPanel(): React.ReactElement {
         <button type="button" onClick={() => void window.mdtApi?.buildRollback()}>
           ⟲ Rollback
         </button>
+        <button
+          type="button"
+          onClick={() => {
+            void window.mdtApi?.previewStart('generated').then((r) => {
+              const payload = r as { ok?: boolean; url?: string; error?: string }
+              if (payload?.ok && payload.url) push('preview running at ' + payload.url, 'info')
+              else if (payload?.error) push('preview failed: ' + payload.error, 'error')
+            })
+          }}
+        >
+          ▶ Run Preview
+        </button>
+        <button type="button" onClick={() => void window.mdtApi?.previewStop()}>
+          ■ Stop Preview
+        </button>
         <span style={{ marginLeft: 'auto', fontSize: 12, opacity: 0.75 }}>
           {availability?.installed
             ? `Codex ${availability.version ?? '?'} · ${availability.loggedIn ? 'signed in' : 'NOT signed in'}`

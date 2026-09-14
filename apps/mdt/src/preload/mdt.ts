@@ -28,6 +28,10 @@ const mdtApi = {
   secretSet: (name: string, value: string) => invoke('mdt:secret-set', { name, value }),
   secretDelete: (name: string) => invoke('mdt:secret-delete', { name }),
 
+  previewStart: (relative?: string) => invoke('mdt:preview-start', { relative }),
+  previewStop: () => invoke('mdt:preview-stop'),
+  previewState: () => invoke('mdt:preview-state'),
+
   buildStart: (task?: string) => invoke('mdt:build-start', { task }),
   buildCancel: () => invoke('mdt:build-cancel'),
   buildAvailability: () => invoke('mdt:build-availability'),
