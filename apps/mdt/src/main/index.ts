@@ -5,6 +5,7 @@ import { CapabilityRegistry, registerBuiltins } from '@mdt/capabilities'
 import { generateAndWrite } from '@mdt/generator'
 import { toBuildBlueprint, type ProjectRoot } from '@mdt/schema'
 import { attachBuildEvents, registerMdtBuildIpc } from './mdt-builder'
+import { registerMdtAppPrefsIpc } from './mdt-app-prefs'
 import { registerMdtCapabilityIpc, registerMdtSecretIpc } from './mdt-capabilities-ipc'
 import { registerMdtIoIpc } from './mdt-io'
 import { registerMdtPreviewIpc } from './mdt-preview-ipc'
@@ -18,6 +19,7 @@ registerMdtIoIpc({
   recentFile: path.join(app.getPath('userData'), 'mdt-recent.json'),
 })
 registerMdtCapabilityIpc()
+registerMdtAppPrefsIpc()
 registerMdtSecretIpc()
 registerMdtPreviewIpc()
 registerMdtBuildIpc({
