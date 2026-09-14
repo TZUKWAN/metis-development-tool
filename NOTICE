@@ -1,7 +1,24 @@
+Metis Development Tool (MDT)
+Copyright 2026 MDT contributors
+
+This product includes software developed by the MDT contributors and is
+licensed under the Apache License, Version 2.0.
+
+MDT is derived from GenOffice and retains the following upstream attribution:
+
 GenOffice
 Copyright 2026 Mainfunc, Inc.
 
 This product includes software developed at Mainfunc, Inc.
+
+GenOffice is licensed under the Apache License, Version 2.0. The GenOffice
+baseline commit MDT was built from is recorded in
+docs/upstream/GENOFFICE_BASELINE.md. Original copyright notices, license
+texts and upstream provenance in GenOffice-derived files are preserved.
+
+MDT uses the OpenAI Codex CLI (Apache-2.0) as its internal coding agent and
+Pi Agent Core (@mariozechner/pi-agent-core, MIT, badlogic/pi-mono) as the
+agent runtime of applications built with MDT. See THIRD_PARTY_NOTICES.md.
 
 Bundled third-party components are listed in THIRD-PARTY-NOTICES.txt, which
 tools/gen-third-party-notices.mjs generates at packaging time. It is not
