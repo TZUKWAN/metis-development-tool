@@ -6,7 +6,11 @@
 import { askUserCapability } from './capabilities/ask-user'
 import { browserCapability } from './capabilities/browser'
 import { datetimeCapability } from './capabilities/datetime'
-import { fileReadCapability, fileListCapability, fileWriteCapability } from './capabilities/file-tools'
+import {
+  fileReadCapability,
+  fileListCapability,
+  fileWriteCapability,
+} from './capabilities/file-tools'
 import { httpRequestCapability } from './capabilities/http-request'
 import { jsonCapability } from './capabilities/json'
 import { mcpCapability } from './capabilities/mcp'

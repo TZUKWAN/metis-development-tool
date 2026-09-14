@@ -17,7 +17,7 @@ const FAKE_SERVER_SCRIPT = [
   '  buf += chunk;',
   '  let idx;',
   "  while ((idx = buf.indexOf('\\n')) >= 0) {",
-  "    const line = buf.slice(0, idx);",
+  '    const line = buf.slice(0, idx);',
   '    buf = buf.slice(idx + 1);',
   '    if (!line.trim()) continue;',
   '    const msg = JSON.parse(line);',
@@ -43,17 +43,18 @@ const FAKE_SERVER_SCRIPT = [
 const overrides: ContextOverrides = { granted: ['process'] }
 
 function serverConfig(extra: Record<string, unknown> = {}): Record<string, unknown> {
-  return { command: process.execPath, args: ['-e', FAKE_SERVER_SCRIPT], transport: 'stdio', ...extra }
+  return {
+    command: process.execPath,
+    args: ['-e', FAKE_SERVER_SCRIPT],
+    transport: 'stdio',
+    ...extra,
+  }
 }
 
-runCapabilityContractTests(
-  mcpCapability,
-  overrides,
-  {
-    happyInput: { server: 'fake', tool: 'echo', args: { x: 1 }, config: serverConfig() },
-    invalidInput: { server: 'fake', tool: 'echo' }, // missing config
-  },
-)
+runCapabilityContractTests(mcpCapability, overrides, {
+  happyInput: { server: 'fake', tool: 'echo', args: { x: 1 }, config: serverConfig() },
+  invalidInput: { server: 'fake', tool: 'echo' }, // missing config
+})
 
 describe('mcp stdio transport', () => {
   const ctx = createCapabilityContext(overrides)
@@ -75,28 +76,39 @@ describe('mcp stdio transport', () => {
   }, 20_000)
 
   it('surfaces JSON-RPC errors from the server as structured errors', async () => {
-    await expect(mcpCapability.execute({ server: 'fake', tool: 'fail', config: serverConfig() }, ctx)).rejects.toThrow(
-      /error -32000: nope/,
-    )
+    await expect(
+      mcpCapability.execute({ server: 'fake', tool: 'fail', config: serverConfig() }, ctx),
+    ).rejects.toThrow(/error -32000: nope/)
   }, 20_000)
 
   it('fails fast when the server command cannot spawn (no hang)', async () => {
     const started = Date.now()
     await expect(
-      mcpCapability.execute({ server: 'ghost', tool: 'echo', config: { command: 'definitely-not-a-real-cmd-xyz' } }, ctx),
-    ).rejects.toThrow(/failed to start MCP server "ghost" \(command "definitely-not-a-real-cmd-xyz"\)/)
+      mcpCapability.execute(
+        { server: 'ghost', tool: 'echo', config: { command: 'definitely-not-a-real-cmd-xyz' } },
+        ctx,
+      ),
+    ).rejects.toThrow(
+      /failed to start MCP server "ghost" \(command "definitely-not-a-real-cmd-xyz"\)/,
+    )
     expect(Date.now() - started).toBeLessThan(10_000)
   }, 15_000)
 
   it('rejects the http transport in 1.0', async () => {
     await expect(
-      mcpCapability.execute({ server: 'web', tool: 'echo', config: { transport: 'http', url: 'http://x.test/sse' } }, ctx),
+      mcpCapability.execute(
+        { server: 'web', tool: 'echo', config: { transport: 'http', url: 'http://x.test/sse' } },
+        ctx,
+      ),
     ).rejects.toThrow(/transport "http" is not supported in 1\.0/)
   })
 
   it('rejects config.env (env comes from the context allowlist)', async () => {
     await expect(
-      mcpCapability.execute({ server: 'fake', tool: 'echo', config: serverConfig({ env: { A: 'b' } }) }, ctx),
+      mcpCapability.execute(
+        { server: 'fake', tool: 'echo', config: serverConfig({ env: { A: 'b' } }) },
+        ctx,
+      ),
     ).rejects.toThrow(/config\.env is not supported/)
   })
 

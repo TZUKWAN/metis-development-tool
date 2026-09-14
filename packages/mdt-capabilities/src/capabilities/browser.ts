@@ -23,7 +23,8 @@ export interface BrowserDriver {
   close(): Promise<void>
 }
 
-const NO_DRIVER_MESSAGE = 'browser capability requires a browser driver — the generated app registers one (Playwright-backed)'
+const NO_DRIVER_MESSAGE =
+  'browser capability requires a browser driver — the generated app registers one (Playwright-backed)'
 
 let driverFactory: (() => BrowserDriver) | null = null
 const sessions = new Map<string, BrowserDriver>()
@@ -50,7 +51,8 @@ export const browserCapability: Capability = {
     name: 'Browser',
     version: '1.0.0',
     category: 'browser',
-    description: 'Drive a real browser (open, navigate, click, type, screenshot, close) through an injected driver.',
+    description:
+      'Drive a real browser (open, navigate, click, type, screenshot, close) through an injected driver.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -80,8 +82,18 @@ export const browserCapability: Capability = {
       additionalProperties: false,
     },
     permissions: [
-      { scope: 'browser', detail: 'drive an automated browser session', required: true, defaultGranted: false },
-      { scope: 'network', detail: 'page navigation fetches', required: false, defaultGranted: false },
+      {
+        scope: 'browser',
+        detail: 'drive an automated browser session',
+        required: true,
+        defaultGranted: false,
+      },
+      {
+        scope: 'network',
+        detail: 'page navigation fetches',
+        required: false,
+        defaultGranted: false,
+      },
     ],
     secrets: [],
     ui: {
@@ -94,13 +106,19 @@ export const browserCapability: Capability = {
     timeoutMs: 60_000,
     maxOutputBytes: 1_000_000,
   },
-  async execute(input: Record<string, unknown>, ctx: CapabilityContext): Promise<Record<string, unknown>> {
+  async execute(
+    input: Record<string, unknown>,
+    ctx: CapabilityContext,
+  ): Promise<Record<string, unknown>> {
     requirePermission(ctx, browserCapability, 'browser')
     const action = String(input.action)
     if (!(BROWSER_ACTIONS as readonly string[]).includes(action)) {
-      throw new Error(`browser: action must be one of ${BROWSER_ACTIONS.join('/')} — got "${action}"`)
+      throw new Error(
+        `browser: action must be one of ${BROWSER_ACTIONS.join('/')} — got "${action}"`,
+      )
     }
-    const sessionId = typeof input.sessionId === 'string' && input.sessionId !== '' ? input.sessionId : 'default'
+    const sessionId =
+      typeof input.sessionId === 'string' && input.sessionId !== '' ? input.sessionId : 'default'
     ctx.log(`browser action=${action} session=${sessionId}`)
 
     if (action === 'open' || action === 'navigate') {
@@ -112,7 +130,8 @@ export const browserCapability: Capability = {
     }
     if (action === 'click' || action === 'type') {
       const driver = requireSession(sessionId, action)
-      const selector = typeof input.selector === 'string' && input.selector !== '' ? input.selector : null
+      const selector =
+        typeof input.selector === 'string' && input.selector !== '' ? input.selector : null
       if (!selector) throw new Error(`browser: "${action}" requires a non-empty "selector"`)
       if (action === 'click') {
         await driver.click(selector)
@@ -159,7 +178,9 @@ async function guardBrowserUrl(value: unknown): Promise<string> {
   }
   // protocol check happens BEFORE any driver call — no opt-out for javascript:/file:/data:
   if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-    throw new Error(`browser: url scheme "${parsed.protocol}" is blocked — only http/https pages can be opened`)
+    throw new Error(
+      `browser: url scheme "${parsed.protocol}" is blocked — only http/https pages can be opened`,
+    )
   }
   // then the full SSRF guard (DNS resolution + per-address class checks)
   // note: no loopback opt-in on the browser capability in 1.0
@@ -169,7 +190,8 @@ async function guardBrowserUrl(value: unknown): Promise<string> {
 
 function normalizeViewport(value: unknown): BrowserDriverOpenOptions['viewport'] {
   if (value === undefined || value === null) return undefined
-  if (typeof value !== 'object' || Array.isArray(value)) throw new Error('browser: "viewport" must be an object { width, height }')
+  if (typeof value !== 'object' || Array.isArray(value))
+    throw new Error('browser: "viewport" must be an object { width, height }')
   const record = value as Record<string, unknown>
   const width = Number(record.width)
   const height = Number(record.height)
@@ -190,6 +212,9 @@ function ensureSession(sessionId: string): BrowserDriver {
 
 function requireSession(sessionId: string, action: string): BrowserDriver {
   const driver = sessions.get(sessionId)
-  if (!driver) throw new Error(`browser: no open session "${sessionId}" — run the "open" action first before "${action}"`)
+  if (!driver)
+    throw new Error(
+      `browser: no open session "${sessionId}" — run the "open" action first before "${action}"`,
+    )
   return driver
 }

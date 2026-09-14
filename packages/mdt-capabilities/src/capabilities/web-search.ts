@@ -18,7 +18,10 @@ export interface SearchProvider {
   readonly id: string
   /** true when the provider cannot run without the `api_key` secret */
   readonly requiresApiKey?: boolean
-  search(query: string, opts: { count: number; apiKey?: string; signal: AbortSignal }): Promise<SearchResult[]>
+  search(
+    query: string,
+    opts: { count: number; apiKey?: string; signal: AbortSignal },
+  ): Promise<SearchResult[]>
 }
 
 /** Registry of search providers (mock + duckduckgo preloaded; apps may add). */
@@ -159,7 +162,11 @@ export const webSearchCapability: Capability = {
           type: 'array',
           items: {
             type: 'object',
-            properties: { title: { type: 'string' }, url: { type: 'string' }, snippet: { type: 'string' } },
+            properties: {
+              title: { type: 'string' },
+              url: { type: 'string' },
+              snippet: { type: 'string' },
+            },
             required: ['title', 'url', 'snippet'],
           },
         },
@@ -168,8 +175,21 @@ export const webSearchCapability: Capability = {
       required: ['results', 'provider'],
       additionalProperties: false,
     },
-    permissions: [{ scope: 'network', detail: 'http(s) GET fetch to the search provider', required: true, defaultGranted: true }],
-    secrets: [{ name: 'api_key', description: 'API key for providers that require one (e.g. bearer-key search APIs)', required: false }],
+    permissions: [
+      {
+        scope: 'network',
+        detail: 'http(s) GET fetch to the search provider',
+        required: true,
+        defaultGranted: true,
+      },
+    ],
+    secrets: [
+      {
+        name: 'api_key',
+        description: 'API key for providers that require one (e.g. bearer-key search APIs)',
+        required: false,
+      },
+    ],
     ui: {
       icon: '🔍',
       accent: '#5b8def',
@@ -180,22 +200,33 @@ export const webSearchCapability: Capability = {
     timeoutMs: 30_000,
     maxOutputBytes: 1_000_000,
   },
-  async execute(input: Record<string, unknown>, ctx: CapabilityContext): Promise<Record<string, unknown>> {
+  async execute(
+    input: Record<string, unknown>,
+    ctx: CapabilityContext,
+  ): Promise<Record<string, unknown>> {
     requirePermission(ctx, webSearchCapability, 'network')
     if (ctx.signal.aborted) throw new Error('web_search cancelled')
 
-    const query = typeof input.query === 'string' && input.query.trim() !== '' ? input.query.trim() : null
+    const query =
+      typeof input.query === 'string' && input.query.trim() !== '' ? input.query.trim() : null
     if (!query) throw new Error('web_search: "query" is required and must be a non-empty string')
 
     const count = normalizeCount(input.count)
-    const providerName = typeof input.provider === 'string' && input.provider.trim() !== '' ? input.provider.trim() : 'duckduckgo'
+    const providerName =
+      typeof input.provider === 'string' && input.provider.trim() !== ''
+        ? input.provider.trim()
+        : 'duckduckgo'
     const provider = searchProviders.get(providerName)
     if (!provider) {
-      throw new Error(`web_search: unknown provider "${providerName}" — registered providers: ${[...searchProviders.keys()].sort().join(', ')}`)
+      throw new Error(
+        `web_search: unknown provider "${providerName}" — registered providers: ${[...searchProviders.keys()].sort().join(', ')}`,
+      )
     }
     const apiKey = ctx.secrets.api_key
     if (provider.requiresApiKey === true && !apiKey) {
-      throw new Error(`web_search provider ${providerName} requires the api_key secret — configure it in Capability inspector`)
+      throw new Error(
+        `web_search provider ${providerName} requires the api_key secret — configure it in Capability inspector`,
+      )
     }
 
     ctx.log(`web_search provider=${providerName} count=${count} query=${redact(query)}`)

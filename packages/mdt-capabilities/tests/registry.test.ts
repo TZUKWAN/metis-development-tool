@@ -8,7 +8,13 @@ import { describe, expect, it } from 'vitest'
 import { builtinCapabilities, registerBuiltins } from '../src/builtins'
 import type { Capability } from '../src/manifest'
 import { validateCapability } from '../src/manifest'
-import { CapabilityNotFoundError, CapabilityRegistry, compareVersions, isVersionCompatible, RegistryConflictError } from '../src/registry'
+import {
+  CapabilityNotFoundError,
+  CapabilityRegistry,
+  compareVersions,
+  isVersionCompatible,
+  RegistryConflictError,
+} from '../src/registry'
 import * as publicApi from '../src/index'
 
 function makeCapability(id: string, version = '1.0.0'): Capability {
@@ -53,7 +59,9 @@ describe('registry semantics', () => {
   it('rejects downgrades unless allowDowngrade is set', () => {
     const registry = new CapabilityRegistry()
     registry.register(makeCapability('dummy_c', '1.1.0'))
-    expect(() => registry.register(makeCapability('dummy_c', '1.0.0'))).toThrow(RegistryConflictError)
+    expect(() => registry.register(makeCapability('dummy_c', '1.0.0'))).toThrow(
+      RegistryConflictError,
+    )
     registry.register(makeCapability('dummy_c', '1.0.0'), { allowDowngrade: true })
     expect(registry.manifestOf('dummy_c').version).toBe('1.0.0')
   })
@@ -63,7 +71,9 @@ describe('registry semantics', () => {
     // secret name colliding with an input property (validateCapability)
     const colliding = makeCapability('dummy_d')
     colliding.manifest.secrets = [{ name: 'alpha', description: 'dup', required: true }]
-    ;(colliding.manifest.inputSchema.properties as Record<string, unknown>).alpha = { type: 'string' }
+    ;(colliding.manifest.inputSchema.properties as Record<string, unknown>).alpha = {
+      type: 'string',
+    }
     expect(() => registry.register(colliding)).toThrow(RegistryConflictError)
     // manifest failing the zod schema (id must be snake_case)
     const badId = makeCapability('NotSnakeCase')
@@ -73,7 +83,9 @@ describe('registry semantics', () => {
   it('rejects process permissions that are default-granted (except shell/python)', () => {
     const registry = new CapabilityRegistry()
     const sneaky = makeCapability('dummy_process')
-    sneaky.manifest.permissions = [{ scope: 'process', detail: 'sneaky', required: true, defaultGranted: true }]
+    sneaky.manifest.permissions = [
+      { scope: 'process', detail: 'sneaky', required: true, defaultGranted: true },
+    ]
     expect(() => registry.register(sneaky)).toThrow(/process permission default-granted/)
   })
 
@@ -133,8 +145,12 @@ describe('builtins', () => {
   })
 
   it('is deterministic across registries', () => {
-    const a = registerBuiltins(new CapabilityRegistry()).list().map((e) => e.capability.manifest.id)
-    const b = registerBuiltins(new CapabilityRegistry()).list().map((e) => e.capability.manifest.id)
+    const a = registerBuiltins(new CapabilityRegistry())
+      .list()
+      .map((e) => e.capability.manifest.id)
+    const b = registerBuiltins(new CapabilityRegistry())
+      .list()
+      .map((e) => e.capability.manifest.id)
     expect(a).toEqual(b)
   })
 
@@ -148,7 +164,15 @@ describe('builtins', () => {
   })
 
   it('high-risk capabilities are default-denied', () => {
-    for (const id of ['shell', 'python', 'mcp', 'browser', 'file_read', 'file_write', 'file_list']) {
+    for (const id of [
+      'shell',
+      'python',
+      'mcp',
+      'browser',
+      'file_read',
+      'file_write',
+      'file_list',
+    ]) {
       const capability = builtinCapabilities.find((c) => c.manifest.id === id)
       expect(capability, id).toBeDefined()
       for (const perm of capability?.manifest.permissions ?? []) {

@@ -22,7 +22,10 @@ export const REDACTED = '[redacted]'
 /** Mask anything that looks like a credential in log output (P13.04). */
 export function redact(message: string): string {
   return message
-    .replace(/(authorization|api[-_]?key|token|secret|x-api-key|password)="?[\w./+=-]+"?/gi, '$1=[redacted]')
+    .replace(
+      /(authorization|api[-_]?key|token|secret|x-api-key|password)="?[\w./+=-]+"?/gi,
+      '$1=[redacted]',
+    )
     .replace(/\b(sk|pk|ghp|gho|github_pat|xoxb|xoxp)-[\w-]{8,}/g, REDACTED)
     .replace(/\bBearer\s+[\w./+=-]+/gi, 'Bearer [redacted]')
 }
@@ -35,9 +38,7 @@ export function createCapabilityContext(overrides: ContextOverrides = {}): Capab
     workdir: overrides.workdir ?? process.cwd(),
     envAllowlist: overrides.envAllowlist ?? ['PATH', 'LANG', 'TZ'],
     signal: overrides.signal ?? new AbortController().signal,
-    askUser:
-      overrides.askUser ??
-      (async () => ({ answered: false }) satisfies AskUserAnswer),
+    askUser: overrides.askUser ?? (async () => ({ answered: false }) satisfies AskUserAnswer),
     log: overrides.log ?? (() => {}),
   }
 }
@@ -50,12 +51,18 @@ export function createCapabilityContext(overrides: ContextOverrides = {}): Capab
 export class PermissionDeniedError extends Error {
   readonly code = 'PERMISSION_DENIED'
   constructor(scope: PermissionScope, capabilityId: string) {
-    super(`capability "${capabilityId}" requires ${scope} permission, which is not granted in this project`)
+    super(
+      `capability "${capabilityId}" requires ${scope} permission, which is not granted in this project`,
+    )
     this.name = 'PermissionDeniedError'
   }
 }
 
-export function requirePermission(ctx: CapabilityContext, capability: Capability, scope: PermissionScope): void {
+export function requirePermission(
+  ctx: CapabilityContext,
+  capability: Capability,
+  scope: PermissionScope,
+): void {
   if (!ctx.granted.has(scope)) {
     throw new PermissionDeniedError(scope, capability.manifest.id)
   }

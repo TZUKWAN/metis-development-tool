@@ -8,7 +8,12 @@
  *    version is higher; instances pinned to the replaced version keep
  *    working via the compat check (`isVersionCompatible`)
  */
-import { CapabilityManifestSchema, validateCapability, type Capability, type CapabilityManifest } from './manifest'
+import {
+  CapabilityManifestSchema,
+  validateCapability,
+  type Capability,
+  type CapabilityManifest,
+} from './manifest'
 
 export class RegistryConflictError extends Error {
   constructor(message: string) {
@@ -41,19 +46,24 @@ export class CapabilityRegistry {
   register(capability: Capability, options: RegisterOptions = {}): this {
     const problems = validateCapability(capability)
     if (problems.length > 0) {
-      throw new RegistryConflictError(`invalid capability "${capability.manifest.id}": ${problems.join('; ')}`)
+      throw new RegistryConflictError(
+        `invalid capability "${capability.manifest.id}": ${problems.join('; ')}`,
+      )
     }
     // revalidate through the schema (third-party capabilities may be plain objects)
     const parsed = CapabilityManifestSchema.safeParse(capability.manifest)
     if (!parsed.success) {
-      throw new RegistryConflictError(`manifest for "${capability.manifest.id}" rejected: ${parsed.error.issues[0]?.message}`)
+      throw new RegistryConflictError(
+        `manifest for "${capability.manifest.id}" rejected: ${parsed.error.issues[0]?.message}`,
+      )
     }
     const existing = this.byId.get(capability.manifest.id)
     if (existing) {
       if (existing.capability.manifest.version === capability.manifest.version) {
         return this // idempotent
       }
-      const incomingHigher = compareVersions(capability.manifest.version, existing.capability.manifest.version) > 0
+      const incomingHigher =
+        compareVersions(capability.manifest.version, existing.capability.manifest.version) > 0
       if (!incomingHigher && !options.allowDowngrade) {
         throw new RegistryConflictError(
           `capability "${capability.manifest.id}" version ${capability.manifest.version} does not replace installed ${existing.capability.manifest.version}`,
@@ -85,7 +95,9 @@ export class CapabilityRegistry {
 
   /** Deterministic: sorted by id. */
   list(): RegistryEntry[] {
-    return [...this.byId.values()].sort((a, b) => a.capability.manifest.id.localeCompare(b.capability.manifest.id))
+    return [...this.byId.values()].sort((a, b) =>
+      a.capability.manifest.id.localeCompare(b.capability.manifest.id),
+    )
   }
 
   manifests(): CapabilityManifest[] {

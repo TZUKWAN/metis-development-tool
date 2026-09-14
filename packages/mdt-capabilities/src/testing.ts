@@ -29,7 +29,11 @@ function isJsonValue(value: unknown): boolean {
   return false
 }
 
-export function runCapabilityContractTests(capability: Capability, overrides: ContextOverrides = {}, options: ContractOptions = {}): void {
+export function runCapabilityContractTests(
+  capability: Capability,
+  overrides: ContextOverrides = {},
+  options: ContractOptions = {},
+): void {
   describe(`capability contract: ${capability.manifest.id}`, () => {
     it('manifest satisfies the schema and the declared id/version format', () => {
       const parsed = CapabilityManifestSchema.safeParse(capability.manifest)
@@ -65,7 +69,10 @@ export function runCapabilityContractTests(capability: Capability, overrides: Co
 
     it('honours abort signals', async () => {
       const controller = new AbortController()
-      const ctx: CapabilityContext = createCapabilityContext({ ...overrides, signal: controller.signal })
+      const ctx: CapabilityContext = createCapabilityContext({
+        ...overrides,
+        signal: controller.signal,
+      })
       controller.abort()
       // execution after abort must reject OR resolve promptly with a
       // well-formed result; it must never hang. We assert no hang via a
@@ -86,8 +93,19 @@ export function runCapabilityContractTests(capability: Capability, overrides: Co
 function minimalInput(capability: Capability): Record<string, unknown> {
   const input: Record<string, unknown> = {}
   for (const key of capability.manifest.inputSchema.required) {
-    const prop = (capability.manifest.inputSchema.properties as Record<string, { type?: string }>)[key]
-    input[key] = prop?.type === 'number' ? 0 : prop?.type === 'boolean' ? false : prop?.type === 'array' ? [] : prop?.type === 'object' ? {} : key
+    const prop = (capability.manifest.inputSchema.properties as Record<string, { type?: string }>)[
+      key
+    ]
+    input[key] =
+      prop?.type === 'number'
+        ? 0
+        : prop?.type === 'boolean'
+          ? false
+          : prop?.type === 'array'
+            ? []
+            : prop?.type === 'object'
+              ? {}
+              : key
   }
   return input
 }

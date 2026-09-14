@@ -24,7 +24,9 @@ function makeFakeDriver(): FakeDriver {
   return {
     calls,
     async open(url, opts) {
-      calls.push(`open:${url}:${opts?.viewport ? `${opts.viewport.width}x${opts.viewport.height}` : '-'}`)
+      calls.push(
+        `open:${url}:${opts?.viewport ? `${opts.viewport.width}x${opts.viewport.height}` : '-'}`,
+      )
     },
     async click(selector) {
       calls.push(`click:${selector}`)
@@ -68,9 +70,9 @@ runCapabilityContractTests(browserCapability, overrides, {
 describe('browser permission gating', () => {
   it('denies the default context (browser is never default-granted)', async () => {
     const ctx = createCapabilityContext({})
-    await expect(browserCapability.execute({ action: 'open', url: PUBLIC_URL }, ctx)).rejects.toThrow(
-      /requires browser permission/,
-    )
+    await expect(
+      browserCapability.execute({ action: 'open', url: PUBLIC_URL }, ctx),
+    ).rejects.toThrow(/requires browser permission/)
   })
 })
 
@@ -78,7 +80,9 @@ describe('browser driver injection', () => {
   it('throws a clear error when no driver factory is registered', async () => {
     setBrowserDriverFactory(null)
     const ctx = createCapabilityContext(overrides)
-    await expect(browserCapability.execute({ action: 'open', url: PUBLIC_URL }, ctx)).rejects.toThrow(
+    await expect(
+      browserCapability.execute({ action: 'open', url: PUBLIC_URL }, ctx),
+    ).rejects.toThrow(
       'browser capability requires a browser driver — the generated app registers one (Playwright-backed)',
     )
   })
@@ -98,9 +102,15 @@ describe('browser session lifecycle (fake driver)', () => {
     expect(getBrowserSession('s1')).toBeDefined()
     expect(browserSessionCount()).toBeGreaterThan(0)
 
-    await browserCapability.execute({ action: 'navigate', url: `${PUBLIC_URL}?page=2`, sessionId: 's1' }, ctx)
+    await browserCapability.execute(
+      { action: 'navigate', url: `${PUBLIC_URL}?page=2`, sessionId: 's1' },
+      ctx,
+    )
     await browserCapability.execute({ action: 'click', selector: '#next', sessionId: 's1' }, ctx)
-    await browserCapability.execute({ action: 'type', selector: 'input.q', text: 'hello', sessionId: 's1' }, ctx)
+    await browserCapability.execute(
+      { action: 'type', selector: 'input.q', text: 'hello', sessionId: 's1' },
+      ctx,
+    )
 
     const shot = await browserCapability.execute({ action: 'screenshot', sessionId: 's1' }, ctx)
     expect(String(shot.dataUrl)).toMatch(/^image\/png;base64,/)
@@ -121,34 +131,44 @@ describe('browser session lifecycle (fake driver)', () => {
 
   it('requires an open session for click/type/screenshot/close', async () => {
     installFakeDriver()
-    await expect(browserCapability.execute({ action: 'click', selector: '#x', sessionId: 'ghost' }, ctx)).rejects.toThrow(
-      /no open session "ghost"/,
-    )
-    await expect(browserCapability.execute({ action: 'type', selector: '#x', text: 'y', sessionId: 'ghost' }, ctx)).rejects.toThrow(
-      /no open session "ghost"/,
-    )
-    await expect(browserCapability.execute({ action: 'screenshot', sessionId: 'ghost' }, ctx)).rejects.toThrow(
-      /no open session "ghost"/,
-    )
-    await expect(browserCapability.execute({ action: 'close', sessionId: 'ghost' }, ctx)).rejects.toThrow(
-      /no open session "ghost" to close/,
-    )
+    await expect(
+      browserCapability.execute({ action: 'click', selector: '#x', sessionId: 'ghost' }, ctx),
+    ).rejects.toThrow(/no open session "ghost"/)
+    await expect(
+      browserCapability.execute(
+        { action: 'type', selector: '#x', text: 'y', sessionId: 'ghost' },
+        ctx,
+      ),
+    ).rejects.toThrow(/no open session "ghost"/)
+    await expect(
+      browserCapability.execute({ action: 'screenshot', sessionId: 'ghost' }, ctx),
+    ).rejects.toThrow(/no open session "ghost"/)
+    await expect(
+      browserCapability.execute({ action: 'close', sessionId: 'ghost' }, ctx),
+    ).rejects.toThrow(/no open session "ghost" to close/)
   })
 
   it('requires a selector for click/type', async () => {
     installFakeDriver()
     await browserCapability.execute({ action: 'open', url: PUBLIC_URL, sessionId: 's2' }, ctx)
-    await expect(browserCapability.execute({ action: 'click', sessionId: 's2' }, ctx)).rejects.toThrow(/selector/)
-    await expect(browserCapability.execute({ action: 'type', sessionId: 's2', text: 'x' }, ctx)).rejects.toThrow(/selector/)
-    await expect(browserCapability.execute({ action: 'type', selector: '#x', sessionId: 's2' }, ctx)).rejects.toThrow(
-      /"type" requires the "text"/,
-    )
+    await expect(
+      browserCapability.execute({ action: 'click', sessionId: 's2' }, ctx),
+    ).rejects.toThrow(/selector/)
+    await expect(
+      browserCapability.execute({ action: 'type', sessionId: 's2', text: 'x' }, ctx),
+    ).rejects.toThrow(/selector/)
+    await expect(
+      browserCapability.execute({ action: 'type', selector: '#x', sessionId: 's2' }, ctx),
+    ).rejects.toThrow(/"type" requires the "text"/)
   })
 
   it('validates the viewport', async () => {
     installFakeDriver()
     await expect(
-      browserCapability.execute({ action: 'open', url: PUBLIC_URL, sessionId: 's3', viewport: { width: -1, height: 0 } }, ctx),
+      browserCapability.execute(
+        { action: 'open', url: PUBLIC_URL, sessionId: 's3', viewport: { width: -1, height: 0 } },
+        ctx,
+      ),
     ).rejects.toThrow(/viewport/)
   })
 })
@@ -160,9 +180,9 @@ describe('browser url guard', () => {
     installFakeDriver()
     const callsBefore = lastDriver?.calls.length ?? 0
     for (const url of ['javascript:alert(1)', 'file:///c:/x.html', 'data:text/html,<b>x</b>']) {
-      await expect(browserCapability.execute({ action: 'open', url, sessionId: 'guard' }, ctx)).rejects.toThrow(
-        /scheme ".*" is blocked/,
-      )
+      await expect(
+        browserCapability.execute({ action: 'open', url, sessionId: 'guard' }, ctx),
+      ).rejects.toThrow(/scheme ".*" is blocked/)
     }
     expect(lastDriver?.calls.length).toBe(callsBefore) // the driver was never invoked
   })
@@ -170,23 +190,33 @@ describe('browser url guard', () => {
   it('blocks SSRF targets via the async guard', async () => {
     installFakeDriver()
     // IP literals skip DNS → deterministic, no network in tests
-    await expect(browserCapability.execute({ action: 'open', url: 'http://169.254.169.254/', sessionId: 'guard' }, ctx)).rejects.toThrow(
-      UrlBlockedError,
-    )
-    await expect(browserCapability.execute({ action: 'navigate', url: 'http://10.0.0.1/x', sessionId: 'guard' }, ctx)).rejects.toThrow(
-      UrlBlockedError,
-    )
+    await expect(
+      browserCapability.execute(
+        { action: 'open', url: 'http://169.254.169.254/', sessionId: 'guard' },
+        ctx,
+      ),
+    ).rejects.toThrow(UrlBlockedError)
+    await expect(
+      browserCapability.execute(
+        { action: 'navigate', url: 'http://10.0.0.1/x', sessionId: 'guard' },
+        ctx,
+      ),
+    ).rejects.toThrow(UrlBlockedError)
   })
 
   it('requires a url for open/navigate', async () => {
     installFakeDriver()
-    await expect(browserCapability.execute({ action: 'open', sessionId: 'guard' }, ctx)).rejects.toThrow(/non-empty "url"/)
-    await expect(browserCapability.execute({ action: 'navigate', url: 'not a url', sessionId: 'guard' }, ctx)).rejects.toThrow(
-      /not a valid url/,
-    )
+    await expect(
+      browserCapability.execute({ action: 'open', sessionId: 'guard' }, ctx),
+    ).rejects.toThrow(/non-empty "url"/)
+    await expect(
+      browserCapability.execute({ action: 'navigate', url: 'not a url', sessionId: 'guard' }, ctx),
+    ).rejects.toThrow(/not a valid url/)
   })
 
   it('rejects unknown actions', async () => {
-    await expect(browserCapability.execute({ action: 'teleport' }, ctx)).rejects.toThrow(/action must be one of/)
+    await expect(browserCapability.execute({ action: 'teleport' }, ctx)).rejects.toThrow(
+      /action must be one of/,
+    )
   })
 })

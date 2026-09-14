@@ -32,8 +32,14 @@ export const webFetchCapability: Capability = {
         url: { type: 'string', description: 'absolute http(s) url to fetch' },
         maxBytes: { type: 'number', description: 'response size cap in bytes (default 1000000)' },
         timeoutMs: { type: 'number', description: 'per-request timeout in ms (default 20000)' },
-        raw: { type: 'boolean', description: 'return the raw body instead of text-extracted (default false)' },
-        allowLocal: { type: 'boolean', description: 'explicit loopback opt-in for local dev/tests (default false)' },
+        raw: {
+          type: 'boolean',
+          description: 'return the raw body instead of text-extracted (default false)',
+        },
+        allowLocal: {
+          type: 'boolean',
+          description: 'explicit loopback opt-in for local dev/tests (default false)',
+        },
       },
       required: ['url'],
       additionalProperties: false,
@@ -51,7 +57,9 @@ export const webFetchCapability: Capability = {
       required: ['url', 'status', 'contentType', 'body', 'bytes', 'title'],
       additionalProperties: false,
     },
-    permissions: [{ scope: 'network', detail: 'http(s) GET fetch', required: true, defaultGranted: true }],
+    permissions: [
+      { scope: 'network', detail: 'http(s) GET fetch', required: true, defaultGranted: true },
+    ],
     secrets: [],
     ui: {
       icon: '🌐',
@@ -63,13 +71,27 @@ export const webFetchCapability: Capability = {
     timeoutMs: 30_000,
     maxOutputBytes: 1_000_000,
   },
-  async execute(input: Record<string, unknown>, ctx: CapabilityContext): Promise<Record<string, unknown>> {
+  async execute(
+    input: Record<string, unknown>,
+    ctx: CapabilityContext,
+  ): Promise<Record<string, unknown>> {
     requirePermission(ctx, webFetchCapability, 'network')
     if (ctx.signal.aborted) throw new Error('web_fetch cancelled')
 
-    const url = requireNonEmptyString(input.url, 'web_fetch: "url" is required and must be a non-empty string')
-    const maxBytes = positiveInt(input.maxBytes, DEFAULT_MAX_BYTES, 'web_fetch: maxBytes must be a positive integer')
-    const timeoutMs = positiveInt(input.timeoutMs, DEFAULT_TIMEOUT_MS, 'web_fetch: timeoutMs must be a positive integer')
+    const url = requireNonEmptyString(
+      input.url,
+      'web_fetch: "url" is required and must be a non-empty string',
+    )
+    const maxBytes = positiveInt(
+      input.maxBytes,
+      DEFAULT_MAX_BYTES,
+      'web_fetch: maxBytes must be a positive integer',
+    )
+    const timeoutMs = positiveInt(
+      input.timeoutMs,
+      DEFAULT_TIMEOUT_MS,
+      'web_fetch: timeoutMs must be a positive integer',
+    )
     const raw = input.raw === true
     const allowLocal = input.allowLocal === true
 
@@ -93,7 +115,9 @@ export const webFetchCapability: Capability = {
     const isHtml = isHtmlContentType(contentType)
     const title = isHtml ? extractHtmlTitle(text) : ''
     const body = !raw && isHtml ? extractHtmlText(text) : text
-    ctx.log(`web_fetch ${redact(url)} -> ${redact(result.finalUrl)} status=${result.status} bytes=${result.bytes}`)
+    ctx.log(
+      `web_fetch ${redact(url)} -> ${redact(result.finalUrl)} status=${result.status} bytes=${result.bytes}`,
+    )
     return {
       url: result.finalUrl,
       status: result.status,
@@ -147,7 +171,12 @@ interface AbortLink {
 }
 
 /** Link a ctx signal + a timeout to one controller; aborts unblock the whole pipeline. */
-function linkAbort(signal: AbortSignal, timeoutMs: number, controller: AbortController, label: string): AbortLink {
+function linkAbort(
+  signal: AbortSignal,
+  timeoutMs: number,
+  controller: AbortController,
+  label: string,
+): AbortLink {
   const state = { timedOut: false, cancelled: false }
   const onAbort = () => {
     state.cancelled = true
@@ -188,9 +217,21 @@ function linkAbort(signal: AbortSignal, timeoutMs: number, controller: AbortCont
  */
 export async function guardedFetch(input: GuardedFetchInput): Promise<GuardedFetchResult> {
   const label = input.label
-  const timeoutMs = positiveInt(input.timeoutMs, DEFAULT_TIMEOUT_MS, `${label}: timeoutMs must be a positive integer`)
-  const maxBytes = positiveInt(input.maxBytes, DEFAULT_MAX_BYTES, `${label}: maxBytes must be a positive integer`)
-  const maxRedirects = positiveInt(input.maxRedirects ?? MAX_REDIRECTS, MAX_REDIRECTS, `${label}: invalid maxRedirects`)
+  const timeoutMs = positiveInt(
+    input.timeoutMs,
+    DEFAULT_TIMEOUT_MS,
+    `${label}: timeoutMs must be a positive integer`,
+  )
+  const maxBytes = positiveInt(
+    input.maxBytes,
+    DEFAULT_MAX_BYTES,
+    `${label}: maxBytes must be a positive integer`,
+  )
+  const maxRedirects = positiveInt(
+    input.maxRedirects ?? MAX_REDIRECTS,
+    MAX_REDIRECTS,
+    `${label}: invalid maxRedirects`,
+  )
   const guardOptions = { localhostMode: input.allowLocal === true }
 
   if (input.signal.aborted) throw new Error(`${label} cancelled`)
@@ -215,9 +256,11 @@ export async function guardedFetch(input: GuardedFetchInput): Promise<GuardedFet
       if (isRedirectStatus(response.status)) {
         const location = response.headers.get('location')
         void response.body?.cancel().catch(() => {})
-        if (!location) throw new Error(`${label}: redirect ${response.status} carries no location header`)
+        if (!location)
+          throw new Error(`${label}: redirect ${response.status} carries no location header`)
         hops += 1
-        if (hops > maxRedirects) throw new Error(`${label}: too many redirects (limit ${maxRedirects})`)
+        if (hops > maxRedirects)
+          throw new Error(`${label}: too many redirects (limit ${maxRedirects})`)
         let next: URL
         try {
           next = new URL(location, current)
@@ -267,7 +310,9 @@ async function readBodyCapped(
   abort: AbortLink,
 ): Promise<Buffer> {
   if (!response.body) return Buffer.alloc(0)
-  const stream = Readable.fromWeb(response.body as unknown as import('node:stream/web').ReadableStream<Uint8Array>)
+  const stream = Readable.fromWeb(
+    response.body as unknown as import('node:stream/web').ReadableStream<Uint8Array>,
+  )
   const chunks: Buffer[] = []
   let total = 0
   try {
@@ -289,7 +334,8 @@ async function readBodyCapped(
 function lowercaseHeaders(headers: Headers): Record<string, string> {
   const out: Record<string, string> = {}
   for (const [key, value] of headers.entries()) {
-    out[key.toLowerCase()] = key.toLowerCase() in out ? `${out[key.toLowerCase()]}, ${value}` : value
+    out[key.toLowerCase()] =
+      key.toLowerCase() in out ? `${out[key.toLowerCase()]}, ${value}` : value
   }
   return out
 }
@@ -299,7 +345,8 @@ export function isTextualContentType(contentType: string): boolean {
   const mime = contentType.split(';')[0].trim().toLowerCase()
   if (mime === '') return false
   if (mime.startsWith('text/')) return true
-  if (mime === 'application/json' || mime === 'application/xhtml+xml' || mime === 'application/xml') return true
+  if (mime === 'application/json' || mime === 'application/xhtml+xml' || mime === 'application/xml')
+    return true
   if (mime.endsWith('+json') || mime.endsWith('+xml')) return true
   return false
 }
@@ -334,7 +381,10 @@ const NAMED_ENTITIES: Record<string, string> = {
 export function decodeHtmlEntities(text: string): string {
   return text.replace(/&(#[xX]?[0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]*);/g, (match, body: string) => {
     if (body.startsWith('#')) {
-      const code = body[1] === 'x' || body[1] === 'X' ? Number.parseInt(body.slice(2), 16) : Number.parseInt(body.slice(1), 10)
+      const code =
+        body[1] === 'x' || body[1] === 'X'
+          ? Number.parseInt(body.slice(2), 16)
+          : Number.parseInt(body.slice(1), 10)
       if (!Number.isInteger(code) || code < 0 || code > 0x10ffff) return match
       try {
         return String.fromCodePoint(code)
@@ -359,7 +409,10 @@ export function extractHtmlText(html: string): string {
   out = out.replace(/<!--[\s\S]*?-->/g, ' ')
   out = out.replace(/<(script|style|noscript|template|svg|head)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ')
   out = out.replace(/<br\s*\/?>/gi, '\n')
-  out = out.replace(/<\/(?:p|div|section|article|header|footer|h[1-6]|li|tr|table|ul|ol|blockquote|pre|title)>/gi, '\n')
+  out = out.replace(
+    /<\/(?:p|div|section|article|header|footer|h[1-6]|li|tr|table|ul|ol|blockquote|pre|title)>/gi,
+    '\n',
+  )
   out = out.replace(/<[^>]+>/g, ' ')
   out = decodeHtmlEntities(out)
   out = out.replace(/[ \t\r\f]+/g, ' ')
@@ -387,7 +440,8 @@ export function positiveInt(value: unknown, fallback: number, message: string): 
 /** Coerce an unknown input into a plain string→string record. */
 export function asStringRecord(value: unknown, label: string): Record<string, string> {
   if (value === undefined || value === null) return {}
-  if (typeof value !== 'object' || Array.isArray(value)) throw new Error(`${label} must be an object of string values`)
+  if (typeof value !== 'object' || Array.isArray(value))
+    throw new Error(`${label} must be an object of string values`)
   const out: Record<string, string> = {}
   for (const [key, entry] of Object.entries(value as Record<string, unknown>)) {
     out[key] = String(entry)

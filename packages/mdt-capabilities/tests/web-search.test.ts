@@ -19,7 +19,10 @@ const grantedCtx = createCapabilityContext({ granted: ['network'] })
 runCapabilityContractTests(
   webSearchCapability,
   { granted: ['network'] },
-  { happyInput: { query: 'capability registry', count: 2, provider: 'mock' }, invalidInput: { query: '' } },
+  {
+    happyInput: { query: 'capability registry', count: 2, provider: 'mock' },
+    invalidInput: { query: '' },
+  },
 )
 
 describe('provider registry', () => {
@@ -33,11 +36,16 @@ describe('provider registry', () => {
   })
 
   it('rejects providers without a usable id', () => {
-    expect(() => registerSearchProvider({ id: '', search: async () => [] })).toThrow(/non-empty string id/)
+    expect(() => registerSearchProvider({ id: '', search: async () => [] })).toThrow(
+      /non-empty string id/,
+    )
   })
 
   it('registers custom providers', () => {
-    const provider: SearchProvider = { id: 'keyed_test', search: async () => [{ title: 't', url: 'u', snippet: 's' }] }
+    const provider: SearchProvider = {
+      id: 'keyed_test',
+      search: async () => [{ title: 't', url: 'u', snippet: 's' }],
+    }
     registerSearchProvider(provider)
     expect(searchProviders.get('keyed_test')).toBe(provider)
   })
@@ -45,8 +53,14 @@ describe('provider registry', () => {
 
 describe('web_search behavior', () => {
   it('mock provider returns deterministic results', async () => {
-    const first = await webSearchCapability.execute({ query: 'cats', count: 3, provider: 'mock' }, grantedCtx)
-    const second = await webSearchCapability.execute({ query: 'cats', count: 3, provider: 'mock' }, grantedCtx)
+    const first = await webSearchCapability.execute(
+      { query: 'cats', count: 3, provider: 'mock' },
+      grantedCtx,
+    )
+    const second = await webSearchCapability.execute(
+      { query: 'cats', count: 3, provider: 'mock' },
+      grantedCtx,
+    )
     expect(first).toEqual(second)
     expect(first.provider).toBe('mock')
     const results = first.results as { title: string; url: string; snippet: string }[]
@@ -56,14 +70,17 @@ describe('web_search behavior', () => {
   })
 
   it('clamps count into the 1–10 range', async () => {
-    const out = await webSearchCapability.execute({ query: 'q', count: 50, provider: 'mock' }, grantedCtx)
+    const out = await webSearchCapability.execute(
+      { query: 'q', count: 50, provider: 'mock' },
+      grantedCtx,
+    )
     expect((out.results as unknown[]).length).toBe(10)
   })
 
   it('defaults to the duckduckgo provider id', async () => {
-    await expect(webSearchCapability.execute({ query: 'q', provider: 'nope' }, grantedCtx)).rejects.toThrow(
-      /unknown provider "nope" — registered providers: duckduckgo, mock/,
-    )
+    await expect(
+      webSearchCapability.execute({ query: 'q', provider: 'nope' }, grantedCtx),
+    ).rejects.toThrow(/unknown provider "nope" — registered providers: duckduckgo, mock/)
   })
 
   it('passes count, apiKey and the abort signal to the provider', async () => {
@@ -78,8 +95,14 @@ describe('web_search behavior', () => {
         return [{ title: `result for ${query}`, url: 'https://example.test/1', snippet: 's' }]
       },
     })
-    const ctx = createCapabilityContext({ granted: ['network'], secrets: { api_key: 'key-value-123' } })
-    const out = await webSearchCapability.execute({ query: 'q', count: 4, provider: 'keyed_test' }, ctx)
+    const ctx = createCapabilityContext({
+      granted: ['network'],
+      secrets: { api_key: 'key-value-123' },
+    })
+    const out = await webSearchCapability.execute(
+      { query: 'q', count: 4, provider: 'keyed_test' },
+      ctx,
+    )
     expect(seen).toEqual({ count: 4, apiKey: 'key-value-123', isSignal: true })
     expect(out.provider).toBe('keyed_test')
   })
@@ -92,7 +115,9 @@ describe('web_search behavior', () => {
         return []
       },
     })
-    await expect(webSearchCapability.execute({ query: 'q', provider: 'keyed_test' }, grantedCtx)).rejects.toThrow(
+    await expect(
+      webSearchCapability.execute({ query: 'q', provider: 'keyed_test' }, grantedCtx),
+    ).rejects.toThrow(
       'web_search provider keyed_test requires the api_key secret — configure it in Capability inspector',
     )
   })

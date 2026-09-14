@@ -11,7 +11,11 @@ export const jsonCapability: Capability = {
     inputSchema: {
       type: 'object',
       properties: {
-        operation: { type: 'string', enum: ['parse', 'stringify', 'query'], description: 'json operation' },
+        operation: {
+          type: 'string',
+          enum: ['parse', 'stringify', 'query'],
+          description: 'json operation',
+        },
         text: { type: 'string', description: 'JSON text for parse' },
         value: { description: 'JSON value for stringify' },
         path: { type: 'string', description: 'dot path for query, e.g. a.b.0.name' },

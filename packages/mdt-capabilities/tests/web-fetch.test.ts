@@ -56,7 +56,11 @@ afterAll(async () => {
 
 const happyInput: Record<string, unknown> = { url: server.url('/html'), allowLocal: true }
 
-runCapabilityContractTests(webFetchCapability, { granted: ['network'] }, { happyInput, invalidInput: {} })
+runCapabilityContractTests(
+  webFetchCapability,
+  { granted: ['network'] },
+  { happyInput, invalidInput: {} },
+)
 
 describe('url guard (sync, pre-DNS only — no network in tests)', () => {
   const blockedUrls = [
@@ -83,14 +87,20 @@ describe('url guard (sync, pre-DNS only — no network in tests)', () => {
   it('localhostMode is an explicit opt-in for loopback literals only', () => {
     expect(() => assertUrlAllowed('http://127.0.0.1/x', { localhostMode: true })).not.toThrow()
     expect(() => assertUrlAllowed('http://localhost:3000/x', { localhostMode: true })).not.toThrow()
-    expect(() => assertUrlAllowed('http://169.254.169.254/', { localhostMode: true })).toThrow(UrlBlockedError)
+    expect(() => assertUrlAllowed('http://169.254.169.254/', { localhostMode: true })).toThrow(
+      UrlBlockedError,
+    )
   })
 
   it('async guard DNS-checks resolved addresses (IP literals skip DNS)', async () => {
     await expect(assertUrlAllowedAsync('http://127.0.0.1/')).rejects.toThrow(UrlBlockedError)
     await expect(assertUrlAllowedAsync('http://10.0.0.1/')).rejects.toThrow(UrlBlockedError)
-    await expect(assertUrlAllowedAsync('http://127.0.0.1/', { localhostMode: true })).resolves.toBeInstanceOf(URL)
-    await expect(assertUrlAllowedAsync('http://[::1]/', { localhostMode: true })).resolves.toBeInstanceOf(URL)
+    await expect(
+      assertUrlAllowedAsync('http://127.0.0.1/', { localhostMode: true }),
+    ).resolves.toBeInstanceOf(URL)
+    await expect(
+      assertUrlAllowedAsync('http://[::1]/', { localhostMode: true }),
+    ).resolves.toBeInstanceOf(URL)
   })
 })
 
@@ -114,25 +124,34 @@ describe('web_fetch behavior (local server via allowLocal)', () => {
   })
 
   it('raw=true returns the unmodified body', async () => {
-    const out = await webFetchCapability.execute({ url: server.url('/html'), allowLocal: true, raw: true }, ctx)
+    const out = await webFetchCapability.execute(
+      { url: server.url('/html'), allowLocal: true, raw: true },
+      ctx,
+    )
     expect(String(out.body)).toContain('<script>alert("evil")</script>')
     expect(out.title).toBe('Hi & welcome')
   })
 
   it('passes json bodies through as text', async () => {
-    const out = await webFetchCapability.execute({ url: server.url('/json'), allowLocal: true }, ctx)
+    const out = await webFetchCapability.execute(
+      { url: server.url('/json'), allowLocal: true },
+      ctx,
+    )
     expect(String(out.body)).toBe('{"answer":42}')
     expect(out.title).toBe('')
   })
 
   it('refuses binary content-types when raw=false', async () => {
-    await expect(webFetchCapability.execute({ url: server.url('/binary'), allowLocal: true }, ctx)).rejects.toThrow(
-      /content-type "image\/png" is not textual/,
-    )
+    await expect(
+      webFetchCapability.execute({ url: server.url('/binary'), allowLocal: true }, ctx),
+    ).rejects.toThrow(/content-type "image\/png" is not textual/)
   })
 
   it('allows binary content-types when raw=true', async () => {
-    const out = await webFetchCapability.execute({ url: server.url('/binary'), allowLocal: true, raw: true }, ctx)
+    const out = await webFetchCapability.execute(
+      { url: server.url('/binary'), allowLocal: true, raw: true },
+      ctx,
+    )
     expect(out.bytes).toBe(8)
   })
 
@@ -147,24 +166,30 @@ describe('web_fetch behavior (local server via allowLocal)', () => {
 
   it('aborts responses larger than maxBytes', async () => {
     await expect(
-      webFetchCapability.execute({ url: server.url('/big'), allowLocal: true, maxBytes: 1000 }, ctx),
+      webFetchCapability.execute(
+        { url: server.url('/big'), allowLocal: true, maxBytes: 1000 },
+        ctx,
+      ),
     ).rejects.toThrow(/response exceeds maxBytes \(limit 1000 bytes\)/)
   })
 
   it('blocks redirect hops to private addresses even with allowLocal', async () => {
-    await expect(webFetchCapability.execute({ url: server.url('/redirect-private'), allowLocal: true }, ctx)).rejects.toThrow(
-      UrlBlockedError,
-    )
+    await expect(
+      webFetchCapability.execute({ url: server.url('/redirect-private'), allowLocal: true }, ctx),
+    ).rejects.toThrow(UrlBlockedError)
   })
 
   it('throws after too many redirects', async () => {
-    await expect(webFetchCapability.execute({ url: server.url('/redirect-loop'), allowLocal: true }, ctx)).rejects.toThrow(
-      /too many redirects \(limit 5\)/,
-    )
+    await expect(
+      webFetchCapability.execute({ url: server.url('/redirect-loop'), allowLocal: true }, ctx),
+    ).rejects.toThrow(/too many redirects \(limit 5\)/)
   })
 
   it('follows safe redirects and reports the final url', async () => {
-    const out = await webFetchCapability.execute({ url: server.url('/redirect-relative'), allowLocal: true }, ctx)
+    const out = await webFetchCapability.execute(
+      { url: server.url('/redirect-relative'), allowLocal: true },
+      ctx,
+    )
     expect(out.url).toBe(server.url('/html'))
     expect(out.title).toBe('Hi & welcome')
   })

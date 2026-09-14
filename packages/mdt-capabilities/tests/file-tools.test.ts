@@ -8,7 +8,11 @@ import path from 'node:path'
 import { afterAll, describe, expect, it } from 'vitest'
 
 import { createCapabilityContext, type ContextOverrides } from '../src/context'
-import { fileListCapability, fileReadCapability, fileWriteCapability } from '../src/capabilities/file-tools'
+import {
+  fileListCapability,
+  fileReadCapability,
+  fileWriteCapability,
+} from '../src/capabilities/file-tools'
 import { PathEscapeError } from '../src/security/paths'
 import { runCapabilityContractTests } from '../src/testing'
 import { makeTempDir, removeTempDir } from './helpers'
@@ -27,16 +31,14 @@ afterAll(async () => {
 
 const overrides: ContextOverrides = { granted: ['filesystem'], sandboxRoots: [root], workdir: root }
 
-runCapabilityContractTests(
-  fileReadCapability,
-  overrides,
-  { happyInput: { path: 'hello.txt' }, invalidInput: { path: '../outside.txt' } },
-)
-runCapabilityContractTests(
-  fileWriteCapability,
-  overrides,
-  { happyInput: { path: 'contract-out.txt', content: 'x' }, invalidInput: { path: 'contract-out.txt' } },
-)
+runCapabilityContractTests(fileReadCapability, overrides, {
+  happyInput: { path: 'hello.txt' },
+  invalidInput: { path: '../outside.txt' },
+})
+runCapabilityContractTests(fileWriteCapability, overrides, {
+  happyInput: { path: 'contract-out.txt', content: 'x' },
+  invalidInput: { path: 'contract-out.txt' },
+})
 runCapabilityContractTests(fileListCapability, overrides, { happyInput: { path: '.', depth: 1 } })
 
 describe('file_read', () => {
@@ -65,17 +67,21 @@ describe('file_read', () => {
 
   it('enforces maxBytes', async () => {
     await fsp.writeFile(path.join(root, 'big.txt'), 'y'.repeat(5000))
-    await expect(fileReadCapability.execute({ path: 'big.txt', maxBytes: 1000 }, ctx)).rejects.toThrow(
-      /5000 bytes, which exceeds maxBytes \(1000\)/,
-    )
+    await expect(
+      fileReadCapability.execute({ path: 'big.txt', maxBytes: 1000 }, ctx),
+    ).rejects.toThrow(/5000 bytes, which exceeds maxBytes \(1000\)/)
   })
 
   it('throws PathEscapeError for ../ paths', async () => {
-    await expect(fileReadCapability.execute({ path: '../outside.txt' }, ctx)).rejects.toThrow(PathEscapeError)
+    await expect(fileReadCapability.execute({ path: '../outside.txt' }, ctx)).rejects.toThrow(
+      PathEscapeError,
+    )
   })
 
   it('throws PathEscapeError for absolute paths outside the sandbox', async () => {
-    await expect(fileReadCapability.execute({ path: path.join(outside, 'secret.txt') }, ctx)).rejects.toThrow(PathEscapeError)
+    await expect(
+      fileReadCapability.execute({ path: path.join(outside, 'secret.txt') }, ctx),
+    ).rejects.toThrow(PathEscapeError)
   })
 })
 
@@ -91,10 +97,13 @@ describe('file_write', () => {
   })
 
   it('refuses to overwrite unless overwrite=true', async () => {
-    await expect(fileWriteCapability.execute({ path: 'out/new-a.txt', content: 'again' }, ctx)).rejects.toThrow(
-      /already exists — pass overwrite: true/,
+    await expect(
+      fileWriteCapability.execute({ path: 'out/new-a.txt', content: 'again' }, ctx),
+    ).rejects.toThrow(/already exists — pass overwrite: true/)
+    const out = await fileWriteCapability.execute(
+      { path: 'out/new-a.txt', content: 'again', overwrite: true },
+      ctx,
     )
-    const out = await fileWriteCapability.execute({ path: 'out/new-a.txt', content: 'again', overwrite: true }, ctx)
     expect(out.created).toBe(false)
     expect(await fsp.readFile(path.join(root, 'out', 'new-a.txt'), 'utf8')).toBe('again')
   })
@@ -116,16 +125,18 @@ describe('file_write', () => {
   })
 
   it('throws PathEscapeError on escape attempts', async () => {
-    await expect(fileWriteCapability.execute({ path: '../evil.txt', content: 'x' }, ctx)).rejects.toThrow(PathEscapeError)
-    await expect(fileWriteCapability.execute({ path: path.join(outside, 'evil.txt'), content: 'x' }, ctx)).rejects.toThrow(
-      PathEscapeError,
-    )
+    await expect(
+      fileWriteCapability.execute({ path: '../evil.txt', content: 'x' }, ctx),
+    ).rejects.toThrow(PathEscapeError)
+    await expect(
+      fileWriteCapability.execute({ path: path.join(outside, 'evil.txt'), content: 'x' }, ctx),
+    ).rejects.toThrow(PathEscapeError)
   })
 
   it('refuses to write a directory path', async () => {
-    await expect(fileWriteCapability.execute({ path: 'sub', content: 'x', overwrite: true }, ctx)).rejects.toThrow(
-      /is a directory/,
-    )
+    await expect(
+      fileWriteCapability.execute({ path: 'sub', content: 'x', overwrite: true }, ctx),
+    ).rejects.toThrow(/is a directory/)
   })
 })
 
@@ -169,7 +180,9 @@ describe('file_list', () => {
   })
 
   it('refuses non-directories', async () => {
-    await expect(fileListCapability.execute({ path: 'hello.txt' }, ctx)).rejects.toThrow(/is not a directory/)
+    await expect(fileListCapability.execute({ path: 'hello.txt' }, ctx)).rejects.toThrow(
+      /is not a directory/,
+    )
   })
 
   it('refuses symlinked entries that escape the sandbox', async () => {
@@ -183,20 +196,32 @@ describe('file_list', () => {
     }
     if (!created) return
     try {
-      await expect(fileListCapability.execute({ path: '.', depth: 1 }, ctx)).rejects.toThrow(PathEscapeError)
-      await expect(fileReadCapability.execute({ path: 'escape-link/anything.txt' }, ctx)).rejects.toThrow(PathEscapeError)
+      await expect(fileListCapability.execute({ path: '.', depth: 1 }, ctx)).rejects.toThrow(
+        PathEscapeError,
+      )
+      await expect(
+        fileReadCapability.execute({ path: 'escape-link/anything.txt' }, ctx),
+      ).rejects.toThrow(PathEscapeError)
     } finally {
       await fsp.rm(linkPath, { force: true })
     }
   })
 
   it('requires no sandbox roots check — empty roots fail clearly', async () => {
-    const noRootsCtx = createCapabilityContext({ granted: ['filesystem'], sandboxRoots: [], workdir: root })
-    await expect(fileListCapability.execute({ path: '.' }, noRootsCtx)).rejects.toThrow(/no sandbox roots configured/)
+    const noRootsCtx = createCapabilityContext({
+      granted: ['filesystem'],
+      sandboxRoots: [],
+      workdir: root,
+    })
+    await expect(fileListCapability.execute({ path: '.' }, noRootsCtx)).rejects.toThrow(
+      /no sandbox roots configured/,
+    )
   })
 
   it('rejects depth over the cap of 5', async () => {
-    await expect(fileListCapability.execute({ path: '.', depth: 6 }, ctx)).rejects.toThrow(/depth must be ≤ 5/)
+    await expect(fileListCapability.execute({ path: '.', depth: 6 }, ctx)).rejects.toThrow(
+      /depth must be ≤ 5/,
+    )
   })
 })
 

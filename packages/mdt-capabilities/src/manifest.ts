@@ -16,7 +16,13 @@ export const JsonSchemaObjectSchema = z.object({
 })
 export type JsonSchemaObject = z.infer<typeof JsonSchemaObjectSchema>
 
-export const PermissionScopeSchema = z.enum(['network', 'filesystem', 'process', 'browser', 'user-interaction'])
+export const PermissionScopeSchema = z.enum([
+  'network',
+  'filesystem',
+  'process',
+  'browser',
+  'user-interaction',
+])
 export type PermissionScope = z.infer<typeof PermissionScopeSchema>
 
 export const PermissionDeclSchema = z.object({
@@ -130,12 +136,20 @@ export function validateCapability(capability: Capability): string[] {
   const { manifest } = capability
   for (const secret of manifest.secrets) {
     // secret declarations must not appear as plain config properties
-    if (manifest.inputSchema.properties && secret.name in (manifest.inputSchema.properties as object)) {
+    if (
+      manifest.inputSchema.properties &&
+      secret.name in (manifest.inputSchema.properties as object)
+    ) {
       problems.push(`secret "${secret.name}" must not also be an input property`)
     }
   }
   for (const perm of manifest.permissions) {
-    if (perm.defaultGranted && perm.scope === 'process' && manifest.id !== 'shell' && manifest.id !== 'python') {
+    if (
+      perm.defaultGranted &&
+      perm.scope === 'process' &&
+      manifest.id !== 'shell' &&
+      manifest.id !== 'python'
+    ) {
       problems.push(`process permission default-granted for ${manifest.id} — must be explicit`)
     }
   }

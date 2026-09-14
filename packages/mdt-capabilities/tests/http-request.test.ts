@@ -55,11 +55,17 @@ afterAll(async () => {
 runCapabilityContractTests(
   httpRequestCapability,
   { granted: ['network'] },
-  { happyInput: { url: server.url('/echo'), allowLocal: true }, invalidInput: { url: 'http://x.y', method: 'trace' } },
+  {
+    happyInput: { url: server.url('/echo'), allowLocal: true },
+    invalidInput: { url: 'http://x.y', method: 'trace' },
+  },
 )
 
 describe('http_request behavior (local server via allowLocal)', () => {
-  const ctx = createCapabilityContext({ granted: ['network'], secrets: { api_token: 'tok-live-8127' } })
+  const ctx = createCapabilityContext({
+    granted: ['network'],
+    secrets: { api_token: 'tok-live-8127' },
+  })
 
   it('GET with query record hits the server and parses the json response', async () => {
     const out = await httpRequestCapability.execute(
@@ -94,7 +100,13 @@ describe('http_request behavior (local server via allowLocal)', () => {
 
   it('sends raw string bodies and custom headers', async () => {
     await httpRequestCapability.execute(
-      { url: server.url('/echo'), method: 'put', body: 'raw-body', headers: { 'x-trace': 'trace-1' }, allowLocal: true },
+      {
+        url: server.url('/echo'),
+        method: 'put',
+        body: 'raw-body',
+        headers: { 'x-trace': 'trace-1' },
+        allowLocal: true,
+      },
       ctx,
     )
     const sent = server.requests.at(-1)
@@ -105,7 +117,11 @@ describe('http_request behavior (local server via allowLocal)', () => {
 
   it('resolves ${secret:NAME} header values from ctx.secrets', async () => {
     const out = await httpRequestCapability.execute(
-      { url: server.url('/text'), headers: { authorization: '${secret:api_token}' }, allowLocal: true },
+      {
+        url: server.url('/text'),
+        headers: { authorization: '${secret:api_token}' },
+        allowLocal: true,
+      },
       ctx,
     )
     expect(out.body).toBe('plain text')
@@ -116,12 +132,22 @@ describe('http_request behavior (local server via allowLocal)', () => {
 
   it('throws a clear error when a referenced secret is missing', async () => {
     await expect(
-      httpRequestCapability.execute({ url: server.url('/text'), headers: { authorization: '${secret:nope}' }, allowLocal: true }, ctx),
+      httpRequestCapability.execute(
+        {
+          url: server.url('/text'),
+          headers: { authorization: '${secret:nope}' },
+          allowLocal: true,
+        },
+        ctx,
+      ),
     ).rejects.toThrow(/secret "nope".*not configured/)
   })
 
   it('HEAD returns no body', async () => {
-    const out = await httpRequestCapability.execute({ url: server.url('/head-target'), method: 'head', allowLocal: true }, ctx)
+    const out = await httpRequestCapability.execute(
+      { url: server.url('/head-target'), method: 'head', allowLocal: true },
+      ctx,
+    )
     expect(out.status).toBe(200)
     expect(out.body).toBe('')
     expect('json' in out).toBe(false)
@@ -129,7 +155,10 @@ describe('http_request behavior (local server via allowLocal)', () => {
 
   it('follows up to 3 redirects and re-validates every hop', async () => {
     // /hop2 -> /hop3 -> /hop4 -> /echo is exactly 3 redirects
-    const out = await httpRequestCapability.execute({ url: server.url('/hop2'), allowLocal: true }, ctx)
+    const out = await httpRequestCapability.execute(
+      { url: server.url('/hop2'), allowLocal: true },
+      ctx,
+    )
     expect(out.status).toBe(200)
     const sent = server.requests.at(-1)
     expect(sent?.url).toBe('/echo')
@@ -137,15 +166,18 @@ describe('http_request behavior (local server via allowLocal)', () => {
 
   it('rejects a 4-hop chain (limit 3)', async () => {
     // /hop1 -> /hop2 -> /hop3 -> /hop4 -> /echo needs 4 redirects
-    await expect(httpRequestCapability.execute({ url: server.url('/hop1'), allowLocal: true }, ctx)).rejects.toThrow(
-      /too many redirects \(limit 3\)/,
-    )
+    await expect(
+      httpRequestCapability.execute({ url: server.url('/hop1'), allowLocal: true }, ctx),
+    ).rejects.toThrow(/too many redirects \(limit 3\)/)
   })
 
   it('blocks redirect hops to private addresses', async () => {
-    await expect(httpRequestCapability.execute({ url: server.url('/redirect-private'), allowLocal: true }, ctx)).rejects.toThrow(
-      UrlBlockedError,
-    )
+    await expect(
+      httpRequestCapability.execute(
+        { url: server.url('/redirect-private'), allowLocal: true },
+        ctx,
+      ),
+    ).rejects.toThrow(UrlBlockedError)
   })
 
   it('allowLocal=false rejects loopback targets with URL_BLOCKED', async () => {
@@ -159,19 +191,28 @@ describe('http_request behavior (local server via allowLocal)', () => {
 
   it('rejects methods outside the enum', async () => {
     await expect(
-      httpRequestCapability.execute({ url: server.url('/text'), method: 'connect', allowLocal: true }, ctx),
+      httpRequestCapability.execute(
+        { url: server.url('/text'), method: 'connect', allowLocal: true },
+        ctx,
+      ),
     ).rejects.toThrow(/method must be one of/)
   })
 
   it('rejects body and json together', async () => {
     await expect(
-      httpRequestCapability.execute({ url: server.url('/text'), body: 'a', json: { b: 1 }, allowLocal: true }, ctx),
+      httpRequestCapability.execute(
+        { url: server.url('/text'), body: 'a', json: { b: 1 }, allowLocal: true },
+        ctx,
+      ),
     ).rejects.toThrow(/either "body" or "json"/)
   })
 
   it('aborts responses larger than maxBytes', async () => {
     await expect(
-      httpRequestCapability.execute({ url: server.url('/big'), allowLocal: true, maxBytes: 500 }, ctx),
+      httpRequestCapability.execute(
+        { url: server.url('/big'), allowLocal: true, maxBytes: 500 },
+        ctx,
+      ),
     ).rejects.toThrow(/response exceeds maxBytes \(limit 500 bytes\)/)
   })
 })

@@ -103,18 +103,25 @@ export function assertUrlAllowed(rawUrl: string, options: UrlGuardOptions = {}):
     throw new UrlBlockedError(`invalid url "${rawUrl}"`)
   }
   if (url.protocol !== 'http:' && url.protocol !== 'https:') {
-    throw new UrlBlockedError(`url scheme "${url.protocol}" is blocked — only http/https are allowed`)
+    throw new UrlBlockedError(
+      `url scheme "${url.protocol}" is blocked — only http/https are allowed`,
+    )
   }
   const hostname = url.hostname.toLowerCase()
   const literal = literalIp(hostname)
   if (literal) {
-    if (addressBlocked(literal) && !(options.localhostMode === true && isLoopbackAddress(literal))) {
+    if (
+      addressBlocked(literal) &&
+      !(options.localhostMode === true && isLoopbackAddress(literal))
+    ) {
       throw new UrlBlockedError(`url "${hostname}" points at a blocked address (${literal})`)
     }
     return url
   }
   if (isLoopbackHostname(hostname) && options.localhostMode !== true) {
-    throw new UrlBlockedError(`host "${hostname}" is blocked — use localhostMode for local development`)
+    throw new UrlBlockedError(
+      `host "${hostname}" is blocked — use localhostMode for local development`,
+    )
   }
   const bare = hostname.replace(/\.$/, '')
   // loopback hostnames are governed by the localhostMode check above;
@@ -129,9 +136,16 @@ export function assertUrlAllowed(rawUrl: string, options: UrlGuardOptions = {}):
  * Class-check every resolved address of `url` (DNS-rebinding defense: the
  * fetch layer re-runs this after each redirect hop).
  */
-export function checkResolvedAddress(url: URL, addresses: readonly string[], options: UrlGuardOptions = {}): void {
+export function checkResolvedAddress(
+  url: URL,
+  addresses: readonly string[],
+  options: UrlGuardOptions = {},
+): void {
   for (const address of addresses) {
-    if (addressBlocked(address) && !(options.localhostMode === true && isLoopbackAddress(address))) {
+    if (
+      addressBlocked(address) &&
+      !(options.localhostMode === true && isLoopbackAddress(address))
+    ) {
       throw new UrlBlockedError(`url "${url.host}" resolves to a blocked address (${address})`)
     }
   }
@@ -143,15 +157,25 @@ export function checkResolvedAddress(url: URL, addresses: readonly string[], opt
  * not pinned into the socket (fetch re-resolves); the per-hop re-check plus
  * the response-size caps are the 1.0 mitigation for rebinding races.
  */
-export async function assertUrlAllowedAsync(rawUrl: string, options: UrlGuardOptions = {}): Promise<URL> {
+export async function assertUrlAllowedAsync(
+  rawUrl: string,
+  options: UrlGuardOptions = {},
+): Promise<URL> {
   const url = assertUrlAllowed(rawUrl, options)
   if (literalIp(url.hostname)) return url
   let resolved: { address: string; family: number }[]
   try {
-    resolved = await dnsPromises.lookup(url.hostname.replace(/\.$/, ''), { all: true, verbatim: true })
+    resolved = await dnsPromises.lookup(url.hostname.replace(/\.$/, ''), {
+      all: true,
+      verbatim: true,
+    })
   } catch {
     throw new UrlBlockedError(`cannot resolve host "${url.hostname}" — refusing to fetch`)
   }
-  checkResolvedAddress(url, resolved.map((r) => r.address), options)
+  checkResolvedAddress(
+    url,
+    resolved.map((r) => r.address),
+    options,
+  )
   return url
 }

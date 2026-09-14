@@ -57,7 +57,9 @@ export function resolveInSandbox(sandbox: PathSandbox, userPath: string): string
   if (userPath.includes('\0')) {
     throw new PathEscapeError('path contains NUL byte')
   }
-  const base = path.isAbsolute(userPath) ? userPath : path.join(sandbox.workdir ?? sandbox.roots[0] ?? process.cwd(), userPath)
+  const base = path.isAbsolute(userPath)
+    ? userPath
+    : path.join(sandbox.workdir ?? sandbox.roots[0] ?? process.cwd(), userPath)
   const resolved = canonical(base)
   for (const root of sandbox.roots) {
     const rootCanonical = canonical(root)

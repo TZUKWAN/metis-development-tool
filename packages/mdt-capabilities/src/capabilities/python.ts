@@ -16,7 +16,8 @@ const DEFAULT_TIMEOUT_MS = 20_000
 const MAX_TIMEOUT_MS = 60_000
 const DEFAULT_MAX_OUTPUT_BYTES = 200_000
 
-const UNAVAILABLE_MESSAGE = 'python capability unavailable: no python interpreter found on this machine'
+const UNAVAILABLE_MESSAGE =
+  'python capability unavailable: no python interpreter found on this machine'
 
 let cachedInterpreter: string | null | undefined
 
@@ -25,7 +26,11 @@ export function resolvePythonInterpreter(): string | null {
   if (cachedInterpreter !== undefined) return cachedInterpreter
   for (const candidate of ['python', 'python3']) {
     try {
-      const probe = spawnSync(candidate, ['--version'], { shell: false, timeout: 10_000, windowsHide: true })
+      const probe = spawnSync(candidate, ['--version'], {
+        shell: false,
+        timeout: 10_000,
+        windowsHide: true,
+      })
       if (!probe.error && probe.status === 0) {
         cachedInterpreter = candidate
         return candidate
@@ -54,10 +59,20 @@ export const pythonCapability: Capability = {
     inputSchema: {
       type: 'object',
       properties: {
-        script: { type: 'string', description: 'python source, piped to the interpreter via stdin' },
-        args: { type: 'array', items: { type: 'string' }, description: 'passed after "-" as sys.argv (default [])' },
+        script: {
+          type: 'string',
+          description: 'python source, piped to the interpreter via stdin',
+        },
+        args: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'passed after "-" as sys.argv (default [])',
+        },
         timeoutMs: { type: 'number', description: 'default 20000, max 60000' },
-        maxOutputBytes: { type: 'number', description: 'combined stdout+stderr cap (default 200000)' },
+        maxOutputBytes: {
+          type: 'number',
+          description: 'combined stdout+stderr cap (default 200000)',
+        },
       },
       required: ['script'],
       additionalProperties: false,
@@ -73,7 +88,14 @@ export const pythonCapability: Capability = {
       required: ['exitCode', 'stdout', 'stderr', 'truncated'],
       additionalProperties: false,
     },
-    permissions: [{ scope: 'process', detail: 'run a python script in the generated workspace', required: true, defaultGranted: false }],
+    permissions: [
+      {
+        scope: 'process',
+        detail: 'run a python script in the generated workspace',
+        required: true,
+        defaultGranted: false,
+      },
+    ],
     secrets: [],
     ui: {
       icon: '🐍',
@@ -85,7 +107,10 @@ export const pythonCapability: Capability = {
     timeoutMs: 60_000,
     maxOutputBytes: 1_000_000,
   },
-  async execute(input: Record<string, unknown>, ctx: CapabilityContext): Promise<Record<string, unknown>> {
+  async execute(
+    input: Record<string, unknown>,
+    ctx: CapabilityContext,
+  ): Promise<Record<string, unknown>> {
     requirePermission(ctx, pythonCapability, 'process')
     if (!Array.isArray(ctx.sandboxRoots) || ctx.sandboxRoots.length === 0) {
       throw new Error('python capability requires an explicit sandbox root')
@@ -99,8 +124,18 @@ export const pythonCapability: Capability = {
     if (!script) throw new Error('python: "script" is required and must be a non-empty string')
     const args = Array.isArray(input.args) ? input.args.map(String) : []
     const cwd = resolveInSandbox({ roots: ctx.sandboxRoots, workdir: ctx.workdir }, '.')
-    const timeoutMs = normalizeInt(input.timeoutMs, DEFAULT_TIMEOUT_MS, MAX_TIMEOUT_MS, 'python: timeoutMs')
-    const maxOutputBytes = normalizeInt(input.maxOutputBytes, DEFAULT_MAX_OUTPUT_BYTES, 10_000_000, 'python: maxOutputBytes')
+    const timeoutMs = normalizeInt(
+      input.timeoutMs,
+      DEFAULT_TIMEOUT_MS,
+      MAX_TIMEOUT_MS,
+      'python: timeoutMs',
+    )
+    const maxOutputBytes = normalizeInt(
+      input.maxOutputBytes,
+      DEFAULT_MAX_OUTPUT_BYTES,
+      10_000_000,
+      'python: maxOutputBytes',
+    )
 
     const env: Record<string, string> = {}
     for (const name of ctx.envAllowlist) {
@@ -127,8 +162,15 @@ export const pythonCapability: Capability = {
 
     try {
       // -I: isolated mode; "-": read the script from stdin; args become sys.argv[1:]
-      const child = spawn(interpreter, ['-I', '-', ...args], { cwd, env, shell: false, windowsHide: true, signal: controller.signal })
-      if (!child.stdout || !child.stderr || !child.stdin) throw new Error('python: failed to open stdio pipes for the interpreter')
+      const child = spawn(interpreter, ['-I', '-', ...args], {
+        cwd,
+        env,
+        shell: false,
+        windowsHide: true,
+        signal: controller.signal,
+      })
+      if (!child.stdout || !child.stderr || !child.stdin)
+        throw new Error('python: failed to open stdio pipes for the interpreter')
 
       const stdout: Buffer[] = []
       const stderr: Buffer[] = []
@@ -148,27 +190,33 @@ export const pythonCapability: Capability = {
       // the interpreter may exit early (syntax error) — swallow EPIPE on stdin
       child.stdin.on('error', () => {})
 
-      const exit = await new Promise<{ code: number | null; signal: string | null; error?: Error }>((resolve) => {
-        let settled = false
-        child.on('error', (err) => {
-          if (!settled) {
-            settled = true
-            resolve({ code: null, signal: null, error: err })
-          }
-        })
-        child.on('close', (code, signal) => {
-          if (!settled) {
-            settled = true
-            resolve({ code, signal })
-          }
-        })
-        child.stdin.end(script, 'utf8')
-      })
-      if (state.timedOut) throw new Error(`python: script timed out after ${timeoutMs}ms and was killed`)
+      const exit = await new Promise<{ code: number | null; signal: string | null; error?: Error }>(
+        (resolve) => {
+          let settled = false
+          child.on('error', (err) => {
+            if (!settled) {
+              settled = true
+              resolve({ code: null, signal: null, error: err })
+            }
+          })
+          child.on('close', (code, signal) => {
+            if (!settled) {
+              settled = true
+              resolve({ code, signal })
+            }
+          })
+          child.stdin.end(script, 'utf8')
+        },
+      )
+      if (state.timedOut)
+        throw new Error(`python: script timed out after ${timeoutMs}ms and was killed`)
       if (state.cancelled) throw new Error('python cancelled')
-      if (exit.error) throw new Error(`python: failed to start "${interpreter}": ${exit.error.message}`)
+      if (exit.error)
+        throw new Error(`python: failed to start "${interpreter}": ${exit.error.message}`)
 
-      ctx.log(`python script (${script.length} chars, ${args.length} args) -> exit=${exit.code ?? 'killed'}${truncated ? ' (truncated)' : ''}`)
+      ctx.log(
+        `python script (${script.length} chars, ${args.length} args) -> exit=${exit.code ?? 'killed'}${truncated ? ' (truncated)' : ''}`,
+      )
       return {
         exitCode: exit.code ?? -1,
         stdout: Buffer.concat(stdout).toString('utf8'),

@@ -9,7 +9,11 @@ import fsp from 'node:fs/promises'
 import path from 'node:path'
 import { afterAll, describe, expect, it } from 'vitest'
 
-import { createCapabilityContext, PermissionDeniedError, type ContextOverrides } from '../src/context'
+import {
+  createCapabilityContext,
+  PermissionDeniedError,
+  type ContextOverrides,
+} from '../src/context'
 import { pythonCapability, resolvePythonInterpreter } from '../src/capabilities/python'
 import { shellCapability } from '../src/capabilities/shell'
 import { runCapabilityContractTests } from '../src/testing'
@@ -20,20 +24,24 @@ afterAll(async () => {
   await removeTempDir(root)
 })
 
-const overrides: ContextOverrides = { granted: ['process'], sandboxRoots: [root], workdir: root, envAllowlist: ['PATH'] }
+const overrides: ContextOverrides = {
+  granted: ['process'],
+  sandboxRoots: [root],
+  workdir: root,
+  envAllowlist: ['PATH'],
+}
 
-runCapabilityContractTests(
-  shellCapability,
-  overrides,
-  { happyInput: { command: 'node', args: ['-e', 'console.log(42)'] }, invalidInput: { command: '' } },
-)
+runCapabilityContractTests(shellCapability, overrides, {
+  happyInput: { command: 'node', args: ['-e', 'console.log(42)'] },
+  invalidInput: { command: '' },
+})
 
 describe('shell permission gating', () => {
   it('denies the default context (process is never default-granted)', async () => {
     const ctx = createCapabilityContext({ sandboxRoots: [root], workdir: root })
-    await expect(shellCapability.execute({ command: 'node', args: ['-e', 'console.log(1)'] }, ctx)).rejects.toThrow(
-      PermissionDeniedError,
-    )
+    await expect(
+      shellCapability.execute({ command: 'node', args: ['-e', 'console.log(1)'] }, ctx),
+    ).rejects.toThrow(PermissionDeniedError)
   })
 
   it('refuses to run without an explicit sandbox root', async () => {
@@ -48,7 +56,10 @@ describe('shell behavior (granted)', () => {
   const ctx = createCapabilityContext(overrides)
 
   it('runs a command with args (never through a shell)', async () => {
-    const out = await shellCapability.execute({ command: 'node', args: ['-e', 'console.log(1)'] }, ctx)
+    const out = await shellCapability.execute(
+      { command: 'node', args: ['-e', 'console.log(1)'] },
+      ctx,
+    )
     expect(out.exitCode).toBe(0)
     expect(String(out.stdout).trim()).toBe('1')
     expect(out.truncated).toBe(false)
@@ -58,7 +69,13 @@ describe('shell behavior (granted)', () => {
     const out = await shellCapability.execute(
       {
         command: 'node',
-        args: ['-e', 'console.log(JSON.stringify(process.argv.slice(1)))', 'a & whoami', 'b | c', 'd; e'],
+        args: [
+          '-e',
+          'console.log(JSON.stringify(process.argv.slice(1)))',
+          'a & whoami',
+          'b | c',
+          'd; e',
+        ],
       },
       ctx,
     )
@@ -84,13 +101,20 @@ describe('shell behavior (granted)', () => {
 
   it('kills the child on timeout and reports a structured error', async () => {
     await expect(
-      shellCapability.execute({ command: 'node', args: ['-e', 'setTimeout(() => {}, 30000)'], timeoutMs: 800 }, ctx),
+      shellCapability.execute(
+        { command: 'node', args: ['-e', 'setTimeout(() => {}, 30000)'], timeoutMs: 800 },
+        ctx,
+      ),
     ).rejects.toThrow(/timed out after 800ms and was killed/)
   }, 15_000)
 
   it('caps output and flags truncation', async () => {
     const out = await shellCapability.execute(
-      { command: 'node', args: ['-e', 'process.stdout.write("x".repeat(500000))'], maxOutputBytes: 10_000 },
+      {
+        command: 'node',
+        args: ['-e', 'process.stdout.write("x".repeat(500000))'],
+        maxOutputBytes: 10_000,
+      },
       ctx,
     )
     expect(out.truncated).toBe(true)
@@ -98,9 +122,9 @@ describe('shell behavior (granted)', () => {
   }, 15_000)
 
   it('maps spawn failures onto structured errors (no hang)', async () => {
-    await expect(shellCapability.execute({ command: 'definitely-not-a-real-cmd-xyz' }, ctx)).rejects.toThrow(
-      /failed to start "definitely-not-a-real-cmd-xyz"/,
-    )
+    await expect(
+      shellCapability.execute({ command: 'definitely-not-a-real-cmd-xyz' }, ctx),
+    ).rejects.toThrow(/failed to start "definitely-not-a-real-cmd-xyz"/)
   }, 15_000)
 
   it('resolves cwd inside the sandbox', async () => {
@@ -113,18 +137,24 @@ describe('shell behavior (granted)', () => {
   }, 15_000)
 
   it('rejects a cwd outside the sandbox', async () => {
-    await expect(shellCapability.execute({ command: 'node', cwd: '..' }, ctx)).rejects.toThrow(/escapes the sandbox roots/)
+    await expect(shellCapability.execute({ command: 'node', cwd: '..' }, ctx)).rejects.toThrow(
+      /escapes the sandbox roots/,
+    )
   })
 
   it('rejects timeoutMs above the 120s cap', async () => {
-    await expect(shellCapability.execute({ command: 'node', timeoutMs: 200_000 }, ctx)).rejects.toThrow(/≤ 120000/)
+    await expect(
+      shellCapability.execute({ command: 'node', timeoutMs: 200_000 }, ctx),
+    ).rejects.toThrow(/≤ 120000/)
   })
 
   it('honours pre-aborted signals promptly', async () => {
     const controller = new AbortController()
     controller.abort()
     const ctxAborted = createCapabilityContext({ ...overrides, signal: controller.signal })
-    await expect(shellCapability.execute({ command: 'node' }, ctxAborted)).rejects.toThrow(/shell cancelled/)
+    await expect(shellCapability.execute({ command: 'node' }, ctxAborted)).rejects.toThrow(
+      /shell cancelled/,
+    )
   })
 })
 
@@ -145,12 +175,16 @@ describe('python capability', () => {
 
     it('denies the default context', async () => {
       const ctxNoGrant = createCapabilityContext({ sandboxRoots: [root], workdir: root })
-      await expect(pythonCapability.execute({ script: 'print(1)' }, ctxNoGrant)).rejects.toThrow(PermissionDeniedError)
+      await expect(pythonCapability.execute({ script: 'print(1)' }, ctxNoGrant)).rejects.toThrow(
+        PermissionDeniedError,
+      )
     })
 
     it('refuses to run without an explicit sandbox root', async () => {
       const ctxNoRoots = createCapabilityContext({ granted: ['process'], sandboxRoots: [] })
-      await expect(pythonCapability.execute({ script: 'print(1)' }, ctxNoRoots)).rejects.toThrow(/explicit sandbox root/)
+      await expect(pythonCapability.execute({ script: 'print(1)' }, ctxNoRoots)).rejects.toThrow(
+        /explicit sandbox root/,
+      )
     })
 
     it('runs a script via stdin with sys.argv passthrough', async () => {
@@ -179,10 +213,9 @@ describe('python capability', () => {
       ).rejects.toThrow(/timed out after 800ms and was killed/)
     }, 20_000)
 
-    runCapabilityContractTests(
-      pythonCapability,
-      overrides,
-      { happyInput: { script: 'print(1+1)' }, invalidInput: { script: '' } },
-    )
+    runCapabilityContractTests(pythonCapability, overrides, {
+      happyInput: { script: 'print(1+1)' },
+      invalidInput: { script: '' },
+    })
   }
 })

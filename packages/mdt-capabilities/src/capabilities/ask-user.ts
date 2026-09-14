@@ -12,15 +12,23 @@ export const askUserCapability: Capability = {
     name: 'Ask the User',
     version: '1.0.0',
     category: 'user-interaction',
-    description: 'Ask the user a question in the app UI and wait for the answer (text, confirm or select).',
+    description:
+      'Ask the user a question in the app UI and wait for the answer (text, confirm or select).',
     inputSchema: {
       type: 'object',
       properties: {
-        kind: { type: 'string', enum: ['text', 'confirm', 'select'], description: 'question style' },
+        kind: {
+          type: 'string',
+          enum: ['text', 'confirm', 'select'],
+          description: 'question style',
+        },
         question: { type: 'string', description: 'what to ask' },
         options: { type: 'array', items: { type: 'string' }, description: 'choices for select' },
         placeholder: { type: 'string', description: 'text input placeholder' },
-        timeoutMs: { type: 'number', description: 'give-up time; the agent receives a timeout error' },
+        timeoutMs: {
+          type: 'number',
+          description: 'give-up time; the agent receives a timeout error',
+        },
       },
       required: ['kind', 'question'],
       additionalProperties: false,
@@ -31,7 +39,14 @@ export const askUserCapability: Capability = {
       required: ['answered'],
       additionalProperties: false,
     },
-    permissions: [{ scope: 'user-interaction', detail: 'shows questions in the app UI', required: true, defaultGranted: true }],
+    permissions: [
+      {
+        scope: 'user-interaction',
+        detail: 'shows questions in the app UI',
+        required: true,
+        defaultGranted: true,
+      },
+    ],
     secrets: [],
     ui: {
       icon: '❓',
@@ -50,7 +65,8 @@ export const askUserCapability: Capability = {
     if (kind === 'select' && (!Array.isArray(input.options) || input.options.length === 0)) {
       throw new Error('select questions need a non-empty options array')
     }
-    const timeoutMs = typeof input.timeoutMs === 'number' && input.timeoutMs > 0 ? input.timeoutMs : undefined
+    const timeoutMs =
+      typeof input.timeoutMs === 'number' && input.timeoutMs > 0 ? input.timeoutMs : undefined
     const answer = await withCancellation(
       ctx.askUser({
         kind,
@@ -83,7 +99,10 @@ async function withCancellation(
     timeoutMs === undefined
       ? null
       : new Promise<never>((_, reject) => {
-          const t = setTimeout(() => reject(new Error(`ask_user timed out after ${timeoutMs}ms`)), timeoutMs)
+          const t = setTimeout(
+            () => reject(new Error(`ask_user timed out after ${timeoutMs}ms`)),
+            timeoutMs,
+          )
           controllers.push(() => clearTimeout(t))
         })
   try {

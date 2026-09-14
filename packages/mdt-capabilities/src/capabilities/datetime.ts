@@ -18,7 +18,11 @@ export const datetimeCapability: Capability = {
         },
         value: { type: 'string', description: 'ISO-8601 input for parse/add/diff' },
         amount: { type: 'number', description: 'units for add (may be negative)' },
-        unit: { type: 'string', enum: ['seconds', 'minutes', 'hours', 'days'], description: 'unit for add' },
+        unit: {
+          type: 'string',
+          enum: ['seconds', 'minutes', 'hours', 'days'],
+          description: 'unit for add',
+        },
         timezone: { type: 'string', description: 'IANA timezone, e.g. Asia/Shanghai' },
         compare: { type: 'string', description: 'second ISO-8601 instant for diff' },
       },
@@ -27,7 +31,11 @@ export const datetimeCapability: Capability = {
     },
     outputSchema: {
       type: 'object',
-      properties: { result: { type: 'string' }, iso: { type: 'string' }, timezone: { type: 'string' } },
+      properties: {
+        result: { type: 'string' },
+        iso: { type: 'string' },
+        timezone: { type: 'string' },
+      },
       required: ['result'],
       additionalProperties: false,
     },
@@ -53,12 +61,14 @@ export const datetimeCapability: Capability = {
       }
       case 'parse': {
         const d = new Date(String(input.value))
-        if (Number.isNaN(d.getTime())) throw new Error(`cannot parse "${String(input.value)}" as a date`)
+        if (Number.isNaN(d.getTime()))
+          throw new Error(`cannot parse "${String(input.value)}" as a date`)
         return { result: formatIn(d, tz), iso: d.toISOString(), timezone: tz }
       }
       case 'add': {
         const d = new Date(String(input.value))
-        if (Number.isNaN(d.getTime())) throw new Error(`cannot parse "${String(input.value)}" as a date`)
+        if (Number.isNaN(d.getTime()))
+          throw new Error(`cannot parse "${String(input.value)}" as a date`)
         const ms = toMs(Number(input.amount), String(input.unit ?? 'days'))
         if (!Number.isFinite(ms)) throw new Error('amount must be a finite number')
         const shifted = new Date(d.getTime() + ms)
@@ -67,7 +77,8 @@ export const datetimeCapability: Capability = {
       case 'diff': {
         const a = new Date(String(input.value))
         const b = new Date(String(input.compare))
-        if (Number.isNaN(a.getTime()) || Number.isNaN(b.getTime())) throw new Error('diff needs two valid dates')
+        if (Number.isNaN(a.getTime()) || Number.isNaN(b.getTime()))
+          throw new Error('diff needs two valid dates')
         const seconds = (b.getTime() - a.getTime()) / 1000
         return { result: `${seconds}s`, iso: b.toISOString(), timezone: tz }
       }
