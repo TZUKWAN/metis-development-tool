@@ -6,15 +6,15 @@ MDT (Metis Development Tool) is built on a legally reused, fixed snapshot of the
 
 ## Immutable baseline
 
-| Field | Value |
-| --- | --- |
-| Upstream repository | https://github.com/genspark-ai/genoffice.git |
-| Baseline commit SHA | `e064f3ad686d0466408a15d91cf87efef158ee09` |
-| Baseline commit date | 2026-09-14 19:04:22 +0800 |
+| Field                   | Value                                               |
+| ----------------------- | --------------------------------------------------- |
+| Upstream repository     | https://github.com/genspark-ai/genoffice.git        |
+| Baseline commit SHA     | `e064f3ad686d0466408a15d91cf87efef158ee09`          |
+| Baseline commit date    | 2026-09-14 19:04:22 +0800                           |
 | Baseline commit subject | `fix(dev): make npm run dev work on Windows (#374)` |
-| Clone date | 2026-09-15 |
-| Upstream license | Apache-2.0 |
-| Upstream default branch | `main` |
+| Clone date              | 2026-09-15                                          |
+| Upstream license        | Apache-2.0                                          |
+| Upstream default branch | `main`                                              |
 
 ## How the baseline was taken
 

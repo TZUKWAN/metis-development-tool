@@ -36,7 +36,7 @@ would clobber that work.
    git cherry-pick <sha>       # resolve conflicts by hand, keeping MDT structure
    ```
 
-   For diverged files, prefer re-applying the *upstream idea* manually over
+   For diverged files, prefer re-applying the _upstream idea_ manually over
    taking their whole file when MDT has modified it.
 
 5. **Validate after every cherry-pick:**

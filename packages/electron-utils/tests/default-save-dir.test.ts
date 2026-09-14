@@ -58,17 +58,24 @@ describe('resolveDefaultSaveDir', () => {
     expect(existsSync(fallback)).toBe(true)
   })
 
-  it('degrades to the fallback when the configured folder is not writable', () => {
-    const readOnly = join(root, 'read-only')
-    mkdirSync(readOnly)
-    chmodSync(readOnly, 0o500)
-    const fallback = join(root, 'fallback')
-    try {
-      expect(resolveDefaultSaveDir(readOnly, fallback)).toBe(fallback)
-    } finally {
-      chmodSync(readOnly, 0o700)
-    }
-  })
+  // Windows has no chmod-equivalent for directories (NTFS ACLs govern
+  // access; POSIX modes are ignored for the current user), so the
+  // chmod-based "unwritable folder" simulation cannot be expressed there.
+  // The degradation behavior itself stays covered on POSIX CI.
+  it.skipIf(process.platform === 'win32')(
+    'degrades to the fallback when the configured folder is not writable',
+    () => {
+      const readOnly = join(root, 'read-only')
+      mkdirSync(readOnly)
+      chmodSync(readOnly, 0o500)
+      const fallback = join(root, 'fallback')
+      try {
+        expect(resolveDefaultSaveDir(readOnly, fallback)).toBe(fallback)
+      } finally {
+        chmodSync(readOnly, 0o700)
+      }
+    },
+  )
 
   it('throws a descriptive error when the fallback itself is unusable', () => {
     const blocker = join(root, 'blocker')

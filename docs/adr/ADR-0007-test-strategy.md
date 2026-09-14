@@ -33,11 +33,11 @@ tests must be fast, hermetic, and deterministic where possible.
 
 ## Alternatives
 
-- *Jest*: slower TS/ESM story in this monorepo; upstream already uses
+- _Jest_: slower TS/ESM story in this monorepo; upstream already uses
   Vitest — reuse it.
-- *Real Codex in every CI run*: non-hermetic, costs money, needs secrets in
+- _Real Codex in every CI run_: non-hermetic, costs money, needs secrets in
   CI — rejected.
-- *Only unit tests*: violates tasklist P14/P18 gates — not an option.
+- _Only unit tests_: violates tasklist P14/P18 gates — not an option.
 
 ## Consequences
 

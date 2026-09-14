@@ -102,7 +102,7 @@ export async function validatePptx(input) {
     })
     if (wf.error) throw wf.error
     const malformed = new Set()
-    for (const line of wf.stderr.split('\n')) {
+    for (const line of wf.stderr.split(/\r?\n/)) {
       const m = /^(.*?):(\d+): (.*)$/.exec(line)
       if (!m) continue
       const part = raw.find((p) => p.file === m[1])?.name
@@ -132,8 +132,13 @@ export async function validatePptx(input) {
         { encoding: 'utf8', maxBuffer: 256 << 20 },
       )
       if (r.error) throw r.error
-      for (const line of r.stderr.split('\n')) {
+      // xmllint emits CRLF line endings on Windows; a stray \r would defeat
+      // the " validates" / " fails to validate" summary-line filter below.
+      for (const line of r.stderr.split(/\r?\n/)) {
         if (!line || / validates$/.test(line) || / fails to validate$/.test(line)) continue
+        // libxml >= 2.12 emits non-fatal "Schemas parser warning" diagnostics
+        // (e.g. duplicate schema imports); only parser errors mark a part invalid.
+        if (/Schemas parser warning/.test(line)) continue
         const m = /^(.*?):(\d+): (.*)$/.exec(line)
         const part = m ? (parts.find((p) => p.file === m[1])?.name ?? m[1]) : parts[0]?.name
         problems.push({ part, message: m ? m[3] : line })

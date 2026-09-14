@@ -27,10 +27,10 @@ Core** and forbids reimplementing its loop. Verified (P08.01): npm package
 
 ## Alternatives
 
-- *Vendoring Pi source into templates*: rejected — freezes upstream bugs,
+- _Vendoring Pi source into templates_: rejected — freezes upstream bugs,
   inflates generated repo, breaks "official package" requirement.
-- *Vercel AI SDK / LangChain as runtime*: rejected — tasklist mandates Pi.
-- *Custom loop*: forbidden by tasklist §0.3.
+- _Vercel AI SDK / LangChain as runtime_: rejected — tasklist mandates Pi.
+- _Custom loop_: forbidden by tasklist §0.3.
 
 ## Consequences
 

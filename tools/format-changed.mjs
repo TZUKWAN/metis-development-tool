@@ -91,6 +91,9 @@ const result = spawnSync(
   {
     cwd: repoRoot,
     stdio: 'inherit',
+    // Node >= 18.20 refuses to spawn .cmd shims without a shell (EINVAL on
+    // win32); running the JS entry via node avoids that entirely.
+    shell: process.platform === 'win32',
     env: {
       ...process.env,
       PATH: `${join(repoRoot, 'node_modules', '.bin')}${delimiter}${process.env.PATH}`,

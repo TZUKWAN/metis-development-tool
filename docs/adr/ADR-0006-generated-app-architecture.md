@@ -33,10 +33,10 @@ The `templates/web-agent` scaffold produces:
 
 ## Alternatives
 
-- *Next.js*: heavier than needed for generated apps; SSR unnecessary for
+- _Next.js_: heavier than needed for generated apps; SSR unnecessary for
   agent UIs; harder for users to reason about. Rejected for 1.0.
-- *Electron generated apps*: tasklist targets web agent apps; rejected.
-- *Single-process (agent in browser)*: rejected — capabilities like
+- _Electron generated apps_: tasklist targets web agent apps; rejected.
+- _Single-process (agent in browser)_: rejected — capabilities like
   shell/file need a Node process; CORS/secret isolation demands a server.
 
 ## Consequences

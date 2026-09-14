@@ -23,12 +23,12 @@ so downstream tools never need to execute MDT code.
 
 ## Alternatives
 
-- *TypeBox*: also emits JSON Schema natively; rejected only because Zod's
+- _TypeBox_: also emits JSON Schema natively; rejected only because Zod's
   ecosystem (`zod-to-json-schema`, familiarity, richer refinements) and the
   team's need for recursive union validation outweighed TypeBox's marginally
   lighter runtime.
-- *Hand-written dual sources*: rejected — guaranteed drift.
-- *JSON Schema first, codegen TS*: rejected — worse DX, generated types hard
+- _Hand-written dual sources_: rejected — guaranteed drift.
+- _JSON Schema first, codegen TS_: rejected — worse DX, generated types hard
   to keep readable.
 
 ## Consequences

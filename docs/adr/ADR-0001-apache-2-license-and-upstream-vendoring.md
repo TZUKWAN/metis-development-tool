@@ -27,13 +27,13 @@ Agent Core (MIT), React Flow (MIT).
 
 ## Alternatives
 
-- *MIT for MDT*: simpler, but loses the explicit patent grant that matters
+- _MIT for MDT_: simpler, but loses the explicit patent grant that matters
   when vendoring a large Apache-2.0 codebase; Apache-2.0 → MIT one-way
   compatibility of GenOffice code would create attribution ambiguity.
-- *Fork on GitHub (network fork)*: rejected — the task forbids a GenOffice
+- _Fork on GitHub (network fork)_: rejected — the task forbids a GenOffice
   fork relationship and PR workflows; a clean independent repository with a
   recorded baseline keeps MDT's history its own.
-- *Clean-room reimplementation of a slides editor*: rejected — cost/quality
+- _Clean-room reimplementation of a slides editor_: rejected — cost/quality
   infeasible for 1.0 and explicitly against the reuse mandate.
 
 ## Consequences

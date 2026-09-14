@@ -8,29 +8,29 @@ packaging time by `node tools/gen-third-party-notices.mjs` (output:
 
 ## Reused upstream project
 
-| Component | License | Copyright | Role in MDT |
-| --- | --- | --- | --- |
+| Component                                             | License    | Copyright             | Role in MDT                                                                                                                                                                             |
+| ----------------------------------------------------- | ---------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [GenOffice](https://github.com/genspark-ai/genoffice) | Apache-2.0 | © 2026 Mainfunc, Inc. | PowerPoint-style Slides editor engine (Canvas, text, shapes, images, selection, undo/redo, thumbnails, pptx import/export). Baseline commit `e064f3ad686d0466408a15d91cf87efef158ee09`. |
 
 ## Runtime dependencies of MDT and generated agent apps
 
-| Component | License | Role |
-| --- | --- | --- |
-| [Pi Agent Core (`@mariozechner/pi-agent-core`)](https://github.com/badlogic/pi-mono) | MIT | Agent runtime (agent loop, tool calling, state) of the agent apps users build with MDT. |
-| [Pi AI (`@mariozechner/pi-ai`)](https://github.com/badlogic/pi-mono) | MIT | Model provider layer used by Pi Agent Core in generated apps. |
-| OpenAI Codex (`@openai/codex`, codex CLI) | Apache-2.0 | MDT's internal coding agent that turns MDT Blueprints into real code in an isolated workspace. Not bundled into generated apps by default. |
-| React Flow (`@xyflow/react`) | MIT | MDT Interaction Canvas (infinite node/edge graph). |
-| React / React DOM | MIT | UI framework (MDT renderer and generated apps). |
-| Konva / react-konva | MIT (Konva) | GenOffice Slides canvas rendering, reused by the MDT Designer. |
-| opentype.js | MIT | Font metrics for the Slides engine. |
-| Electron | MIT | Desktop shell of MDT itself (not part of generated web apps). |
-| TypeScript | Apache-2.0 | Language/tooling. |
-| Vite / electron-vite | MIT | Build tooling. |
-| Vitest | MIT | Test framework. |
-| Playwright (`@playwright/test`) | Apache-2.0 | E2E testing for MDT and generated apps. |
-| Zod | MIT | Schema validation (MDT project schema). |
-| harfbuzzjs | MIT | Text shaping (Slides engine). |
-| pngjs / utif2 | MIT / LGPL-3.0-or-later (utif2, used as npm runtime dep of upstream slides) | Image codecs in the Slides engine. |
+| Component                                                                            | License                                                                     | Role                                                                                                                                       |
+| ------------------------------------------------------------------------------------ | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| [Pi Agent Core (`@mariozechner/pi-agent-core`)](https://github.com/badlogic/pi-mono) | MIT                                                                         | Agent runtime (agent loop, tool calling, state) of the agent apps users build with MDT.                                                    |
+| [Pi AI (`@mariozechner/pi-ai`)](https://github.com/badlogic/pi-mono)                 | MIT                                                                         | Model provider layer used by Pi Agent Core in generated apps.                                                                              |
+| OpenAI Codex (`@openai/codex`, codex CLI)                                            | Apache-2.0                                                                  | MDT's internal coding agent that turns MDT Blueprints into real code in an isolated workspace. Not bundled into generated apps by default. |
+| React Flow (`@xyflow/react`)                                                         | MIT                                                                         | MDT Interaction Canvas (infinite node/edge graph).                                                                                         |
+| React / React DOM                                                                    | MIT                                                                         | UI framework (MDT renderer and generated apps).                                                                                            |
+| Konva / react-konva                                                                  | MIT (Konva)                                                                 | GenOffice Slides canvas rendering, reused by the MDT Designer.                                                                             |
+| opentype.js                                                                          | MIT                                                                         | Font metrics for the Slides engine.                                                                                                        |
+| Electron                                                                             | MIT                                                                         | Desktop shell of MDT itself (not part of generated web apps).                                                                              |
+| TypeScript                                                                           | Apache-2.0                                                                  | Language/tooling.                                                                                                                          |
+| Vite / electron-vite                                                                 | MIT                                                                         | Build tooling.                                                                                                                             |
+| Vitest                                                                               | MIT                                                                         | Test framework.                                                                                                                            |
+| Playwright (`@playwright/test`)                                                      | Apache-2.0                                                                  | E2E testing for MDT and generated apps.                                                                                                    |
+| Zod                                                                                  | MIT                                                                         | Schema validation (MDT project schema).                                                                                                    |
+| harfbuzzjs                                                                           | MIT                                                                         | Text shaping (Slides engine).                                                                                                              |
+| pngjs / utif2                                                                        | MIT / LGPL-3.0-or-later (utif2, used as npm runtime dep of upstream slides) | Image codecs in the Slides engine.                                                                                                         |
 
 ## Fonts
 

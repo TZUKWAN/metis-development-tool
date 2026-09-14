@@ -17,11 +17,11 @@ MDT is a desktop development tool for **designing and building Agent
 applications** the same way you make a presentation:
 
 1. **Design** — a PowerPoint-style editor (pages, canvas, text, shapes,
-   images, buttons, inputs, lists, chat) where each *page* of your agent's UI
+   images, buttons, inputs, lists, chat) where each _page_ of your agent's UI
    is a slide-like canvas. Pages can be Pages, Modals, Drawers, Popovers or
    reusable Components.
 2. **Connect** — an infinite interaction canvas shows all your pages, agents
-   and capabilities as nodes. Draw connections to say *what happens when*:
+   and capabilities as nodes. Draw connections to say _what happens when_:
    click → navigate, open a modal, send text to an agent, invoke a
    capability, bind results into the UI.
 3. **Build** — MDT compiles your design into a structured **Blueprint** and
@@ -39,11 +39,11 @@ applications** the same way you make a presentation:
 
 ### Role separation (important)
 
-| Component | Role in MDT |
-| --- | --- |
+| Component                   | Role in MDT                                                                                                                                                                                         |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **GenOffice Slides** engine | The PowerPoint-style editing experience (canvas, text, shapes, images, selection, undo/redo, thumbnails, PPTX import/export). Vendored under Apache-2.0 — see [attribution](#upstream-attribution). |
-| **OpenAI Codex** | MDT's *internal* coding agent. Turns Blueprints into code. Never ships inside your app. |
-| **Pi Agent Core** | The *agent runtime* of the apps you build. Owns the agent loop, tool calls, streaming, state. MDT never reimplements it. |
+| **OpenAI Codex**            | MDT's _internal_ coding agent. Turns Blueprints into code. Never ships inside your app.                                                                                                             |
+| **Pi Agent Core**           | The _agent runtime_ of the apps you build. Owns the agent loop, tool calls, streaming, state. MDT never reimplements it.                                                                            |
 
 ## Quick start (contributors)
 
@@ -57,7 +57,7 @@ npm run typecheck:mdt  # TypeScript strict checks
 ```
 
 Requirements: Node ≥ 22.12, npm ≥ 10 (see `docs/build-environment.md` for the
-verified toolchain). Codex CLI is optional but required for *Build*;
+verified toolchain). Codex CLI is optional but required for _Build_;
 `codex login` uses your own OpenAI/ChatGPT account.
 
 ## Documentation

@@ -31,12 +31,12 @@ sandbox/config flags.
 
 ## Alternatives
 
-- *`codex exec` polling only*: simpler but no rich streaming/cancel; kept as
+- _`codex exec` polling only_: simpler but no rich streaming/cancel; kept as
   fallback only.
-- *MCP server mode (`codex mcp-server`)*: inverted direction — MDT would be
+- _MCP server mode (`codex mcp-server`)_: inverted direction — MDT would be
   the MCP client orchestrating tool calls manually; worse fit than the
   app-server's native conversation model.
-- *OpenAI HTTP API directly*: forbidden — tasklist requires the real Codex
+- _OpenAI HTTP API directly_: forbidden — tasklist requires the real Codex
   agent, not "an LLM that returns code strings" (§6 pseudo-completion).
 
 ## Consequences
