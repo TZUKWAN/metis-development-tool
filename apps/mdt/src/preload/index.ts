@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import type { IpcRendererEvent } from 'electron'
+import './mdt'
 import type { RenderSlide } from '@genoffice/pptx-render'
 import { installDropOpenBridge } from '@genoffice/electron-utils/drop-open'
 import type {

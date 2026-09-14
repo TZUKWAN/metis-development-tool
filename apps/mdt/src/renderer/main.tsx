@@ -1,4 +1,5 @@
 import React from 'react'
+import { MdtDock } from './mdt/MdtDock'
 import { createRoot } from 'react-dom/client'
 import { htmlLang, type Lang } from '@genoffice/i18n'
 import { App } from './App'
@@ -59,7 +60,12 @@ async function bootstrap(): Promise<void> {
   createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
       <LocaleProvider initial={lang}>
-        {mode === 'audience' ? <AudienceView /> : <App />}
+        {mode === 'audience' ? <AudienceView /> : (
+          <>
+            <App />
+            <MdtDock />
+          </>
+        )}
       </LocaleProvider>
     </React.StrictMode>,
   )

@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "@genoffice/i18n": "*",
+    "@genoffice/pipelines": "*",
     "@genoffice/pptx-engine": "*",
     "@genoffice/pptx-ops": "*",
     "@genoffice/pptx-render": "*",
@@ -28,6 +29,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.0.4",
+    "@xyflow/react": "^12.11.6",
     "electron": "^43.3.0",
     "electron-builder": "^26.0.12",
     "electron-vite": "^5.0.0",
@@ -40,7 +42,10 @@
     "typescript": "^5.9.3",
     "vite": "^7.3.1",
     "vitest": "^4.1.11",
-    "@genoffice/pipelines": "*"
+    "zustand": "^5.0.15",
+    "@mdt/codex": "*",
+    "@mdt/schema": "*",
+    "@mdt/design": "*"
   },
   "author": "MDT contributors",
   "build": {
@@ -88,6 +93,8 @@
     "acorn": "^8.18.0",
     "harfbuzzjs": "^1.4.0",
     "pngjs": "^7.0.0",
-    "utif2": "^4.1.0"
+    "utif2": "^4.1.0",
+    "@mdt/project": "*",
+    "@mdt/capabilities": "*"
   }
 }
