@@ -5,7 +5,7 @@
  * APIs); manifests cross IPC as data. Secrets use Electron safeStorage and
  * never leave the main process: the renderer only ever sees slot metadata.
  */
-import { safeStorage, ipcMain } from 'electron'
+import { app, safeStorage, ipcMain } from 'electron'
 
 import { CapabilityRegistry, registerBuiltins } from '@mdt/capabilities'
 import { z } from 'zod'

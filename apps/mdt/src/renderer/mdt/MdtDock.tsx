@@ -9,13 +9,13 @@ import type React from 'react'
 
 import { AgentsPanel } from './AgentsPanel'
 import { BuildPanel } from './BuildPanel'
+import { InteractionCanvas } from './InteractionCanvas'
 import { Welcome } from './Welcome'
 import { useMdtStore } from './store'
 
-type Tab = 'agents' | 'build' | null
+type Tab = 'agents' | 'interactions' | 'build' | null
 
 export function MdtDock(): React.ReactElement | null {
-  const project = useMdtStore((s) => s.project)
   const loadProject = useMdtStore((s) => s.loadProject)
   const newProject = useMdtStore((s) => s.newProject)
   const [tab, setTab] = useState<Tab>('agents')
@@ -103,6 +103,15 @@ export function MdtDock(): React.ReactElement | null {
           </button>
           <button
             role="tab"
+            aria-selected={tab === 'interactions'}
+            type="button"
+            onClick={() => setTab(tab === 'interactions' ? null : 'interactions')}
+            style={{ flex: 1, padding: 8 }}
+          >
+            Interactions
+          </button>
+          <button
+            role="tab"
             aria-selected={tab === 'build'}
             type="button"
             onClick={() => setTab(tab === 'build' ? null : 'build')}
@@ -120,6 +129,7 @@ export function MdtDock(): React.ReactElement | null {
           </button>
         </div>
         {tab === 'agents' && <AgentsPanel />}
+        {tab === 'interactions' && <InteractionCanvas />}
         {tab === 'build' && <BuildPanel />}
       </div>
     </>
