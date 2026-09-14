@@ -57,6 +57,16 @@ export interface MdtStore {
   updateInteraction(id: string, patch: Partial<ProjectRoot['interactions'][number]>): void
   deleteInteraction(id: string): void
 
+  updateElementSemantics(
+    pageId: string,
+    elementId: string,
+    patch: Partial<ProjectRoot['pages'][number]['elements'][number]['semantics']>,
+  ): void
+  setNodeType(
+    pageId: string,
+    type: ProjectRoot['pages'][number]['type'],
+    drawerSide?: 'left' | 'right',
+  ): void
   setNodePosition(pageId: string, x: number, y: number): void
 }
 
@@ -323,6 +333,44 @@ export const useMdtStore = create<MdtStore>((set, get) => ({
       project: { ...project, interactions },
       dirty: true,
       refIssues: collectIssues({ ...project, interactions }),
+    })
+  },
+
+  updateElementSemantics(pageId, elementId, patch) {
+    const { project } = get()
+    if (!project) return
+    const visit = (
+      els: ProjectRoot['pages'][number]['elements'],
+    ): ProjectRoot['pages'][number]['elements'] =>
+      els.map((el) =>
+        el.id === elementId
+          ? { ...el, semantics: { ...el.semantics, ...patch } }
+          : { ...el, children: visit(el.children) },
+      )
+    set({
+      project: {
+        ...project,
+        pages: project.pages.map((p) =>
+          p.id === pageId ? { ...p, elements: visit(p.elements) } : p,
+        ),
+      },
+      dirty: true,
+    })
+  },
+
+  setNodeType(pageId, type, drawerSide) {
+    const { project } = get()
+    if (!project) return
+    set({
+      project: {
+        ...project,
+        pages: project.pages.map((p) =>
+          p.id === pageId
+            ? { ...p, type, metadata: { ...p.metadata, ...(drawerSide ? { drawerSide } : {}) } }
+            : p,
+        ),
+      },
+      dirty: true,
     })
   },
 

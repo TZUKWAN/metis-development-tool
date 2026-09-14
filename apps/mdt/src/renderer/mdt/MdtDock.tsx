@@ -10,11 +10,12 @@ import type React from 'react'
 import { AgentsPanel } from './AgentsPanel'
 import { BuildPanel } from './BuildPanel'
 import { InteractionCanvas } from './InteractionCanvas'
+import { SemanticsInspector } from './SemanticsInspector'
 import { Welcome } from './Welcome'
 import { useMdtStore } from './store'
 import { useDeckSync } from './use-deck-sync'
 
-type Tab = 'agents' | 'interactions' | 'build' | null
+type Tab = 'agents' | 'interactions' | 'semantics' | 'build' | null
 
 export function MdtDock(): React.ReactElement | null {
   const loadProject = useMdtStore((s) => s.loadProject)
@@ -114,6 +115,15 @@ export function MdtDock(): React.ReactElement | null {
           </button>
           <button
             role="tab"
+            aria-selected={tab === 'semantics'}
+            type="button"
+            onClick={() => setTab(tab === 'semantics' ? null : 'semantics')}
+            style={{ flex: 1, padding: 8 }}
+          >
+            Semantics
+          </button>
+          <button
+            role="tab"
             aria-selected={tab === 'build'}
             type="button"
             onClick={() => setTab(tab === 'build' ? null : 'build')}
@@ -132,6 +142,7 @@ export function MdtDock(): React.ReactElement | null {
         </div>
         {tab === 'agents' && <AgentsPanel />}
         {tab === 'interactions' && <InteractionCanvas />}
+        {tab === 'semantics' && <SemanticsInspector />}
         {tab === 'build' && <BuildPanel />}
       </div>
     </>
