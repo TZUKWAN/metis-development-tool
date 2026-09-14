@@ -75,6 +75,10 @@ export class AppServerCodexClient implements CodexClient {
       this.request('initialize', PROTOCOL_STUBS.initialize),
       exitedDuringHandshake,
     ])
+    // the losing promise may reject later (exit right after the handshake
+    // response); swallow that late rejection — pending requests already got
+    // rejected through rejectAllPending
+    exitedDuringHandshake.catch(() => {})
     this.notify('initialized', {})
   }
 

@@ -99,9 +99,9 @@ describe('AppServerCodexClient (P10.02, P10.05)', () => {
     const events: CodexEvent[] = []
     // handshake succeeds (the fake answers initialize, THEN exits)
     await client.start((e) => events.push(e))
-    const result = await client.turn('go', { cwd: root, timeoutMs: 5_000 })
-    expect(result.status).toBe('failed')
-    expect(result.error).toBeTruthy()
+    await expect(
+      client.turn('go', { cwd: root, timeoutMs: 5_000 }),
+    ).rejects.toThrow(/exited|not running|timed out/)
     await client.dispose()
   })
 })
