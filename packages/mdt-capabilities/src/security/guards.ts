@@ -117,7 +117,9 @@ export function assertUrlAllowed(rawUrl: string, options: UrlGuardOptions = {}):
     throw new UrlBlockedError(`host "${hostname}" is blocked — use localhostMode for local development`)
   }
   const bare = hostname.replace(/\.$/, '')
-  if (BLOCKED_HOSTNAMES.has(bare)) {
+  // loopback hostnames are governed by the localhostMode check above;
+  // the blocklist covers cloud metadata/instance endpoints
+  if (!isLoopbackHostname(bare) && BLOCKED_HOSTNAMES.has(bare)) {
     throw new UrlBlockedError(`host "${hostname}" is a blocked metadata/instance endpoint`)
   }
   return url

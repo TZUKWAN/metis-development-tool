@@ -122,7 +122,7 @@ export const shellCapability: Capability = {
       child.stdout.on('data', (chunk: Buffer) => cap(chunk, stdout))
       child.stderr.on('data', (chunk: Buffer) => cap(chunk, stderr))
 
-      const exit = await new Promise<{ code: number | null; signal: string | null; error?: Error }>((resolve, reject) => {
+      const exit = await new Promise<{ code: number | null; signal: string | null; error?: Error }>((resolve) => {
         let settled = false
         child.on('error', (err) => {
           if (!settled) {
@@ -137,12 +137,12 @@ export const shellCapability: Capability = {
           }
         })
       })
+      if (state.timedOut) throw new Error(`shell: command timed out after ${timeoutMs}ms and was killed`)
+      if (state.cancelled) throw new Error('shell cancelled')
       if (exit.error) {
         // spawn failure (ENOENT & co): structured error, never a hang
         throw new Error(`shell: failed to start "${command}": ${exit.error.message}`)
       }
-      if (state.timedOut) throw new Error(`shell: command timed out after ${timeoutMs}ms and was killed`)
-      if (state.cancelled) throw new Error('shell cancelled')
 
       const stdoutText = Buffer.concat(stdout).toString('utf8')
       const stderrText = Buffer.concat(stderr).toString('utf8')

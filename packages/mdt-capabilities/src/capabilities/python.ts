@@ -164,9 +164,9 @@ export const pythonCapability: Capability = {
         })
         child.stdin.end(script, 'utf8')
       })
-      if (exit.error) throw new Error(`python: failed to start "${interpreter}": ${exit.error.message}`)
       if (state.timedOut) throw new Error(`python: script timed out after ${timeoutMs}ms and was killed`)
       if (state.cancelled) throw new Error('python cancelled')
+      if (exit.error) throw new Error(`python: failed to start "${interpreter}": ${exit.error.message}`)
 
       ctx.log(`python script (${script.length} chars, ${args.length} args) -> exit=${exit.code ?? 'killed'}${truncated ? ' (truncated)' : ''}`)
       return {
