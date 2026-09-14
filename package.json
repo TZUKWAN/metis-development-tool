@@ -38,7 +38,11 @@
     "licenses": "node tools/check-licenses.mjs",
     "dist:mac": "npm run notices && npm run build:all && npm run native:build:universal -w @genoffice/sheets && npm run dist:mac -w @genoffice/shell",
     "dist:win": "npm run notices && npm run build:all && npm run dist:win -w @genoffice/shell",
-    "dist:linux": "npm run notices && npm run build:all && npm run dist:linux -w @genoffice/shell"
+    "dist:linux": "npm run notices && npm run build:all && npm run dist:linux -w @genoffice/shell",
+    "dev:mdt": "npm run dev -w @mdt/app",
+    "test:mdt": "npm run test -w @mdt/app",
+    "typecheck:mdt": "npm run typecheck -w @mdt/app",
+    "build:mdt": "npm run build -w @mdt/app"
   },
   "dependencies": {
     "ws": "^8.21.1"
