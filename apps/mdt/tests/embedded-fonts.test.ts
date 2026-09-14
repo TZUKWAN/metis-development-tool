@@ -28,7 +28,7 @@ const style = (fontFamily: string, over: Partial<RunStyle> = {}): RunStyle => ({
 describe('document-embedded fonts', () => {
   it('a bold-only embed serves plain runs too (PowerPoint draws the only embedded face)', () => {
     const sfnt = new Uint8Array(
-      readFileSync(join(__dirname, '../../docs/src/renderer/fonts/Caladea-Bold.ttf')),
+      readFileSync(join(__dirname, '../../../packages/ui/src/fonts/Caladea-Bold.ttf')),
     )
     expect(registerEmbeddedFonts([{ typeface: 'Zz Embed Bold Only', style: 'bold', sfnt }])).toBe(
       true,

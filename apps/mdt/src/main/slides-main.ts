@@ -21,18 +21,16 @@ import {
 import type { WebContents } from 'electron'
 import { execFile } from 'node:child_process'
 import { readFile, writeFile, rm, stat, mkdir, open } from 'node:fs/promises'
-import { createHash, randomUUID } from 'node:crypto'
+import { createHash } from 'node:crypto'
 import { existsSync, mkdirSync } from 'node:fs'
 import { userInfo } from 'node:os'
 import { basename, dirname, join, resolve } from 'node:path'
 import { cleanupExpiredGeneratedPages } from './generated-page-temp'
 import { exportSlidesPdf } from './pdf-export'
-import { gskApiKey, gskSlideGenerate, setGskProxyUrl } from '@genoffice/ai-search'
 import {
   appMenuLabels,
   configuredDefaultSaveDir,
   contextMenuLabels,
-  fetchRemoteImage,
   installContextMenu,
   installNavigationGuard,
   isHeadlessMode,
@@ -56,9 +54,7 @@ import {
 } from '@genoffice/pptx-ops'
 import { matchesElementRef } from '@genoffice/pptx-engine/identity'
 import { buildPagePptx, parsePageSpec } from '@genoffice/pipelines/slides'
-import { sniffImageMime } from './media-mime'
 import { getUiLang, normalizeLang, setUiLang } from '@genoffice/i18n'
-import { ProjectStore } from '@genoffice/project-store'
 import {
   copyElementData,
   findGroupChild,
@@ -85,13 +81,8 @@ import {
   getSlideAnimations,
   listEmbeddedFonts,
   openPptx,
-  mergeSlideFromPptx,
-  extractMergeSlideSource,
-  type MergeSlideSource,
-  promoteSlideBackground,
   parseTheme,
   reparseDeck,
-  savePptx,
   savePptxToFile,
   commitSaved,
   builtinLayoutInfos,
@@ -190,8 +181,6 @@ import type {
   MoveSectionOp,
   MoveSlideOp,
   ApplyEditScriptOp,
-  ApplyTxnOp,
-  ApplyTxnResult,
   AnimationItem,
   ShapeKey,
   SetEffectsPatch,
@@ -216,7 +205,6 @@ import {
   rebuildSlide,
   rebuildSlideWithReparse,
   registerAiSnapshot,
-  restoreAiSnapshot,
   restoreSnapshot,
   settleStaleHistoryBatch,
   runtime,
@@ -230,7 +218,6 @@ import {
   type OpLogEntry,
   type Session,
 } from './session-state'
-import { registerAiIpc, registerSlidesOnlyAiIpc } from './ai-ipc'
 import { listPrivateFontFaces, getPrivateFontData, registerEmbeddedFonts } from './fonts'
 import { listMetafileFonts } from './metafile-fonts'
 import {
@@ -247,12 +234,7 @@ let slideClipboard: { bundle: SlideBundle; png?: string } | null = null
 /** The immediately preceding slide paste per webContents, so the paste-options floater can redo it with another mode. */
 const lastSlidePaste = new Map<number, { afterIndex: number; undoLen: number }>()
 
-// Cloud-generated single-page pptx: marker strings travel in pageMarkers slots; only paths issued
-// by slides:cloud-page-generate are readable (the renderer can't point the reader at arbitrary files)
-const CLOUD_PAGE_PREFIX = 'cloudpptx:'
-const issuedCloudPages = new Set<string>()
 import { registerPresenterIpc } from './presenter-show'
-import { registerAttachmentIpc } from './attachments-ipc'
 
 export {
   configureSlidesRuntime,
@@ -280,7 +262,6 @@ const gradientFillTo = (
   g: GradientFillSpec['gradient'],
 ): { l: number; t: number; r: number; b: number } | undefined =>
   g.center ? { l: g.center.x, t: g.center.y, r: 1 - g.center.x, b: 1 - g.center.y } : undefined
-export { registerAiIpc } from './ai-ipc'
 
 /** standalone: path queued before window creation (argv/open-file) */
 let pendingOpenPath: string | null = null
@@ -816,44 +797,6 @@ function pickDraftPath(draftsDir: string, deckName?: string): string {
     if (!existsSync(candidate)) return candidate
   }
   return join(draftsDir, newDraftFilename())
-}
-
-/**
- * Auto-save the draft to <Documents>/GenOffice/<name>.pptx after AI generation completes.
- * Append mode reuses the session's existing draft path (overwrite); replace mode generates a
- * new filename. On successful write, update session.path, pushRecent, slidesOpenedHook.
- * On write failure, degrade silently (console.warn) without blocking the in-memory session.
- */
-async function saveDraftAfterGenerate(
-  wc: WebContents,
-  session: Session,
-  bytes: Uint8Array,
-  mode: 'replace' | 'append',
-  deckName?: string,
-): Promise<void> {
-  try {
-    const draftsDir = getDraftsDir()
-    // Ensure the directory exists
-    if (!existsSync(draftsDir)) mkdirSync(draftsDir, { recursive: true })
-
-    // Append mode: overwrite if the session already has a draft path; otherwise create a new file too
-    let draftPath: string
-    if (mode === 'append' && session.path && session.path.startsWith(draftsDir)) {
-      draftPath = session.path
-    } else {
-      draftPath = pickDraftPath(draftsDir, deckName)
-    }
-
-    await writeFile(draftPath, Buffer.from(bytes))
-    session.path = draftPath
-    await pushRecent(draftPath)
-    slidesOpenedHook?.(wc, draftPath)
-  } catch (err) {
-    console.warn(
-      '[slides] Failed to persist AI-generated draft to disk; the in-memory session still works:',
-      err,
-    )
-  }
 }
 
 /** Theme body (minor) Latin font: fallback shown in the ribbon font box when the selection has no text element. */
@@ -1455,97 +1398,6 @@ export function registerSlidesIpc(): void {
     return r ? rebuildSlide(session, op.slideIndex) : null
   })
 
-  // AI batch surface: raw ops arrive as one transaction. The registry validates
-  // (guided errors), the executor owns atomicity/rollback/journal; dry-run
-  // rehearses the plan without touching the deck or its history.
-  ipcMain.handle('slides:apply-txn', (e, req: ApplyTxnOp): ApplyTxnResult | null => {
-    const session = sessions.get(e.sender.id)
-    if (!session) return null
-    const ops = Array.isArray(req?.ops) ? (req.ops as Parameters<typeof runTxn>[1]['ops']) : []
-    if (ops.length === 0 || ops.length > 50) {
-      return {
-        applied: false,
-        failures: [
-          { index: 0, error: 'ops must be a non-empty array (at most 50 per transaction).' },
-        ],
-      }
-    }
-    const isolation = req.isolation === 'per_op' ? ('per_op' as const) : ('atomic' as const)
-    const compact = (fails?: Array<{ index: number; error: string }>) =>
-      fails?.map((f) => ({ index: f.index, error: f.error }))
-    if (req.dryRun) {
-      const r = runTxn(session.opened, { ops, isolation, dryRun: true })
-      return {
-        applied: false,
-        dryRun: true,
-        plan: r.plan ?? [],
-        ...(r.failures?.length ? { failures: compact(r.failures) } : {}),
-      }
-    }
-    // Plan before pushing history (a no-op request must not clear the redo stack)
-    const plan = runTxn(session.opened, { ops, isolation, dryRun: true })
-    const invalid = plan.failures?.length ?? 0
-    if (isolation === 'atomic' ? invalid > 0 : invalid >= ops.length) {
-      return { applied: false, failures: compact(plan.failures) }
-    }
-    pushHistory(session)
-    const r = journaledTxn(session, 'batch', { ops, isolation })
-    if (!r.applied) {
-      session.undoStack.pop()
-      return { applied: false, failures: compact(r.failures) }
-    }
-    // Post-pass mirroring the dedicated shims (autofit/reparse are render concerns and live
-    // outside the executor): text ops get autofit resize + fontScale write-back, level changes
-    // materialize, and XML-patching ops reparse the page so the final render reflects them.
-    // Slides are re-found by the executor-stamped durable id: a numeric target.slide drifts
-    // when a later structural op (deleteSlide/moveSlide/duplicateSlide) shifts pages.
-    const slideIdxOf = (rec: OpRecord): number => {
-      if (rec.slideId)
-        return session.opened.deck.slides.findIndex((s) => slideDurableId(s) === rec.slideId)
-      return -1
-    }
-    const renderedByIdx = new Map<number, ReturnType<typeof rebuildSlide>>()
-    for (const rec of r.records ?? []) {
-      const o = rec.op
-      const idx = slideIdxOf(rec)
-      if (idx < 0) continue
-      if (o.op === 'setTableStyle' || o.op === 'setChart') {
-        rebuildSlideWithReparse(session, idx)
-        renderedByIdx.delete(idx)
-        continue
-      }
-      const id = o.target?.el
-      if (!id || o.group) continue
-      if (o.op !== 'setText' && o.op !== 'setFont' && o.op !== 'setParagraphFormat') continue
-      if (o.op === 'setText' && (rec.after as { levelDirty?: boolean } | undefined)?.levelDirty)
-        continue
-      if (
-        o.op === 'setParagraphFormat' &&
-        (o.format as { indentDelta?: number } | undefined)?.indentDelta
-      ) {
-        materializeSlide(session.opened, idx)
-        renderedByIdx.delete(idx)
-        continue
-      }
-      let rendered = renderedByIdx.has(idx) ? renderedByIdx.get(idx)! : rebuildSlide(session, idx)
-      rendered = applyAutofitResize(session, idx, id, rendered)
-      rendered = syncAutofitScale(session, idx, id, rendered)
-      renderedByIdx.set(idx, rendered)
-    }
-    return {
-      applied: true,
-      records: (r.records ?? []).map((rec) => ({
-        op: rec.op.op,
-        ...(rec.op.target
-          ? { target: `${rec.op.target.slide}${rec.op.target.el ? `/${rec.op.target.el}` : ''}` }
-          : {}),
-        ...(rec.created ? { created: rec.created } : {}),
-      })),
-      ...(r.failures?.length ? { failures: compact(r.failures) } : {}),
-      slides: buildAllRenderSlides(session.opened, session.fitWidthPx),
-    }
-  })
-
   // The whole edit script as ONE transaction: the collected primitives arrive in a
   // single IPC, compile to ops (script-map), and apply atomically — the executor
   // owns validation, rollback and the journal. Autofit is a render concern and
@@ -1580,344 +1432,6 @@ export function registerSlidesIpc(): void {
     }
     return rendered ? { slide: rendered } : null
   })
-  // ── Cloud single-page generation (gsk slide_generate): brief → cloud HTML+conversion → one-slide
-  // pptx saved to a temp file. Returns a marker string that slides:land-generated-pages redeems for
-  // the bytes. Enabled when gsk is logged in; GENOFFICE_CLOUD_SLIDE=0 is the kill switch.
-  const cloudSlideEnabled = () => process.env.GENOFFICE_CLOUD_SLIDE !== '0' && !!gskApiKey()
-
-  ipcMain.handle('slides:cloud-gen-status', () => ({ enabled: cloudSlideEnabled() }))
-
-  ipcMain.handle(
-    'slides:cloud-page-generate',
-    async (
-      _e,
-      op: {
-        brief: string
-        title?: string
-        styleSkill?: string
-        deckContext?: Record<string, unknown>
-        images?: { url: string; caption?: string }[]
-        width?: number
-        height?: number
-      },
-    ): Promise<{ ok: boolean; marker?: string; error?: string }> => {
-      if (!cloudSlideEnabled()) return { ok: false, error: 'cloud slide generation is disabled' }
-      try {
-        // Ultra resolves to the opus-class slide model server-side; standard is the
-        // lighter MiniMax M3 model. Keep an explicit escape hatch for quality
-        // comparisons and emergency rollback.
-        const tier = process.env.GENOFFICE_CLOUD_SLIDE_TIER === 'standard' ? 'standard' : 'ultra'
-        const started = Date.now()
-        const { bytes, model } = await gskSlideGenerate({
-          tier,
-          brief: String(op.brief ?? ''),
-          title: op.title ? String(op.title) : undefined,
-          styleSkill: op.styleSkill ? String(op.styleSkill) : undefined,
-          deckContext: op.deckContext,
-          images: Array.isArray(op.images) ? op.images : undefined,
-          width: op.width,
-          height: op.height,
-        })
-        console.log(
-          `[cloud-slide] page generated: tier=${tier} model=${model} bytes=${bytes.length} ms=${Date.now() - started}`,
-        )
-        const dir = join(app.getPath('temp'), 'genoffice-cloud-pages')
-        mkdirSync(dir, { recursive: true })
-        const path = join(dir, `${randomUUID()}.pptx`)
-        await writeFile(path, bytes)
-        issuedCloudPages.add(path)
-        return { ok: true, marker: CLOUD_PAGE_PREFIX + path }
-      } catch (err) {
-        return { ok: false, error: err instanceof Error ? err.message : String(err) }
-      }
-    },
-  )
-
-  // ── Local single-page generation (no gsk needed, e.g. BYOK): a JSON slide spec written by
-  // the renderer's LLM call is built directly into a one-slide pptx with pptx-engine
-  // primitives — no HTML intermediate. Returns the same marker kind as the cloud path, so
-  // landing (slides:land-generated-pages) is shared.
-  ipcMain.handle(
-    'slides:local-page-generate',
-    async (
-      _e,
-      op: { specJson: string },
-    ): Promise<{ ok: boolean; marker?: string; error?: string; imageFailures?: string[] }> => {
-      const parsed = parsePageSpec(String(op?.specJson ?? ''))
-      if (!parsed.ok) return { ok: false, error: parsed.error }
-      try {
-        const started = Date.now()
-        const { bytes, imageFailures } = await buildPagePptx(parsed.spec, {
-          fontMetrics: getFontMetrics(),
-          fetchImage: async (url) => {
-            const resp = await fetchRemoteImage(url)
-            if (!resp || !resp.ok) return null
-            const buf = new Uint8Array(await resp.arrayBuffer())
-            const mime = sniffImageMime(buf) ?? resp.headers.get('content-type') ?? ''
-            const ext = /png/.test(mime)
-              ? 'png'
-              : /gif/.test(mime)
-                ? 'gif'
-                : /webp/.test(mime)
-                  ? 'webp'
-                  : /bmp/.test(mime)
-                    ? 'bmp'
-                    : 'jpg'
-            return { bytes: buf, ext }
-          },
-          imageDims: (bytes) => {
-            try {
-              const s = nativeImage.createFromBuffer(Buffer.from(bytes)).getSize()
-              return s.width > 0 && s.height > 0 ? s : null
-            } catch {
-              return null
-            }
-          },
-        })
-        console.log(
-          `[local-slide] page generated: bytes=${bytes.length} imageFails=${imageFailures.length} ms=${Date.now() - started}`,
-        )
-        const dir = join(app.getPath('temp'), 'genoffice-local-pages')
-        mkdirSync(dir, { recursive: true })
-        const path = join(dir, `${randomUUID()}.pptx`)
-        await writeFile(path, bytes)
-        issuedCloudPages.add(path)
-        return {
-          ok: true,
-          marker: CLOUD_PAGE_PREFIX + path,
-          ...(imageFailures.length ? { imageFailures } : {}),
-        }
-      } catch (err) {
-        return { ok: false, error: err instanceof Error ? err.message : String(err) }
-      }
-    },
-  )
-
-  ipcMain.handle(
-    'slides:land-generated-pages',
-    async (
-      e,
-      pageMarkers: string[],
-      fitWidthPx: number,
-      mode?: 'replace' | 'append' | 'replace_at' | 'insert_at',
-      atIndex?: number,
-      deckName?: string,
-    ): Promise<
-      | (OpenResult & {
-          appendedFrom?: number
-          replacedIndex?: number
-          insertedIndex?: number
-          fallbackReason?: string
-          imageFailures?: { page: number; url: string }[]
-        })
-      | { error: string }
-    > => {
-      // Every page arrives as a cloud marker (cloudpptx:<path> written by
-      // slides:cloud-page-generate, pointing at a one-slide pptx temp file); this handler only
-      // reads and lands the bytes.
-      // replace: assemble the whole batch into one multi-page pptx as the new deck base.
-      // append/replace_at/insert_at: land the extracted pages as insertSlidePptx ops
-      // (earlier pages are untouched; landing shows up in the op journal like any edit).
-      const readCloudPage = async (marker: string): Promise<{ bytes: Uint8Array }> => {
-        if (!marker.startsWith(CLOUD_PAGE_PREFIX)) throw new Error('expected a cloud page marker')
-        const path = marker.slice(CLOUD_PAGE_PREFIX.length)
-        if (!issuedCloudPages.has(path)) throw new Error('unknown cloud page marker')
-        return { bytes: new Uint8Array(await readFile(path)) }
-      }
-      const assembleDeck = async (): Promise<{ bytes: Uint8Array }> => {
-        const perPage = await Promise.all(pageMarkers.map(readCloudPage))
-        const base = await openPptx(perPage[0]!.bytes)
-        for (const one of perPage.slice(1)) await mergeSlideFromPptx(base, one.bytes)
-        for (const s of base.deck.slides) promoteSlideBackground(s, base.deck.size)
-        return { bytes: await savePptx(base) }
-      }
-
-      try {
-        // Append: extract only the "new pages" and land them into the existing in-memory
-        // deck as one per_op transaction. Already-landed pages stay untouched
-        // (O(N) rather than O(N²)); no dependency on stored PageVisualData.
-        if (mode === 'append') {
-          const existing = sessions.get(e.sender.id)
-          if (!existing) {
-            return { error: tm('errNoDeckAppend') }
-          }
-          const opened = existing.opened
-          const beforeCount = opened.deck.slides.length
-          // Push an undo snapshot: appending is an ordinary edit, ⌘Z should return to the
-          // pre-append state (previously the undoStack was simply cleared, making all of the
-          // user's prior manual edits non-undoable — inconsistent with replace_at behavior)
-          // Extract every page first (pure reads), then land them as insertSlidePptx ops so
-          // the journal and undo see generation like any other edit.
-          const sources: MergeSlideSource[] = []
-          let lastErr: string | undefined
-          for (const marker of pageMarkers) {
-            try {
-              const one = await readCloudPage(marker)
-              const source = await extractMergeSlideSource(one.bytes)
-              if (source) sources.push(source)
-              else lastErr = tm('errMergeFailed')
-            } catch (pageErr) {
-              lastErr = pageErr instanceof Error ? pageErr.message : String(pageErr)
-            }
-          }
-          let merged = 0
-          if (sources.length > 0) {
-            pushHistory(existing)
-            const r = journaledTxn(existing, 'generate', {
-              isolation: 'per_op',
-              ops: sources.map((source) => ({ op: 'insertSlidePptx', source })),
-            })
-            merged = r.records?.length ?? 0
-            if (merged === 0) existing.undoStack.pop() // Nothing happened, pop the just-pushed snapshot
-            if (!lastErr) lastErr = r.failures?.[0]?.error
-          }
-          if (merged === 0) {
-            return { error: tm('errAppendFailed', { reason: lastErr ?? tm('errUnknown') }) }
-          }
-          existing.fitWidthPx = fitWidthPx
-          // Save the draft: persist the current complete deck
-          const bytes = await savePptx(opened)
-          await saveDraftAfterGenerate(e.sender, existing, bytes, 'append', deckName)
-          // Draft now matches memory: reopen from the output bytes to clear dirty (same as
-          // slides:save) — otherwise pure AI generation (per-page append merges mark
-          // structureDirty) would trigger the close confirmation even without edits
-          if (existing.path) {
-            existing.opened = await openPptx(bytes)
-            existing.metaDirty = false
-          }
-          return {
-            path: existing.path,
-            slides: buildAllRenderSlides(existing.opened, fitWidthPx),
-            size: { cx: existing.opened.deck.size.cx, cy: existing.opened.deck.size.cy },
-            defaultFont: deckDefaultFont(existing.opened),
-            appendedFrom: beforeCount,
-            ...(lastErr && merged < pageMarkers.length
-              ? { fallbackReason: tm('errPartialAppend', { reason: lastErr }) }
-              : {}),
-          }
-        }
-
-        // Redo one page in place: the insertSlidePptx op merges the extracted page at the
-        // end, moves it to atIndex and drops the displaced old page — one atomic txn, one
-        // undo snapshot, so ⌘Z rolls back to the old page.
-        if (mode === 'replace_at') {
-          const existing = sessions.get(e.sender.id)
-          if (!existing) {
-            return { error: tm('errNoDeckReplace') }
-          }
-          const opened = existing.opened
-          const total = opened.deck.slides.length
-          if (atIndex == null || !Number.isInteger(atIndex) || atIndex < 0 || atIndex >= total) {
-            return { error: tm('errIndexRange', { max: total - 1 }) }
-          }
-          const marker = pageMarkers[0]
-          if (!marker || pageMarkers.length !== 1) {
-            return { error: tm('errReplaceNeedsOne') }
-          }
-          const one = await readCloudPage(marker)
-          const source = await extractMergeSlideSource(one.bytes)
-          if (!source) {
-            return { error: tm('errMergeFailed') }
-          }
-          pushHistory(existing)
-          const r = journaledTxn(existing, 'generate', {
-            ops: [{ op: 'insertSlidePptx', source, at: atIndex, replace: true }],
-          })
-          if (!r.applied) {
-            existing.undoStack.pop() // The executor already restored the deck
-            return { error: r.failures?.[0]?.error ?? tm('errReplaceFailed') }
-          }
-          existing.fitWidthPx = fitWidthPx
-          const bytes = await savePptx(opened)
-          await saveDraftAfterGenerate(e.sender, existing, bytes, 'append', deckName)
-          if (existing.path) {
-            existing.opened = await openPptx(bytes)
-            existing.metaDirty = false
-          }
-          return {
-            path: existing.path,
-            slides: buildAllRenderSlides(existing.opened, fitWidthPx),
-            size: { cx: existing.opened.deck.size.cx, cy: existing.opened.deck.size.cy },
-            defaultFont: deckDefaultFont(existing.opened),
-            replacedIndex: atIndex,
-          }
-        }
-
-        // Insert one page at atIndex (later pages shift back): used to regenerate a failed middle
-        // page from generate_deck and put it back in place. Same op as replace_at but without
-        // dropping an old page; atIndex=total lands at the end without a move.
-        if (mode === 'insert_at') {
-          const existing = sessions.get(e.sender.id)
-          if (!existing) {
-            return { error: tm('errNoDeckInsert') }
-          }
-          const opened = existing.opened
-          const total = opened.deck.slides.length
-          if (atIndex == null || !Number.isInteger(atIndex) || atIndex < 0 || atIndex > total) {
-            return { error: tm('errIndexRange', { max: total }) }
-          }
-          const marker = pageMarkers[0]
-          if (!marker || pageMarkers.length !== 1) {
-            return { error: tm('errInsertNeedsOne') }
-          }
-          const one = await readCloudPage(marker)
-          const source = await extractMergeSlideSource(one.bytes)
-          if (!source) {
-            return { error: tm('errMergeFailed') }
-          }
-          pushHistory(existing)
-          const r = journaledTxn(existing, 'generate', {
-            ops: [{ op: 'insertSlidePptx', source, at: atIndex }],
-          })
-          if (!r.applied) {
-            existing.undoStack.pop() // The executor already restored the deck
-            return { error: r.failures?.[0]?.error ?? tm('errInsertFailed') }
-          }
-          existing.fitWidthPx = fitWidthPx
-          const bytes = await savePptx(opened)
-          await saveDraftAfterGenerate(e.sender, existing, bytes, 'append', deckName)
-          if (existing.path) {
-            existing.opened = await openPptx(bytes)
-            existing.metaDirty = false
-          }
-          return {
-            path: existing.path,
-            slides: buildAllRenderSlides(existing.opened, fitWidthPx),
-            size: { cx: existing.opened.deck.size.cx, cy: existing.opened.deck.size.cy },
-            defaultFont: deckDefaultFont(existing.opened),
-            insertedIndex: atIndex,
-          }
-        }
-
-        // replace mode: assemble the whole batch into one multi-page pptx as the new deck base.
-        const { bytes } = await assembleDeck()
-        const opened = await openPptx(bytes)
-        const replaceSession: Session = {
-          path: '',
-          opened,
-          fitWidthPx,
-          undoStack: [],
-          redoStack: [],
-        }
-        const old = sessions.get(e.sender.id)
-        carryHistoryForReplacement(old, replaceSession)
-        sessions.set(e.sender.id, replaceSession)
-        // Re-point windows that shared the old session, or they diverge onto a dead deck
-        if (old) for (const id of attachedIds(old)) sessions.set(id, replaceSession)
-        // Save the draft: await completion so the real path is returned; on failure degrade silently (session.path stays '')
-        await saveDraftAfterGenerate(e.sender, replaceSession, bytes, 'replace', deckName)
-        scheduleDeckBroadcast(replaceSession)
-        return {
-          path: replaceSession.path,
-          slides: buildAllRenderSlides(opened, fitWidthPx),
-          size: { cx: opened.deck.size.cx, cy: opened.deck.size.cy },
-          defaultFont: deckDefaultFont(opened),
-        }
-      } catch (err) {
-        return { error: err instanceof Error ? err.message : String(err) }
-      }
-    },
-  )
 
   ipcMain.handle('slides:new-blank', async (e, fitWidthPx: number): Promise<OpenResult> => {
     const opened = await openPptx(await createBlankPptx())
@@ -3973,14 +3487,6 @@ export function registerSlidesIpc(): void {
     return before ? registerAiSnapshot(session, before) : null
   })
 
-  ipcMain.handle('slides:ai-snapshot-restore', (e, id: number) => {
-    const session = sessions.get(e.sender.id)
-    if (!session || session.masterEdit || session.historyBatch) return null
-    if (!restoreAiSnapshot(session, id)) return null
-    scheduleDeckBroadcast(session)
-    return buildAllRenderSlides(session.opened, session.fitWidthPx)
-  })
-
   ipcMain.handle('slides:undo', (e) => {
     const session = sessions.get(e.sender.id)
     // Undo disabled in master view: the masterEdit.slide model cannot roll back with snapshots (v1 trade-off; undoable after exiting)
@@ -4257,97 +3763,9 @@ export function registerSlidesIpc(): void {
     }
   })
 
-  // ── Chat attachments (slides:files-*) ──
-  registerAttachmentIpc()
-
   // ── Presenter-view multi-screen show (registered inside registerSlidesIpc: shell
   // aggregate mode only calls this function) ──
   registerPresenterIpc()
-
-  registerSlidesOnlyAiIpc()
-}
-
-// ── project-store IPC (standalone mode) ───────────────────────────────────
-// In shell mode docs-main.registerProjectIpc registers these centrally (idempotent guard,
-// registers once). Slides standalone calls this function.
-
-let slidesProjectStore: ProjectStore | null = null
-let slidesProjectIpcRegistered = false
-
-function getSlidesProjectStore(): ProjectStore {
-  if (!slidesProjectStore) slidesProjectStore = new ProjectStore(app.getPath('userData'))
-  return slidesProjectStore
-}
-
-export function registerProjectIpc(): void {
-  if (slidesProjectIpcRegistered) return
-  slidesProjectIpcRegistered = true
-
-  ipcMain.handle(
-    'project:resolveChat',
-    (_event, args: { filePath: string | null; tempChatId?: string }) => {
-      const store = getSlidesProjectStore()
-      store.ensureDefaultProject()
-      if (!args.filePath) {
-        return { projectId: 'default', chatId: args.tempChatId ?? `unsaved-${Date.now()}` }
-      }
-      return store.resolveChatForFile(args.filePath)
-    },
-  )
-
-  ipcMain.handle(
-    'project:appendChat',
-    (
-      _event,
-      args: {
-        projectId: string
-        chatId: string
-        role: 'user' | 'assistant'
-        text: string
-        tools?: Array<{
-          name: string
-          summary: string
-          isError?: boolean
-          input?: string
-          output?: string
-        }>
-        attachments?: Array<{ name: string; path?: string; ext?: string; sizeBytes?: number }>
-        scope?: { label: string; text?: string }
-      },
-    ) => {
-      const msg: Parameters<ProjectStore['appendChatMessage']>[2] = {
-        role: args.role,
-        text: args.text,
-      }
-      if (args.tools) msg.tools = args.tools
-      if (args.attachments) msg.attachments = args.attachments
-      if (args.scope) msg.scope = args.scope
-
-      getSlidesProjectStore().appendChatMessage(args.projectId, args.chatId, msg)
-    },
-  )
-
-  ipcMain.handle(
-    'project:loadChat',
-    (_event, args: { projectId: string; chatId: string; limit?: number }) => {
-      return getSlidesProjectStore().loadChat(args.projectId, args.chatId, args.limit ?? 200)
-    },
-  )
-
-  ipcMain.handle(
-    'project:rebindChat',
-    (
-      _event,
-      args: { projectId: string; tempChatId: string; newChatId?: string; newFilePath?: string },
-    ) => {
-      const store = getSlidesProjectStore()
-      if (args.newFilePath) {
-        return store.rebindChatToFile(args.projectId, args.tempChatId, args.newFilePath)
-      }
-      if (args.newChatId) store.rebindChat(args.projectId, args.tempChatId, args.newChatId)
-      return { projectId: args.projectId, chatId: args.newChatId ?? args.tempChatId }
-    },
-  )
 }
 
 /** hidden export windows: webContents id -> the PDF path the renderer must write */
@@ -4608,9 +4026,6 @@ export function installSlidesMenu(): void {
  */
 async function applyMainProcessProxy(): Promise<void> {
   const setDispatcher = async (proxyUrl: string) => {
-    // spawned gsk CLI children do their own fetch and never see the
-    // dispatcher below — forward the proxy to them via env
-    setGskProxyUrl(proxyUrl)
     try {
       const { ProxyAgent, setGlobalDispatcher } = await import('undici')
       setGlobalDispatcher(new ProxyAgent(proxyUrl))
@@ -4634,8 +4049,8 @@ async function applyMainProcessProxy(): Promise<void> {
   // No environment variables: read the system proxy (requires app ready)
   try {
     await app.whenReady()
-    // PAC/rule proxies answer per-host: probe the host the login flow, the
-    // Genspark LLM proxy and the gsk CLI actually target
+    // PAC/rule proxies answer per-host: probe a representative remote host so the
+    // resolved proxy covers the document/font/image fetches the app performs
     const resolved = await electronSession.defaultSession.resolveProxy('https://www.genspark.ai/')
     // resolveProxy returns strings like "PROXY 127.0.0.1:1087" or "DIRECT"
     const m = /PROXY\s+([^;]+)/i.exec(resolved || '')
@@ -4698,8 +4113,6 @@ export function startSlidesStandalone(): void {
     installRendererProtocol({ slides: join(__dirname, '../renderer') })
     setUiLang(normalizeLang(process.env.GENOFFICE_LANG ?? app.getLocale()))
     registerSlidesIpc()
-    registerAiIpc()
-    registerProjectIpc()
     Menu.setApplicationMenu(buildSlidesMenu())
     const win = createSlidesWindow(pendingOpenPath)
     app.on('activate', () => {

@@ -51,8 +51,6 @@ export default defineConfig({
           '@genoffice/pptx-ops',
           '@genoffice/pptx-render',
           '@genoffice/pipelines',
-          '@genoffice/ai-search',
-          '@genoffice/file-parse',
           '@genoffice/electron-utils',
           'opentype.js',
         ],

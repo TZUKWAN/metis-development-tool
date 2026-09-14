@@ -10,7 +10,6 @@ import * as clipboardActions from './clipboard-actions'
 import * as arrangeActions from './arrange-actions'
 import * as slideActions from './slide-actions'
 import * as showActions from './show-actions'
-import { shouldRouteUndoToDeck } from './undo-routing'
 
 /** Whether focus is in a text input (input/textarea/contentEditable) — these cases use native undo/delete */
 function inTextField(): boolean {
@@ -53,7 +52,7 @@ export function handleGlobalKeydown(
   }
   // Undo/redo (menu accelerators normally intercept; fallback for shell/menuless scenarios)
   if (mod && !e.altKey && (e.key === 'z' || e.key === 'Z')) {
-    if (editing || (inField && !shouldRouteUndoToDeck(e.target as HTMLElement))) return
+    if (editing || inField) return
     e.preventDefault()
     void (e.shiftKey ? ctx.redo() : ctx.undo())
     return
@@ -69,13 +68,6 @@ export function handleGlobalKeydown(
     if (editing) return
     e.preventDefault()
     ctx.setFindOpen(true)
-    return
-  }
-  // ⌘K: annotate the selection with an AI edit
-  if (mod && !e.altKey && !e.shiftKey && (e.key === 'k' || e.key === 'K')) {
-    if (editing || inField || selectedIds.length === 0) return
-    e.preventDefault()
-    ctx.openAskPopover()
     return
   }
   // ⌘P print
@@ -102,7 +94,7 @@ export function handleGlobalKeydown(
     return
   }
   if (editing || inField) return
-  // ⌘C/⌘X with text dragged in plain DOM (e.g. AI panel, focus on body): let the
+  // ⌘C/⌘X with text dragged in plain DOM (focus on body): let the
   // native copy run instead of hijacking it for the slide/element clipboard
   if (mod && !e.altKey && !e.shiftKey && ['c', 'C', 'x', 'X'].includes(e.key)) {
     const sel = window.getSelection()

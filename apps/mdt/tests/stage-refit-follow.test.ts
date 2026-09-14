@@ -82,7 +82,6 @@ function makeSlidesApi() {
     newBlank: () => Promise.resolve({ path: '', slides: [blankSlide()], defaultFont: 'Arial' }),
     isDirty: () => Promise.resolve(false),
     getRecentFiles: () => Promise.resolve([]),
-    getAiSettings: () => Promise.resolve(null),
     getSections: () => Promise.resolve([]),
     getComments: () => Promise.resolve([]),
     getNotes: () => Promise.resolve(''),
@@ -146,6 +145,23 @@ let container: HTMLElement | null = null
 beforeAll(() => {
   ;(globalThis as Record<string, unknown>).IS_REACT_ACT_ENVIRONMENT = true
   vi.stubGlobal('ResizeObserver', FakeResizeObserver)
+  // Node ≥22 exposes a built-in `localStorage` global that shadows jsdom's working
+  // Storage and is non-functional without --localstorage-file; install a plain
+  // in-memory implementation so App's persisted prefs (thumb width, autosave) work.
+  const memStorage = new Map<string, string>()
+  Object.defineProperty(window, 'localStorage', {
+    configurable: true,
+    value: {
+      getItem: (k: string) => (memStorage.has(k) ? memStorage.get(k)! : null),
+      setItem: (k: string, v: string) => void memStorage.set(k, String(v)),
+      removeItem: (k: string) => void memStorage.delete(k),
+      clear: () => void memStorage.clear(),
+      key: (i: number) => [...memStorage.keys()][i] ?? null,
+      get length() {
+        return memStorage.size
+      },
+    },
+  })
   window.matchMedia ??= (query: string) =>
     ({
       matches: false,

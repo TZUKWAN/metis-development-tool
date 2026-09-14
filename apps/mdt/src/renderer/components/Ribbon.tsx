@@ -95,8 +95,6 @@ import {
   IconRotateRight,
 } from './icons'
 // brand-supplied Review AI icon art (44px = 22px @2x), color baked in
-import iconSpelling from '../assets/icon-spelling.png'
-import iconTranslate from '../assets/icon-translate.png'
 import iconTransparency from '../assets/icon-transparency.png'
 import texPaper from '../assets/textures/paper.png'
 import texCanvas from '../assets/textures/canvas.png'
@@ -187,21 +185,6 @@ const THEME_NAME: Record<string, StringKey> = {
 }
 const themeDisplayName = (tp: SlideThemePreset, t: (key: StringKey) => string): string =>
   THEME_NAME[tp.id] ? t(THEME_NAME[tp.id]) : tp.name
-
-/** Translation target languages (for AI proofread/translate presets) */
-const TRANSLATE_TARGETS: StringKey[] = [
-  'ribbonLangEnglish',
-  'ribbonLangSimplifiedChinese',
-  'ribbonLangTraditionalChinese',
-  'ribbonLangJapanese',
-  'ribbonLangKorean',
-  'ribbonLangFrench',
-  'ribbonLangGerman',
-  'ribbonLangSpanish',
-]
-
-/** One-time "AI rewrites the whole document" acknowledgement */
-const AI_REWRITE_ACK_KEY = 'slides-ai-rewrite-ack'
 
 // Draw tab palettes/pen widths (same as apps/docs DrawTab)
 const INK_COLORS = [
@@ -1099,9 +1082,6 @@ export function Ribbon({
   onZoom,
   showThumbs,
   onToggleThumbs,
-  aiOpen,
-  onToggleAi,
-  onAiPreset,
   onInsert,
   onPickShape,
   onInsertImage,
@@ -1291,7 +1271,6 @@ export function Ribbon({
   // responsive-collapse state (see the collapse effect below)
   const [collapsedGroups, setCollapsedGroups] = useState<string[]>([])
   const [collapseOpen, setCollapseOpen] = useState<string | null>(null)
-  const [translateOpen, setTranslateOpen] = useState(false)
   const [arrangeOpen, setArrangeOpen] = useState(false)
   const [slideShowOpen, setSlideShowOpen] = useState(false)
   const [slideShowFromStart, setSlideShowFromStart] = useState(false)
@@ -1333,7 +1312,6 @@ export function Ribbon({
     if (!keep.includes('shapeFill')) setShapeFillOpen(false)
     if (!keep.includes('table')) setTableOpen(false)
     if (!keep.includes('layout')) setLayoutOpen(false)
-    if (!keep.includes('translate')) setTranslateOpen(false)
     if (!keep.includes('arrange')) setArrangeOpen(false)
     if (!keep.includes('insert')) setInsertDrop(null)
     if (!keep.includes('chart')) setChartDrop(null)
@@ -1348,7 +1326,6 @@ export function Ribbon({
   const anyPanelOpen =
     tableOpen ||
     colorOpen ||
-    translateOpen ||
     insertDrop != null ||
     fontOpen ||
     sizeOpen ||
@@ -1554,16 +1531,6 @@ export function Ribbon({
     bulletColorTimer.current = window.setTimeout(() => onParagraphFormat({ bulletColor: hex }), 200)
   }
 
-  // One-time acknowledgement before whole-document AI rewrites:
-  // Spelling / Translate send the full deck to the agent, consume credits and may
-  // rewrite every slide — say so once before the first run.
-  const confirmAiRewrite = () => {
-    if (localStorage.getItem(AI_REWRITE_ACK_KEY) === '1') return true
-    if (!window.confirm(t('ribbonAiRewriteConfirm'))) return false
-    localStorage.setItem(AI_REWRITE_ACK_KEY, '1')
-    return true
-  }
-
   // Format buttons use onMouseDown+preventDefault, avoiding stealing contentEditable focus and triggering a commit
   const fmtBtn = (cmd: FormatCmd, label: ReactNode, title: string, className?: string) => (
     <button
@@ -1581,7 +1548,6 @@ export function Ribbon({
   )
 
   const tabCtx: RibbonTabCtx = {
-    aiOpen,
     brushMode,
     canDistribute,
     canPaste,
@@ -1605,7 +1571,6 @@ export function Ribbon({
     onAddSection,
     onAddSlide,
     onAddSlideWithLayout,
-    onAiPreset,
     onAlign,
     onDirection,
     onArrange,
@@ -1643,7 +1608,6 @@ export function Ribbon({
     onStrike,
     onTextColor,
     onTextToggle,
-    onToggleAi,
     onToggleFormat,
     onToggleScreenRecord,
     recording,
@@ -2460,61 +2424,6 @@ export function Ribbon({
           </>
         ) : tab === 'review' ? (
           <>
-            <Group label={t('ribbonGroupProofing')}>
-              <button
-                className="rb-big"
-                disabled={!hasDoc}
-                data-tip={`${t('ribbonSpellCheckTip')} — ${t('ribbonAiCreditNote')}`}
-                onClick={() => {
-                  if (confirmAiRewrite()) onAiPreset(t('ribbonSpellCheckPrompt'))
-                }}
-              >
-                <span className="rb-big-icon">
-                  <span className="ai-feature-icon" aria-hidden="true">
-                    <img src={iconSpelling} width={22} height={22} alt="" />
-                  </span>
-                </span>
-                <span>{t('ribbonSpellCheck')}</span>
-              </button>
-              <div className="rb-drop-wrap">
-                <button
-                  className={`rb-big ${translateOpen ? 'active' : ''}`}
-                  disabled={!hasDoc}
-                  data-tip={`${t('ribbonTranslateTip')} — ${t('ribbonAiCreditNote')}`}
-                  onMouseDown={(e) => {
-                    e.stopPropagation()
-                    closeSiblingPanels(e, closePanels, 'translate')
-                  }}
-                  onClick={() => setTranslateOpen((v) => !v)}
-                >
-                  <span className="rb-big-icon">
-                    <span className="ai-feature-icon" aria-hidden="true">
-                      <img src={iconTranslate} width={22} height={22} alt="" />
-                    </span>
-                    <RbCaret />
-                  </span>
-                  <span>{t('ribbonTranslate')}</span>
-                </button>
-                {translateOpen && (
-                  <div className="rb-drop rb-menu" onMouseDown={(e) => e.stopPropagation()}>
-                    {TRANSLATE_TARGETS.map((lang) => (
-                      <button
-                        key={lang}
-                        onClick={() => {
-                          setTranslateOpen(false)
-                          if (confirmAiRewrite()) {
-                            onAiPreset(t('ribbonTranslatePrompt', { lang: t(lang) }))
-                          }
-                        }}
-                      >
-                        {t(lang)}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </Group>
-            <div className="ribbon-sep" />
             <Group label={t('ribbonGroupComments')}>
               <button
                 className="rb-big"

@@ -1,0 +1,26 @@
+{
+  "name": "@mdt/capabilities",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "private": true,
+  "type": "module",
+  "description": "MDT Capability Registry: manifest schema, deterministic loader, security guards (SSRF, path sandbox), and the built-in capability set",
+  "exports": {
+    ".": "./src/index.ts",
+    "./testing": "./src/testing.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "gen:docs": "UPDATE_DOCS=1 vitest run tests/docs-artifact.test.ts"
+  },
+  "dependencies": {
+    "@mdt/schema": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.11"
+  }
+}
