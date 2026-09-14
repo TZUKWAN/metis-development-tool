@@ -10,7 +10,11 @@ const TEMPLATE_DIR = templateDirFor({
   outDir: '.',
 })
 
-function npm(args: string[], cwd: string, timeoutMs = 600_000): { status: number; stdout: string; stderr: string } {
+function npm(
+  args: string[],
+  cwd: string,
+  timeoutMs = 600_000,
+): { status: number; stdout: string; stderr: string } {
   const command = process.platform === 'win32' ? 'npm.cmd' : 'npm'
   const result = spawnSync(command, args, {
     cwd,

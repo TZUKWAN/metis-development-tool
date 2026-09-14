@@ -313,11 +313,15 @@ function emitPageFile(input: FrontendEmitInput, overlayKind: OverlayKind | undef
   }
 
   const body: string[] = []
-  body.push(`export default function ${plan.componentName}(${isOverlay ? `{ open, onClose }: { open: boolean; onClose: () => void }` : ''}) {`)
+  body.push(
+    `export default function ${plan.componentName}(${isOverlay ? `{ open, onClose }: { open: boolean; onClose: () => void }` : ''}) {`,
+  )
   body.push(`${IND}const navigate = useNavigate()`)
   body.push(`${IND}const [values, setValues] = useState<Record<string, unknown>>({})`)
   body.push(`${IND}const [agentOutputs, setAgentOutputs] = useState<Record<string, string>>({})`)
-  body.push(`${IND}const [capabilityOutputs, setCapabilityOutputs] = useState<Record<string, unknown>>({})`)
+  body.push(
+    `${IND}const [capabilityOutputs, setCapabilityOutputs] = useState<Record<string, unknown>>({})`,
+  )
 
   const visibilityTargets = collectVisibilityTargets(input.interactions)
   const hostPlan = isOverlay ? null : (plan as PagePlan)
@@ -364,7 +368,9 @@ function emitPageFile(input: FrontendEmitInput, overlayKind: OverlayKind | undef
     bindingVarByBindingId.set(binding.id, varName)
     const existing = bindingVarByElement.get(binding.target.elementId) ?? []
     bindingVarByElement.set(binding.target.elementId, [...existing, varName])
-    body.push(`${IND}// data binding ${binding.id}: ${binding.source.type} → element ${binding.target.elementId} (${binding.target.property})`)
+    body.push(
+      `${IND}// data binding ${binding.id}: ${binding.source.type} → element ${binding.target.elementId} (${binding.target.property})`,
+    )
     body.push(
       `${IND}const ${varName} = resolveSource(${stableJsonCompact(sourceLiteral(binding.source))}, bindingCtx)`,
     )
@@ -409,9 +415,13 @@ function emitPageFile(input: FrontendEmitInput, overlayKind: OverlayKind | undef
   }
 
   // render
-  const { elementLines, elementImports } = emitElementChildren(input, bindingVarByElement, (used) => {
-    usesDisplayText = usesDisplayText || used
-  })
+  const { elementLines, elementImports } = emitElementChildren(
+    input,
+    bindingVarByElement,
+    (used) => {
+      usesDisplayText = usesDisplayText || used
+    },
+  )
   for (const needed of elementImports) imports.add(needed)
   if (usesDisplayText) body.push(...displayTextHelper())
 
@@ -425,8 +435,7 @@ function emitPageFile(input: FrontendEmitInput, overlayKind: OverlayKind | undef
         `${IND}  <div className="mdt-overlay" data-overlay-kind="drawer" data-overlay-side="${side}" data-mdt-id='${page.id}' role="dialog" aria-label=${tsString(page.name)} style={{ width: ${page.viewport.width}, height: '100vh' }}>`,
       )
     } else {
-      const dismissible =
-        overlayKind === 'modal' && page.metadata.modalDismissible !== false
+      const dismissible = overlayKind === 'modal' && page.metadata.modalDismissible !== false
       body.push(
         `${IND}  <div className="mdt-overlay-backdrop" data-overlay-kind="${overlayKind}" data-mdt-id='${page.id}'${dismissible ? ' onClick={() => onClose()}' : ''}>`,
       )
@@ -475,11 +484,7 @@ function emitPageFile(input: FrontendEmitInput, overlayKind: OverlayKind | undef
   return `${header}${[...imports].sort().join('\n')}\n\n${body.join('\n')}\n`
 }
 
-function backgroundLines(
-  page: Page,
-  input: FrontendEmitInput,
-  depth: number,
-): string[] {
+function backgroundLines(page: Page, input: FrontendEmitInput, depth: number): string[] {
   const color = page.background['color']
   if (typeof color !== 'string' || color === '') return []
   const safe = /^#[0-9a-fA-F]{3,8}$/.test(color) || /^(rgb|rgba|hsl)a?\(/.test(color)
@@ -567,7 +572,9 @@ function emitHandler(
       if (target !== undefined) {
         lines.push(`${IND}  navigate(${tsString(target)})`)
       } else {
-        lines.push(`${IND}  // unknown navigation target ${action.targetPageId} (lint error upstream)`)
+        lines.push(
+          `${IND}  // unknown navigation target ${action.targetPageId} (lint error upstream)`,
+        )
       }
       break
     }
@@ -810,7 +817,8 @@ function emitElement(
       lines.push(
         `${indent}  value={String(values['${element.id}'] ?? ${stableJsonCompact(element.semantics.defaultValue ?? '')})}`,
       )
-      const placeholder = element.semantics.placeholder ?? asOptionalString(element.visual.props.placeholder)
+      const placeholder =
+        element.semantics.placeholder ?? asOptionalString(element.visual.props.placeholder)
       if (placeholder !== undefined) lines.push(`${indent}  placeholder=${tsString(placeholder)}`)
       if (label !== undefined) lines.push(`${indent}  label=${tsString(label)}`)
       lines.push(...wireChange(input, element, depth, 'value'))
@@ -823,7 +831,8 @@ function emitElement(
       lines.push(
         `${indent}  value={String(values['${element.id}'] ?? ${stableJsonCompact(element.semantics.defaultValue ?? '')})}`,
       )
-      const placeholder = element.semantics.placeholder ?? asOptionalString(element.visual.props.placeholder)
+      const placeholder =
+        element.semantics.placeholder ?? asOptionalString(element.visual.props.placeholder)
       if (placeholder !== undefined) lines.push(`${indent}  placeholder=${tsString(placeholder)}`)
       if (label !== undefined) lines.push(`${indent}  label=${tsString(label)}`)
       lines.push(...wireChange(input, element, depth, 'value'))
@@ -903,7 +912,8 @@ function emitElement(
         lines.push(`${indent}  onCancel={${hook}.cancel}`)
       }
       if (label !== undefined) lines.push(`${indent}  label=${tsString(label)}`)
-      const placeholder = element.semantics.placeholder ?? asOptionalString(element.visual.props.placeholder)
+      const placeholder =
+        element.semantics.placeholder ?? asOptionalString(element.visual.props.placeholder)
       if (placeholder !== undefined) lines.push(`${indent}  placeholder=${tsString(placeholder)}`)
       lines.push(`${indent}/>`)
       break
@@ -1011,7 +1021,9 @@ function resolveImageSrc(element: Element, input: FrontendEmitInput): string {
     if (raw.startsWith('asset:')) return `/assets/${raw.slice('asset:'.length)}`
     return raw
   }
-  input.warnings.push(`image element "${element.name}" (${element.id}) has no src prop — rendering empty`)
+  input.warnings.push(
+    `image element "${element.name}" (${element.id}) has no src prop — rendering empty`,
+  )
   return ''
 }
 

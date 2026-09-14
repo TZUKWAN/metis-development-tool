@@ -1,0 +1,282 @@
+{
+  "schemaVersion": 1,
+  "id": "01a0a224-e6e5-74a6-baf6-e8b616711fda",
+  "name": "Planner and Research",
+  "createdAt": "2026-09-15T00:00:00.000Z",
+  "updatedAt": "2026-09-15T00:00:00.000Z",
+  "pages": [
+    {
+      "id": "01a0a224-e6e5-74aa-838d-063ce35808d5",
+      "name": "Home",
+      "type": "page",
+      "viewport": {
+        "width": 1440,
+        "height": 1024,
+        "preset": "desktop-1440"
+      },
+      "background": {},
+      "elements": [
+        {
+          "id": "01a0a224-e6e5-74ab-88fd-eaf2f6e3d16d",
+          "name": "Title",
+          "role": "text",
+          "visual": {
+            "kind": "text",
+            "geometry": {
+              "x": 120,
+              "y": 60,
+              "width": 520,
+              "height": 44
+            },
+            "style": {
+              "font-size": 32
+            },
+            "props": {}
+          },
+          "semantics": {
+            "handles": [],
+            "accessibility": {
+              "label": "Planner + Research"
+            }
+          },
+          "locked": false,
+          "hidden": false,
+          "children": []
+        },
+        {
+          "id": "01a0a224-e6e5-74ac-b21e-624649224245",
+          "name": "Request Input",
+          "role": "input",
+          "visual": {
+            "kind": "input",
+            "geometry": {
+              "x": 120,
+              "y": 160,
+              "width": 520,
+              "height": 44
+            },
+            "style": {},
+            "props": {}
+          },
+          "semantics": {
+            "handles": [
+              "change"
+            ],
+            "accessibility": {
+              "label": "Request"
+            },
+            "placeholder": "What should we plan and research?"
+          },
+          "locked": false,
+          "hidden": false,
+          "children": []
+        },
+        {
+          "id": "01a0a224-e6e5-74ad-9dc8-3e06a8348d30",
+          "name": "Plan Button",
+          "role": "button",
+          "visual": {
+            "kind": "button",
+            "geometry": {
+              "x": 660,
+              "y": 160,
+              "width": 140,
+              "height": 44
+            },
+            "style": {},
+            "props": {
+              "label": "Plan"
+            }
+          },
+          "semantics": {
+            "handles": [
+              "click"
+            ],
+            "accessibility": {
+              "label": "Plan"
+            }
+          },
+          "locked": false,
+          "hidden": false,
+          "children": []
+        },
+        {
+          "id": "01a0a224-e6e5-74ae-9d7e-d4951635d01d",
+          "name": "Plan Chat",
+          "role": "chat",
+          "visual": {
+            "kind": "chat",
+            "geometry": {
+              "x": 120,
+              "y": 240,
+              "width": 520,
+              "height": 44
+            },
+            "style": {},
+            "props": {}
+          },
+          "semantics": {
+            "handles": [],
+            "accessibility": {
+              "label": "Planner"
+            }
+          },
+          "locked": false,
+          "hidden": false,
+          "children": []
+        }
+      ],
+      "metadata": {}
+    },
+    {
+      "id": "01a0a224-e6e5-74af-9775-3a09a2d32ac1",
+      "name": "Research",
+      "type": "page",
+      "viewport": {
+        "width": 1440,
+        "height": 1024,
+        "preset": "desktop-1440"
+      },
+      "background": {},
+      "elements": [
+        {
+          "id": "01a0a224-e6e5-74b0-8e53-d3a436aa5d91",
+          "name": "Research Chat",
+          "role": "chat",
+          "visual": {
+            "kind": "chat",
+            "geometry": {
+              "x": 120,
+              "y": 80,
+              "width": 520,
+              "height": 44
+            },
+            "style": {},
+            "props": {}
+          },
+          "semantics": {
+            "handles": [],
+            "accessibility": {
+              "label": "Research"
+            }
+          },
+          "locked": false,
+          "hidden": false,
+          "children": []
+        }
+      ],
+      "metadata": {}
+    }
+  ],
+  "components": [],
+  "agents": [
+    {
+      "id": "01a0a224-e6e5-74a7-bd70-c43b6d7dbd01",
+      "name": "Planner Agent",
+      "description": "",
+      "instructions": "You are a planner. Break the user request into concrete research questions. Answer with a numbered list.",
+      "modelPolicy": {
+        "provider": "openai",
+        "model": "gpt-4.1-mini",
+        "api": "openai-completions",
+        "compat": {
+          "supportsDeveloperRole": false,
+          "supportsReasoningEffort": false
+        }
+      },
+      "capabilityRefs": [],
+      "memory": {
+        "enabled": false
+      },
+      "isDefault": true
+    },
+    {
+      "id": "01a0a224-e6e5-74a9-9133-c1977d0f89e1",
+      "name": "Research Agent",
+      "description": "",
+      "instructions": "You are a web research assistant. Answer the given research question with a cited summary.",
+      "modelPolicy": {
+        "provider": "openai",
+        "model": "gpt-4.1-mini",
+        "api": "openai-completions",
+        "compat": {
+          "supportsDeveloperRole": false,
+          "supportsReasoningEffort": false
+        }
+      },
+      "capabilityRefs": [
+        "01a0a224-e6e5-74a8-9782-d91a1e463110"
+      ],
+      "memory": {
+        "enabled": false
+      },
+      "isDefault": false
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "01a0a224-e6e5-74a8-9782-d91a1e463110",
+      "capabilityId": "web_search",
+      "version": "1.0.0",
+      "config": {},
+      "secrets": {},
+      "permissions": [
+        {
+          "scope": "network",
+          "granted": true
+        }
+      ]
+    }
+  ],
+  "interactions": [
+    {
+      "id": "01a0a224-e6e5-74b1-9016-c1aa2a8a1047",
+      "sourcePageId": "01a0a224-e6e5-74aa-838d-063ce35808d5",
+      "sourceElementId": "01a0a224-e6e5-74ad-9dc8-3e06a8348d30",
+      "trigger": "click",
+      "enabled": true,
+      "action": {
+        "type": "sendToAgent",
+        "agentId": "01a0a224-e6e5-74a7-bd70-c43b6d7dbd01",
+        "payload": {
+          "type": "elementValue",
+          "elementId": "01a0a224-e6e5-74ac-b21e-624649224245"
+        },
+        "chatElementId": "01a0a224-e6e5-74ae-9d7e-d4951635d01d"
+      }
+    },
+    {
+      "id": "01a0a224-e6e5-74b2-9f5b-123079dcdf43",
+      "sourcePageId": "01a0a224-e6e5-74aa-838d-063ce35808d5",
+      "sourceElementId": "01a0a224-e6e5-74ad-9dc8-3e06a8348d30",
+      "trigger": "click",
+      "enabled": true,
+      "action": {
+        "type": "navigate",
+        "targetPageId": "01a0a224-e6e5-74af-9775-3a09a2d32ac1"
+      }
+    }
+  ],
+  "bindings": [],
+  "variables": [],
+  "assets": [],
+  "settings": {
+    "theme": {
+      "colors": {},
+      "fonts": {}
+    },
+    "viewportPresets": [
+      {
+        "name": "desktop-1440",
+        "width": 1440,
+        "height": 1024
+      }
+    ],
+    "locale": "en",
+    "generator": {
+      "target": "web-agent",
+      "dependencyOverrides": {}
+    },
+    "defaultAgentId": "01a0a224-e6e5-74a7-bd70-c43b6d7dbd01"
+  }
+}

@@ -8,7 +8,15 @@
  * Opt out in CI with MDT_SKIP_STANDALONE=1; it runs locally by default.
  */
 import { spawnSync } from 'node:child_process'
-import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import {
+  cpSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
@@ -19,7 +27,11 @@ import { builtinManifests, goldenBlueprint } from './helpers/blueprint'
 
 const manifests = builtinManifests()
 
-function npm(args: string[], cwd: string, timeoutMs = 600_000): { status: number; stdout: string; stderr: string } {
+function npm(
+  args: string[],
+  cwd: string,
+  timeoutMs = 600_000,
+): { status: number; stdout: string; stderr: string } {
   const command = process.platform === 'win32' ? 'npm.cmd' : 'npm'
   const result = spawnSync(command, args, {
     cwd,

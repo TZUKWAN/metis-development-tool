@@ -13,7 +13,10 @@ import type { CapabilityManifest } from '@mdt/capabilities'
 
 const manifests = builtinManifests()
 
-function generateTwice(): { filesA: ReturnType<typeof generateProject>; filesB: ReturnType<typeof generateProject> } {
+function generateTwice(): {
+  filesA: ReturnType<typeof generateProject>
+  filesB: ReturnType<typeof generateProject>
+} {
   // generateProject is pure — outDir is only recorded for the write step
   const options = (): { capabilityManifests: Map<string, CapabilityManifest>; outDir: string } => ({
     capabilityManifests: manifests,
@@ -21,8 +24,14 @@ function generateTwice(): { filesA: ReturnType<typeof generateProject>; filesB: 
   })
   const outA = options()
   const outB = options()
-  const filesA = generateProject(goldenBlueprint(), { capabilityManifests: outA.capabilityManifests, outDir: outA.outDir })
-  const filesB = generateProject(goldenBlueprint(), { capabilityManifests: outB.capabilityManifests, outDir: outB.outDir })
+  const filesA = generateProject(goldenBlueprint(), {
+    capabilityManifests: outA.capabilityManifests,
+    outDir: outA.outDir,
+  })
+  const filesB = generateProject(goldenBlueprint(), {
+    capabilityManifests: outB.capabilityManifests,
+    outDir: outB.outDir,
+  })
   return { filesA, filesB }
 }
 
@@ -187,7 +196,11 @@ describe('golden generation', () => {
       entries: Record<string, { kind: string; file: string; line?: number; symbol?: string }>
     }
     const homePage = map.entries['01990000-7000-7000-8000-010000000001']
-    expect(homePage).toMatchObject({ kind: 'page', file: 'src/pages/HomePage.tsx', symbol: 'HomePage' })
+    expect(homePage).toMatchObject({
+      kind: 'page',
+      file: 'src/pages/HomePage.tsx',
+      symbol: 'HomePage',
+    })
     expect(homePage?.line).toBeGreaterThan(0)
     const chat = map.entries['01990000-7000-7000-8000-020000000005']
     expect(chat).toMatchObject({ kind: 'element', file: 'src/pages/HomePage.tsx' })
@@ -203,12 +216,17 @@ describe('golden generation', () => {
     const outDir = trackDir(mkdtempSync(join(tmpdir(), 'mdt-cap-')))
     writeFileSync(join(outDir, 'package.json'), JSON.stringify({ type: 'module' }))
     for (const id of ['web_fetch', 'web_search', 'datetime']) {
-      const file = filesA.files.find((candidate) => candidate.path === `server/capabilities/${id}.js`)
+      const file = filesA.files.find(
+        (candidate) => candidate.path === `server/capabilities/${id}.js`,
+      )
       expect(file, `${id}.js emitted`).toBeDefined()
       writeFileSync(join(outDir, `${id}.js`), file?.content ?? '')
     }
     // the json runtime ships with the generator (not used by the golden blueprint)
-    const jsonSource = readFileSync(new URL('../src/capability-runtime/json.js', import.meta.url), 'utf8')
+    const jsonSource = readFileSync(
+      new URL('../src/capability-runtime/json.js', import.meta.url),
+      'utf8',
+    )
     writeFileSync(join(outDir, 'json.js'), jsonSource)
     const datetime = await import(pathToFileURL(join(outDir, 'datetime.js')).href)
     const parsed = await datetime.execute(
@@ -241,12 +259,21 @@ describe('golden generation', () => {
     await expect(
       webFetch.execute(
         { url: 'http://localhost:9999/x' },
-        { secrets: {}, granted: new Set(['network']), signal: new AbortController().signal, log: () => {} },
+        {
+          secrets: {},
+          granted: new Set(['network']),
+          signal: new AbortController().signal,
+          log: () => {},
+        },
       ),
     ).rejects.toThrow(/blocked|localhostMode/)
 
     const json = await import(pathToFileURL(join(outDir, 'json.js')).href)
-    const query = await json.execute({ operation: 'parse', text: '{"a":{"b":[1,2]}}', path: 'a.b.1' })
+    const query = await json.execute({
+      operation: 'parse',
+      text: '{"a":{"b":[1,2]}}',
+      path: 'a.b.1',
+    })
     expect(query.result).toBe(2)
   })
 })

@@ -1,0 +1,166 @@
+{
+  "schemaVersion": 1,
+  "id": "01a0a224-e6bf-7c95-802c-a2e601a13146",
+  "name": "Local File Analyst",
+  "createdAt": "2026-09-15T00:00:00.000Z",
+  "updatedAt": "2026-09-15T00:00:00.000Z",
+  "pages": [
+    {
+      "id": "01a0a224-e6bf-7c98-ad97-0dbd60325b1a",
+      "name": "Home",
+      "type": "page",
+      "viewport": {
+        "width": 1440,
+        "height": 1024,
+        "preset": "desktop-1440"
+      },
+      "background": {},
+      "elements": [
+        {
+          "id": "01a0a224-e6bf-7c99-b5bf-7ef5eda08cfa",
+          "name": "Title",
+          "role": "text",
+          "visual": {
+            "kind": "text",
+            "geometry": {
+              "x": 120,
+              "y": 60,
+              "width": 520,
+              "height": 44
+            },
+            "style": {
+              "font-size": 32
+            },
+            "props": {}
+          },
+          "semantics": {
+            "handles": [],
+            "accessibility": {
+              "label": "File Analyst"
+            }
+          },
+          "locked": false,
+          "hidden": false,
+          "children": []
+        },
+        {
+          "id": "01a0a224-e6bf-7c9a-aa3f-5e5c6d441c37",
+          "name": "File Picker",
+          "role": "filepicker",
+          "visual": {
+            "kind": "filepicker",
+            "geometry": {
+              "x": 120,
+              "y": 160,
+              "width": 520,
+              "height": 44
+            },
+            "style": {},
+            "props": {}
+          },
+          "semantics": {
+            "handles": [
+              "change"
+            ],
+            "accessibility": {
+              "label": "Choose a file"
+            }
+          },
+          "locked": false,
+          "hidden": false,
+          "children": []
+        },
+        {
+          "id": "01a0a224-e6bf-7c9b-a939-73c3f190286c",
+          "name": "Analyst Chat",
+          "role": "chat",
+          "visual": {
+            "kind": "chat",
+            "geometry": {
+              "x": 120,
+              "y": 240,
+              "width": 520,
+              "height": 44
+            },
+            "style": {},
+            "props": {}
+          },
+          "semantics": {
+            "handles": [],
+            "accessibility": {
+              "label": "Analyst"
+            }
+          },
+          "locked": false,
+          "hidden": false,
+          "children": []
+        }
+      ],
+      "metadata": {}
+    }
+  ],
+  "components": [],
+  "agents": [
+    {
+      "id": "01a0a224-e6bf-7c97-88ef-1a63e89bb30e",
+      "name": "File Analyst",
+      "description": "",
+      "instructions": "You are a file analyst. Read the file the user provides inside the workspace, summarize it, and answer questions about it. Never read outside the allowed directory.",
+      "modelPolicy": {
+        "provider": "openai",
+        "model": "gpt-4.1-mini",
+        "api": "openai-completions",
+        "compat": {
+          "supportsDeveloperRole": false,
+          "supportsReasoningEffort": false
+        }
+      },
+      "capabilityRefs": [
+        "01a0a224-e6bf-7c96-87f2-b9c493db0b5a"
+      ],
+      "memory": {
+        "enabled": false
+      },
+      "isDefault": true
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "01a0a224-e6bf-7c96-87f2-b9c493db0b5a",
+      "capabilityId": "file_read",
+      "version": "1.0.0",
+      "config": {},
+      "secrets": {},
+      "permissions": [
+        {
+          "scope": "filesystem",
+          "detail": "project workspace",
+          "granted": true
+        }
+      ]
+    }
+  ],
+  "interactions": [],
+  "bindings": [],
+  "variables": [],
+  "assets": [],
+  "settings": {
+    "theme": {
+      "colors": {},
+      "fonts": {}
+    },
+    "viewportPresets": [
+      {
+        "name": "desktop-1440",
+        "width": 1440,
+        "height": 1024
+      }
+    ],
+    "locale": "en",
+    "generator": {
+      "target": "web-agent",
+      "dependencyOverrides": {}
+    },
+    "defaultAgentId": "01a0a224-e6bf-7c97-88ef-1a63e89bb30e"
+  }
+}

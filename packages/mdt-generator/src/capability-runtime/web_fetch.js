@@ -89,18 +89,25 @@ export function assertUrlAllowed(rawUrl, options = {}) {
     throw new UrlBlockedError(`invalid url "${rawUrl}"`)
   }
   if (url.protocol !== 'http:' && url.protocol !== 'https:') {
-    throw new UrlBlockedError(`url scheme "${url.protocol}" is blocked — only http/https are allowed`)
+    throw new UrlBlockedError(
+      `url scheme "${url.protocol}" is blocked — only http/https are allowed`,
+    )
   }
   const hostname = url.hostname.toLowerCase()
   const literal = literalIp(hostname)
   if (literal) {
-    if (addressBlocked(literal) && !(options.localhostMode === true && isLoopbackAddress(literal))) {
+    if (
+      addressBlocked(literal) &&
+      !(options.localhostMode === true && isLoopbackAddress(literal))
+    ) {
       throw new UrlBlockedError(`url "${hostname}" points at a blocked address (${literal})`)
     }
     return url
   }
   if (isLoopbackHostname(hostname) && options.localhostMode !== true) {
-    throw new UrlBlockedError(`host "${hostname}" is blocked — use localhostMode for local development`)
+    throw new UrlBlockedError(
+      `host "${hostname}" is blocked — use localhostMode for local development`,
+    )
   }
   const bare = hostname.replace(/\.$/, '')
   if (!isLoopbackHostname(bare) && BLOCKED_HOSTNAMES.has(bare)) {
@@ -111,7 +118,10 @@ export function assertUrlAllowed(rawUrl, options = {}) {
 
 export function checkResolvedAddress(url, addresses, options = {}) {
   for (const address of addresses) {
-    if (addressBlocked(address) && !(options.localhostMode === true && isLoopbackAddress(address))) {
+    if (
+      addressBlocked(address) &&
+      !(options.localhostMode === true && isLoopbackAddress(address))
+    ) {
       throw new UrlBlockedError(`url "${url.host}" resolves to a blocked address (${address})`)
     }
   }
@@ -123,7 +133,10 @@ export async function assertUrlAllowedAsync(rawUrl, options = {}) {
   if (literalIp(url.hostname)) return url
   let resolved
   try {
-    resolved = await dnsPromises.lookup(url.hostname.replace(/\.$/, ''), { all: true, verbatim: true })
+    resolved = await dnsPromises.lookup(url.hostname.replace(/\.$/, ''), {
+      all: true,
+      verbatim: true,
+    })
   } catch {
     throw new UrlBlockedError(`cannot resolve host "${url.hostname}" — refusing to fetch`)
   }
@@ -163,7 +176,10 @@ export function asStringRecord(value, label) {
 /** Mask anything credential-shaped in log output. */
 export function redact(message) {
   return message
-    .replace(/(authorization|api[-_]?key|token|secret|x-api-key|password)="?[\w./+=-]+"?/gi, '$1=[redacted]')
+    .replace(
+      /(authorization|api[-_]?key|token|secret|x-api-key|password)="?[\w./+=-]+"?/gi,
+      '$1=[redacted]',
+    )
     .replace(/\b(sk|pk|ghp|gho|github_pat|xoxb|xoxp)-[\w-]{8,}/g, '[redacted]')
     .replace(/\bBearer\s+[\w./+=-]+/gi, 'Bearer [redacted]')
 }
@@ -251,9 +267,21 @@ function lowercaseHeaders(headers) {
  */
 export async function guardedFetch(input) {
   const label = input.label
-  const timeoutMs = positiveInt(input.timeoutMs, DEFAULT_TIMEOUT_MS, `${label}: timeoutMs must be a positive integer`)
-  const maxBytes = positiveInt(input.maxBytes, DEFAULT_MAX_BYTES, `${label}: maxBytes must be a positive integer`)
-  const maxRedirects = positiveInt(input.maxRedirects ?? MAX_REDIRECTS, MAX_REDIRECTS, `${label}: invalid maxRedirects`)
+  const timeoutMs = positiveInt(
+    input.timeoutMs,
+    DEFAULT_TIMEOUT_MS,
+    `${label}: timeoutMs must be a positive integer`,
+  )
+  const maxBytes = positiveInt(
+    input.maxBytes,
+    DEFAULT_MAX_BYTES,
+    `${label}: maxBytes must be a positive integer`,
+  )
+  const maxRedirects = positiveInt(
+    input.maxRedirects ?? MAX_REDIRECTS,
+    MAX_REDIRECTS,
+    `${label}: invalid maxRedirects`,
+  )
   const guardOptions = { localhostMode: input.allowLocal === true }
 
   if (input.signal.aborted) throw new Error(`${label} cancelled`)
@@ -278,9 +306,11 @@ export async function guardedFetch(input) {
       if (isRedirectStatus(response.status)) {
         const location = response.headers.get('location')
         void response.body?.cancel().catch(() => {})
-        if (!location) throw new Error(`${label}: redirect ${response.status} carries no location header`)
+        if (!location)
+          throw new Error(`${label}: redirect ${response.status} carries no location header`)
         hops += 1
-        if (hops > maxRedirects) throw new Error(`${label}: too many redirects (limit ${maxRedirects})`)
+        if (hops > maxRedirects)
+          throw new Error(`${label}: too many redirects (limit ${maxRedirects})`)
         let next
         try {
           next = new URL(location, current)
@@ -384,7 +414,8 @@ export function isTextualContentType(contentType) {
   const mime = contentType.split(';')[0].trim().toLowerCase()
   if (mime === '') return false
   if (mime.startsWith('text/')) return true
-  if (mime === 'application/json' || mime === 'application/xhtml+xml' || mime === 'application/xml') return true
+  if (mime === 'application/json' || mime === 'application/xhtml+xml' || mime === 'application/xml')
+    return true
   if (mime.endsWith('+json') || mime.endsWith('+xml')) return true
   return false
 }
@@ -402,9 +433,20 @@ export async function execute(input, ctx) {
   requirePermission(ctx, 'web_fetch', 'network')
   if (ctx.signal.aborted) throw new Error('web_fetch cancelled')
 
-  const url = requireNonEmptyString(input.url, 'web_fetch: "url" is required and must be a non-empty string')
-  const maxBytes = positiveInt(input.maxBytes, DEFAULT_MAX_BYTES, 'web_fetch: maxBytes must be a positive integer')
-  const timeoutMs = positiveInt(input.timeoutMs, DEFAULT_TIMEOUT_MS, 'web_fetch: timeoutMs must be a positive integer')
+  const url = requireNonEmptyString(
+    input.url,
+    'web_fetch: "url" is required and must be a non-empty string',
+  )
+  const maxBytes = positiveInt(
+    input.maxBytes,
+    DEFAULT_MAX_BYTES,
+    'web_fetch: maxBytes must be a positive integer',
+  )
+  const timeoutMs = positiveInt(
+    input.timeoutMs,
+    DEFAULT_TIMEOUT_MS,
+    'web_fetch: timeoutMs must be a positive integer',
+  )
   const raw = input.raw === true
   const allowLocal = input.allowLocal === true
 

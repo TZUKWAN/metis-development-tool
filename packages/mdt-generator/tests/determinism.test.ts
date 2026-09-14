@@ -35,7 +35,10 @@ describe('determinism (P11.01)', () => {
 
     expect(blueprintHash(movedBlueprint)).toBe(blueprintHash(baseline))
 
-    const options = (): { capabilityManifests: Map<string, CapabilityManifest>; outDir: string } => ({
+    const options = (): {
+      capabilityManifests: Map<string, CapabilityManifest>
+      outDir: string
+    } => ({
       capabilityManifests: manifests,
       outDir: '/tmp/mdt-determinism-unused',
     })
@@ -54,7 +57,10 @@ describe('determinism (P11.01)', () => {
       page.id === IDS.homePage ? { ...page, background: { color: '#fafbff' } } : page,
     )
     const a = generateProject(baseline, { capabilityManifests: manifests, outDir: '/tmp/x' })
-    const b = generateProject({ ...tinted, pages: tintedPages }, { capabilityManifests: manifests, outDir: '/tmp/x' })
+    const b = generateProject(
+      { ...tinted, pages: tintedPages },
+      { capabilityManifests: manifests, outDir: '/tmp/x' },
+    )
     expect(a.files).not.toEqual(b.files)
   })
 })

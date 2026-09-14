@@ -1,0 +1,265 @@
+{
+  "schemaVersion": 1,
+  "id": "01a0a224-e67b-71b4-a3b8-3906f981c10f",
+  "name": "Web Research Agent",
+  "createdAt": "2026-09-15T00:00:00.000Z",
+  "updatedAt": "2026-09-15T00:00:00.000Z",
+  "pages": [
+    {
+      "id": "01a0a224-e67b-71b8-be48-78580663f964",
+      "name": "Home",
+      "type": "page",
+      "viewport": {
+        "width": 1440,
+        "height": 1024,
+        "preset": "desktop-1440"
+      },
+      "background": {},
+      "elements": [
+        {
+          "id": "01a0a224-e67c-7fff-bcd1-bfbeeb574620",
+          "name": "Title",
+          "role": "text",
+          "visual": {
+            "kind": "text",
+            "geometry": {
+              "x": 120,
+              "y": 60,
+              "width": 520,
+              "height": 44
+            },
+            "style": {
+              "font-size": 32
+            },
+            "props": {}
+          },
+          "semantics": {
+            "handles": [],
+            "accessibility": {
+              "label": "Web Research"
+            }
+          },
+          "locked": false,
+          "hidden": false,
+          "children": []
+        },
+        {
+          "id": "01a0a224-e67d-7f3f-abce-9ee346124915",
+          "name": "Query Input",
+          "role": "input",
+          "visual": {
+            "kind": "input",
+            "geometry": {
+              "x": 120,
+              "y": 160,
+              "width": 520,
+              "height": 44
+            },
+            "style": {},
+            "props": {}
+          },
+          "semantics": {
+            "handles": [
+              "change"
+            ],
+            "accessibility": {
+              "label": "Query"
+            },
+            "placeholder": "What do you want to research?"
+          },
+          "locked": false,
+          "hidden": false,
+          "children": []
+        },
+        {
+          "id": "01a0a224-e67d-7c83-a02e-e4d8e9a50929",
+          "name": "Search Button",
+          "role": "button",
+          "visual": {
+            "kind": "button",
+            "geometry": {
+              "x": 660,
+              "y": 160,
+              "width": 140,
+              "height": 44
+            },
+            "style": {},
+            "props": {
+              "label": "Search"
+            }
+          },
+          "semantics": {
+            "handles": [
+              "click"
+            ],
+            "accessibility": {
+              "label": "Search"
+            }
+          },
+          "locked": false,
+          "hidden": false,
+          "children": []
+        }
+      ],
+      "metadata": {}
+    },
+    {
+      "id": "01a0a224-e67d-7c84-9ab3-374c6296cda1",
+      "name": "Results",
+      "type": "page",
+      "viewport": {
+        "width": 1440,
+        "height": 1024,
+        "preset": "desktop-1440"
+      },
+      "background": {},
+      "elements": [
+        {
+          "id": "01a0a224-e67d-7c85-a57b-07379c8d9445",
+          "name": "Findings List",
+          "role": "list",
+          "visual": {
+            "kind": "list",
+            "geometry": {
+              "x": 120,
+              "y": 80,
+              "width": 520,
+              "height": 44
+            },
+            "style": {},
+            "props": {}
+          },
+          "semantics": {
+            "handles": [],
+            "accessibility": {
+              "label": "Findings"
+            }
+          },
+          "locked": false,
+          "hidden": false,
+          "children": []
+        }
+      ],
+      "metadata": {}
+    }
+  ],
+  "components": [],
+  "agents": [
+    {
+      "id": "01a0a224-e67b-71b7-a745-68f8f46efeb7",
+      "name": "Research Agent",
+      "description": "",
+      "instructions": "You are a web research assistant. Search the web, fetch the most relevant pages, and answer with a short list of findings. Always cite sources.",
+      "modelPolicy": {
+        "provider": "openai",
+        "model": "gpt-4.1-mini",
+        "api": "openai-completions",
+        "compat": {
+          "supportsDeveloperRole": false,
+          "supportsReasoningEffort": false
+        }
+      },
+      "capabilityRefs": [
+        "01a0a224-e67b-71b5-9acd-f7c9ca4398c7",
+        "01a0a224-e67b-71b6-8d06-68a5be2db7a4"
+      ],
+      "memory": {
+        "enabled": false
+      },
+      "isDefault": true
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "01a0a224-e67b-71b5-9acd-f7c9ca4398c7",
+      "capabilityId": "web_search",
+      "version": "1.0.0",
+      "config": {},
+      "secrets": {},
+      "permissions": [
+        {
+          "scope": "network",
+          "granted": true
+        }
+      ]
+    },
+    {
+      "id": "01a0a224-e67b-71b6-8d06-68a5be2db7a4",
+      "capabilityId": "web_fetch",
+      "version": "1.0.0",
+      "config": {},
+      "secrets": {},
+      "permissions": [
+        {
+          "scope": "network",
+          "granted": true
+        }
+      ]
+    }
+  ],
+  "interactions": [
+    {
+      "id": "01a0a224-e67d-7c86-ad71-3d73e753dc6a",
+      "sourcePageId": "01a0a224-e67b-71b8-be48-78580663f964",
+      "sourceElementId": "01a0a224-e67d-7c83-a02e-e4d8e9a50929",
+      "trigger": "click",
+      "enabled": true,
+      "action": {
+        "type": "sendToAgent",
+        "agentId": "01a0a224-e67b-71b7-a745-68f8f46efeb7",
+        "payload": {
+          "type": "elementValue",
+          "elementId": "01a0a224-e67d-7f3f-abce-9ee346124915"
+        }
+      }
+    },
+    {
+      "id": "01a0a224-e67d-7c87-a2c4-11a2efb3ca9c",
+      "sourcePageId": "01a0a224-e67b-71b8-be48-78580663f964",
+      "sourceElementId": "01a0a224-e67d-7c83-a02e-e4d8e9a50929",
+      "trigger": "click",
+      "enabled": true,
+      "action": {
+        "type": "navigate",
+        "targetPageId": "01a0a224-e67d-7c84-9ab3-374c6296cda1"
+      }
+    },
+    {
+      "id": "01a0a224-e67d-7c88-8af0-7eb703bfa3aa",
+      "sourcePageId": "01a0a224-e67d-7c84-9ab3-374c6296cda1",
+      "trigger": "load",
+      "enabled": true,
+      "action": {
+        "type": "bindOutput",
+        "source": {
+          "type": "agentOutput",
+          "agentId": "01a0a224-e67b-71b7-a745-68f8f46efeb7"
+        },
+        "targetElementId": "01a0a224-e67d-7c85-a57b-07379c8d9445",
+        "property": "items"
+      }
+    }
+  ],
+  "bindings": [],
+  "variables": [],
+  "assets": [],
+  "settings": {
+    "theme": {
+      "colors": {},
+      "fonts": {}
+    },
+    "viewportPresets": [
+      {
+        "name": "desktop-1440",
+        "width": 1440,
+        "height": 1024
+      }
+    ],
+    "locale": "en",
+    "generator": {
+      "target": "web-agent",
+      "dependencyOverrides": {}
+    },
+    "defaultAgentId": "01a0a224-e67b-71b7-a745-68f8f46efeb7"
+  }
+}

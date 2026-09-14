@@ -1,0 +1,89 @@
+{
+  "agents": [
+    {
+      "capabilityInstanceIds": [
+        "01a0a224-e67b-71b5-9acd-f7c9ca4398c7",
+        "01a0a224-e67b-71b6-8d06-68a5be2db7a4"
+      ],
+      "description": "",
+      "id": "01a0a224-e67b-71b7-a745-68f8f46efeb7",
+      "instructions": "You are a web research assistant. Search the web, fetch the most relevant pages, and answer with a short list of findings. Always cite sources.",
+      "isDefault": true,
+      "memory": {
+        "enabled": false
+      },
+      "modelPolicy": {
+        "api": "openai-completions",
+        "compat": {
+          "supportsDeveloperRole": false,
+          "supportsReasoningEffort": false
+        },
+        "model": "gpt-4.1-mini",
+        "provider": "openai"
+      },
+      "name": "Research Agent"
+    }
+  ],
+  "tools": [
+    {
+      "description": "Search the web through a pluggable provider (DuckDuckGo html-lite by default) and return title/url/snippet results.",
+      "id": "web_search",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "description": "result count, 1–10 (default 5)",
+            "type": "number"
+          },
+          "provider": {
+            "description": "provider id (default 'duckduckgo')",
+            "type": "string"
+          },
+          "query": {
+            "description": "search query",
+            "type": "string"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "type": "object"
+      },
+      "version": "1.0.0"
+    },
+    {
+      "description": "Fetch an http(s) URL and return readable text (title + tag-stripped body) or the raw body, with SSRF guards, redirect re-validation and hard size limits.",
+      "id": "web_fetch",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "allowLocal": {
+            "description": "explicit loopback opt-in for local dev/tests (default false)",
+            "type": "boolean"
+          },
+          "maxBytes": {
+            "description": "response size cap in bytes (default 1000000)",
+            "type": "number"
+          },
+          "raw": {
+            "description": "return the raw body instead of text-extracted (default false)",
+            "type": "boolean"
+          },
+          "timeoutMs": {
+            "description": "per-request timeout in ms (default 20000)",
+            "type": "number"
+          },
+          "url": {
+            "description": "absolute http(s) url to fetch",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "type": "object"
+      },
+      "version": "1.0.0"
+    }
+  ]
+}

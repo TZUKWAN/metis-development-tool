@@ -1,0 +1,268 @@
+/* MDT generated-app base styles: absolute-position page layout inside a
+ * responsive page container, preserving design geometry. */
+
+:root {
+  --mdt-accent: #5b8def;
+  --mdt-text: #1c1e21;
+  --mdt-border: #d8dbe0;
+  --mdt-bg: #f5f6f8;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: var(--mdt-text);
+  background: var(--mdt-bg);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Responsive page container: fixed design size, scaled down on small viewports. */
+.mdt-page-container {
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+  overflow: auto;
+}
+
+.mdt-page {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid var(--mdt-border);
+  border-radius: 8px;
+  overflow: hidden;
+  transform-origin: top center;
+}
+
+/* Overlay (modal/drawer/popover) chrome */
+.mdt-overlay-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.mdt-overlay {
+  position: relative;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+.mdt-overlay[data-overlay-kind='drawer'] {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  border-radius: 0;
+}
+
+.mdt-overlay[data-overlay-kind='drawer'][data-overlay-side='left'] {
+  left: 0;
+}
+
+.mdt-overlay[data-overlay-kind='drawer'][data-overlay-side='right'] {
+  right: 0;
+}
+
+/* toggleVisibility target hidden state */
+.mdt-hidden {
+  display: none !important;
+}
+
+/* Semantic element styling */
+.mdt-button {
+  background: var(--mdt-accent);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.mdt-button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.mdt-field input,
+.mdt-field textarea,
+.mdt-field select {
+  border: 1px solid var(--mdt-border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font: inherit;
+}
+
+.mdt-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow: auto;
+}
+
+.mdt-list li {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--mdt-border);
+  cursor: default;
+}
+
+.mdt-datatable table {
+  border-collapse: collapse;
+}
+
+.mdt-datatable th,
+.mdt-datatable td {
+  border: 1px solid var(--mdt-border);
+  padding: 6px 10px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.mdt-tabs {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.mdt-tabs button {
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.mdt-tabs button[aria-selected='true'] {
+  border-color: var(--mdt-border);
+  background: #ffffff;
+  font-weight: 600;
+}
+
+.mdt-chat {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--mdt-border);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.mdt-chat-transcript {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mdt-chat-message p {
+  margin: 2px 0 0;
+  white-space: pre-wrap;
+}
+
+.mdt-chat-role {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.6;
+}
+
+.mdt-chat-message.mdt-chat-user {
+  align-self: flex-end;
+  background: var(--mdt-accent);
+  color: #ffffff;
+  border-radius: 10px 10px 2px 10px;
+  padding: 6px 10px;
+  max-width: 85%;
+}
+
+.mdt-chat-message.mdt-chat-assistant {
+  align-self: flex-start;
+  background: var(--mdt-bg);
+  border-radius: 10px 10px 10px 2px;
+  padding: 6px 10px;
+  max-width: 85%;
+}
+
+.mdt-chat-empty {
+  opacity: 0.5;
+}
+
+.mdt-chat-pending {
+  display: inline-block;
+  animation: mdt-pulse 1s infinite;
+}
+
+.mdt-chat-composer {
+  display: flex;
+  gap: 6px;
+  padding: 8px;
+  border-top: 1px solid var(--mdt-border);
+}
+
+.mdt-chat-composer input {
+  flex: 1;
+  border: 1px solid var(--mdt-border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font: inherit;
+}
+
+.mdt-codeblock {
+  margin: 0;
+  padding: 10px;
+  background: #10141a;
+  color: #e6e8eb;
+  border-radius: 8px;
+  overflow: auto;
+  font-size: 13px;
+}
+
+.mdt-browserframe {
+  border: 1px solid var(--mdt-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.mdt-browserframe iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.mdt-browserframe-empty {
+  padding: 12px;
+  opacity: 0.6;
+}
+
+.mdt-filepicker-button {
+  display: inline-block;
+  border: 1px dashed var(--mdt-border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.mdt-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}

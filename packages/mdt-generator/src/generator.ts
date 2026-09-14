@@ -12,14 +12,28 @@
  * records locally-modified generator-owned files as conflicts.
  */
 import { createHash } from 'node:crypto'
-import { existsSync, mkdirSync, readFileSync, readdirSync, unlinkSync, writeFileSync } from 'node:fs'
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  unlinkSync,
+  writeFileSync,
+} from 'node:fs'
 import { dirname, join, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { blueprintHash, type BuildBlueprint, type Element } from '@mdt/schema'
 import type { CapabilityManifest } from '@mdt/capabilities'
 
-import { emitEnvExample, emitChatSpec, emitNavigationSpec, emitReadme, emitSmokeSpec, interactionView } from './emit/meta.js'
+import {
+  emitEnvExample,
+  emitChatSpec,
+  emitNavigationSpec,
+  emitReadme,
+  emitSmokeSpec,
+  interactionView,
+} from './emit/meta.js'
 import { planFrontend } from './emit/pages.js'
 import { emitServer } from './emit/server.js'
 import { lineOf } from './naming.js'
@@ -57,7 +71,15 @@ const GENERATED_PATHS = [
   'server/agents.config.json',
 ]
 const GENERATED_DIRS = ['src/pages/', 'server/capabilities/', 'tests/e2e/', '.mdt/']
-const ALWAYS_SKIP = new Set(['.env', 'node_modules', 'dist', '.git', 'playwright-report', 'test-results', '.mdt-map.json'])
+const ALWAYS_SKIP = new Set([
+  '.env',
+  'node_modules',
+  'dist',
+  '.git',
+  'playwright-report',
+  'test-results',
+  '.mdt-map.json',
+])
 
 function isGeneratedPath(path: string): boolean {
   if (GENERATED_PATHS.includes(path)) return true
@@ -210,7 +232,8 @@ export function generateProject(
   const copiedAssets: CopiedAsset[] = []
   for (const asset of blueprint.assets) {
     const base = asset.path.slice('assets/'.length)
-    const from = options.projectRoot !== undefined ? join(options.projectRoot, ...asset.path.split('/')) : null
+    const from =
+      options.projectRoot !== undefined ? join(options.projectRoot, ...asset.path.split('/')) : null
     const to = join(options.outDir, 'public', 'assets', ...base.split('/'))
     if (from === null || !existsSync(from)) {
       warnings.push(
@@ -236,10 +259,7 @@ export function generateProject(
   }
 }
 
-function emitPackageJson(
-  templateDir: string,
-  dependencyOverrides: Record<string, string>,
-): string {
+function emitPackageJson(templateDir: string, dependencyOverrides: Record<string, string>): string {
   const raw = readFileSync(join(templateDir, 'package.json'), 'utf8')
   const parsed = JSON.parse(raw) as {
     name: string
@@ -448,11 +468,7 @@ export function writeProject(
   }
 
   // refresh the source map artifact next to the manifest
-  writeFileSync(
-    join(outDir, '.mdt-map.json'),
-    `${JSON.stringify(result.map, null, 2)}\n`,
-    'utf8',
-  )
+  writeFileSync(join(outDir, '.mdt-map.json'), `${JSON.stringify(result.map, null, 2)}\n`, 'utf8')
   return { conflicts, removedPaths }
 }
 
@@ -469,5 +485,3 @@ function readPreviousManifest(manifestPath: string): PreviousManifest | null {
     return null // corrupt manifest → treat as absent (all writes win)
   }
 }
-
-

@@ -1,7 +1,13 @@
 /**
  * Public surface of @mdt/generator (P11).
  */
-export { generateProject, writeProject, generateAndWrite, templateDirFor, GENERATOR_VERSION } from './generator'
+export {
+  generateProject,
+  writeProject,
+  generateAndWrite,
+  templateDirFor,
+  GENERATOR_VERSION,
+} from './generator'
 export { lintBlueprint, blueprintToProject } from './lint'
 export { builderPrompt } from './prompt'
 export { planFrontend } from './emit/pages'

@@ -147,7 +147,11 @@ export async function execute(input, ctx) {
   return {
     results: results
       .slice(0, count)
-      .map((r) => ({ title: String(r?.title ?? ''), url: String(r?.url ?? ''), snippet: String(r?.snippet ?? '') })),
+      .map((r) => ({
+        title: String(r?.title ?? ''),
+        url: String(r?.url ?? ''),
+        snippet: String(r?.snippet ?? ''),
+      })),
     provider: providerName,
   }
 }

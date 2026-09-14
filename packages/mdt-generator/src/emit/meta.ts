@@ -9,7 +9,12 @@ import type { BuildBlueprint } from '@mdt/schema'
 import type { FrontendPlan } from './pages.js'
 
 export interface BlueprintInteractionView {
-  navigate: { sourcePath: string; sourceElementId: string; targetPath: string; targetName: string }[]
+  navigate: {
+    sourcePath: string
+    sourceElementId: string
+    targetPath: string
+    targetName: string
+  }[]
   chat: {
     pagePath: string
     chatElementId: string
@@ -136,7 +141,7 @@ export function emitEnvExample(blueprint: BuildBlueprint): string {
   ].sort()
   const lines: string[] = [
     '# MDT generated app — API key configuration (variable NAMES only; fill values locally).',
-    '# One variable per provider used by the project\'s agents',
+    "# One variable per provider used by the project's agents",
     '# (provider uppercased, non-alphanumeric characters → "_").',
   ]
   for (const provider of providers) {
@@ -146,7 +151,7 @@ export function emitEnvExample(blueprint: BuildBlueprint): string {
   lines.push('# Fallback key for any provider without a specific variable above.')
   lines.push('MDT_LLM_API_KEY=')
   lines.push('')
-  lines.push('# Optional endpoint overrides applied to every agent\'s model policy.')
+  lines.push("# Optional endpoint overrides applied to every agent's model policy.")
   lines.push('MDT_LLM_BASE_URL=')
   lines.push('MDT_LLM_MODEL=')
   if (secretSlots.length > 0) {

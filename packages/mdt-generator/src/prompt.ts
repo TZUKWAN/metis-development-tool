@@ -40,7 +40,10 @@ export function builderPrompt(
   const pageLines =
     blueprint.pages.length === 0
       ? ['- (no pages in this project)']
-      : blueprint.pages.map((page) => `- ${page.name} (${page.id}) type=${page.type} ${page.viewport.width}x${page.viewport.height}`)
+      : blueprint.pages.map(
+          (page) =>
+            `- ${page.name} (${page.id}) type=${page.type} ${page.viewport.width}x${page.viewport.height}`,
+        )
 
   return `# MDT Builder Task
 

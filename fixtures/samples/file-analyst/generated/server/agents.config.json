@@ -1,0 +1,58 @@
+{
+  "agents": [
+    {
+      "capabilityInstanceIds": [
+        "01a0a224-e6bf-7c96-87f2-b9c493db0b5a"
+      ],
+      "description": "",
+      "id": "01a0a224-e6bf-7c97-88ef-1a63e89bb30e",
+      "instructions": "You are a file analyst. Read the file the user provides inside the workspace, summarize it, and answer questions about it. Never read outside the allowed directory.",
+      "isDefault": true,
+      "memory": {
+        "enabled": false
+      },
+      "modelPolicy": {
+        "api": "openai-completions",
+        "compat": {
+          "supportsDeveloperRole": false,
+          "supportsReasoningEffort": false
+        },
+        "model": "gpt-4.1-mini",
+        "provider": "openai"
+      },
+      "name": "File Analyst"
+    }
+  ],
+  "tools": [
+    {
+      "description": "Read a file from the project sandbox as utf8 text or base64.",
+      "id": "file_read",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "encoding": {
+            "description": "default utf8",
+            "enum": [
+              "utf8",
+              "base64"
+            ],
+            "type": "string"
+          },
+          "maxBytes": {
+            "description": "refuse files larger than this (default 1000000)",
+            "type": "number"
+          },
+          "path": {
+            "description": "path inside the sandbox (relative to the workdir)",
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "version": "1.0.0"
+    }
+  ]
+}

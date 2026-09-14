@@ -42,13 +42,24 @@ export async function execute(input, ctx) {
   requirePermission(ctx, 'http_request', 'network')
   if (ctx.signal.aborted) throw new Error('http_request cancelled')
 
-  const url = requireNonEmptyString(input.url, 'http_request: "url" is required and must be a non-empty string')
+  const url = requireNonEmptyString(
+    input.url,
+    'http_request: "url" is required and must be a non-empty string',
+  )
   const method = String(input.method ?? 'get').toLowerCase()
   if (!HTTP_METHODS.includes(method)) {
     throw new Error(`http_request: method "${method}" is not one of ${HTTP_METHODS.join(', ')}`)
   }
-  const timeoutMs = positiveInt(input.timeoutMs, DEFAULT_TIMEOUT_MS, 'http_request: timeoutMs must be a positive integer')
-  const maxBytes = positiveInt(input.maxBytes, DEFAULT_MAX_BYTES, 'http_request: maxBytes must be a positive integer')
+  const timeoutMs = positiveInt(
+    input.timeoutMs,
+    DEFAULT_TIMEOUT_MS,
+    'http_request: timeoutMs must be a positive integer',
+  )
+  const maxBytes = positiveInt(
+    input.maxBytes,
+    DEFAULT_MAX_BYTES,
+    'http_request: maxBytes must be a positive integer',
+  )
   const allowLocal = input.allowLocal === true
   const headers = asStringRecord(input.headers, 'http_request: headers')
   const query = asStringRecord(input.query, 'http_request: query')

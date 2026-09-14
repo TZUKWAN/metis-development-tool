@@ -1,0 +1,74 @@
+{
+  "agents": [
+    {
+      "capabilityInstanceIds": [],
+      "description": "",
+      "id": "01a0a224-e6e5-74a7-bd70-c43b6d7dbd01",
+      "instructions": "You are a planner. Break the user request into concrete research questions. Answer with a numbered list.",
+      "isDefault": true,
+      "memory": {
+        "enabled": false
+      },
+      "modelPolicy": {
+        "api": "openai-completions",
+        "compat": {
+          "supportsDeveloperRole": false,
+          "supportsReasoningEffort": false
+        },
+        "model": "gpt-4.1-mini",
+        "provider": "openai"
+      },
+      "name": "Planner Agent"
+    },
+    {
+      "capabilityInstanceIds": [
+        "01a0a224-e6e5-74a8-9782-d91a1e463110"
+      ],
+      "description": "",
+      "id": "01a0a224-e6e5-74a9-9133-c1977d0f89e1",
+      "instructions": "You are a web research assistant. Answer the given research question with a cited summary.",
+      "isDefault": false,
+      "memory": {
+        "enabled": false
+      },
+      "modelPolicy": {
+        "api": "openai-completions",
+        "compat": {
+          "supportsDeveloperRole": false,
+          "supportsReasoningEffort": false
+        },
+        "model": "gpt-4.1-mini",
+        "provider": "openai"
+      },
+      "name": "Research Agent"
+    }
+  ],
+  "tools": [
+    {
+      "description": "Search the web through a pluggable provider (DuckDuckGo html-lite by default) and return title/url/snippet results.",
+      "id": "web_search",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "description": "result count, 1–10 (default 5)",
+            "type": "number"
+          },
+          "provider": {
+            "description": "provider id (default 'duckduckgo')",
+            "type": "string"
+          },
+          "query": {
+            "description": "search query",
+            "type": "string"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "type": "object"
+      },
+      "version": "1.0.0"
+    }
+  ]
+}

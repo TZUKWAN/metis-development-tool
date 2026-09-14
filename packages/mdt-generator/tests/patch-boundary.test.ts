@@ -27,7 +27,10 @@ afterEach(() => {
 describe('patch boundary (P11.19)', () => {
   test('user files survive regeneration; modified generator-owned files are overwritten + conflicts recorded', () => {
     const outDir = freshDir('mdt-patch-')
-    const options = (): { capabilityManifests: Map<string, CapabilityManifest>; outDir: string } => ({
+    const options = (): {
+      capabilityManifests: Map<string, CapabilityManifest>
+      outDir: string
+    } => ({
       capabilityManifests: manifests,
       outDir,
     })
@@ -61,7 +64,10 @@ describe('patch boundary (P11.19)', () => {
 
   test('regeneration of an unchanged tree records no conflicts and is idempotent', () => {
     const outDir = freshDir('mdt-patch-idem-')
-    const options = (): { capabilityManifests: Map<string, CapabilityManifest>; outDir: string } => ({
+    const options = (): {
+      capabilityManifests: Map<string, CapabilityManifest>
+      outDir: string
+    } => ({
       capabilityManifests: manifests,
       outDir,
     })
@@ -79,7 +85,10 @@ describe('patch boundary (P11.19)', () => {
 
   test('stale generator-owned files are removed on regeneration', () => {
     const outDir = freshDir('mdt-patch-stale-')
-    const options = (): { capabilityManifests: Map<string, CapabilityManifest>; outDir: string } => ({
+    const options = (): {
+      capabilityManifests: Map<string, CapabilityManifest>
+      outDir: string
+    } => ({
       capabilityManifests: manifests,
       outDir,
     })
@@ -97,7 +106,10 @@ describe('patch boundary (P11.19)', () => {
     manifest.generatorOwnedPaths.push('src/pages/RemovedOverlay.tsx')
     manifest.fileHashes['src/pages/RemovedOverlay.tsx'] = 'deadbeef'
     writeFileSync(manifestPath, JSON.stringify(manifest))
-    writeFileSync(join(outDir, 'src', 'pages', 'RemovedOverlay.tsx'), 'export {} // stale overlay\n')
+    writeFileSync(
+      join(outDir, 'src', 'pages', 'RemovedOverlay.tsx'),
+      'export {} // stale overlay\n',
+    )
 
     const second = generateProject(goldenBlueprint(), options())
     const { removedPaths } = writeProject(second, options())

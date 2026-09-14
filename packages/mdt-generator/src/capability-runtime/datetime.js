@@ -38,12 +38,14 @@ export async function execute(input) {
     }
     case 'parse': {
       const d = new Date(String(input.value))
-      if (Number.isNaN(d.getTime())) throw new Error(`cannot parse "${String(input.value)}" as a date`)
+      if (Number.isNaN(d.getTime()))
+        throw new Error(`cannot parse "${String(input.value)}" as a date`)
       return { result: formatIn(d, tz), iso: d.toISOString(), timezone: tz }
     }
     case 'add': {
       const d = new Date(String(input.value))
-      if (Number.isNaN(d.getTime())) throw new Error(`cannot parse "${String(input.value)}" as a date`)
+      if (Number.isNaN(d.getTime()))
+        throw new Error(`cannot parse "${String(input.value)}" as a date`)
       const ms = toMs(Number(input.amount), String(input.unit ?? 'days'))
       if (!Number.isFinite(ms)) throw new Error('amount must be a finite number')
       const shifted = new Date(d.getTime() + ms)

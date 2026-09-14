@@ -15,6 +15,7 @@ import { z } from 'zod'
 
 import { parseProject, toBuildBlueprint } from '@mdt/schema'
 
+import { runBuildPipeline, type BuildPipelineOptions } from './build-pipeline'
 import { builderPrompt } from '@mdt/generator'
 import {
   AppServerCodexClient,
@@ -118,9 +119,11 @@ export function registerMdtBuildIpc(deps: GenerateDeps): void {
     }
     active = build
     const contractPrompt = builderPrompt(toBuildBlueprint(blueprint.project), args.task)
-    void runBuild(build, deps, args.task, blueprint.project, session.root, contractPrompt).finally(() => {
-      active = undefined
-    })
+    void runBuild(build, deps, args.task, blueprint.project, session.root, contractPrompt).finally(
+      () => {
+        active = undefined
+      },
+    )
     return { ok: true, buildId, warning: availability.compatWarning }
   })
 
@@ -162,163 +165,30 @@ async function runBuild(
   projectRoot?: string,
   contractPrompt?: string,
 ): Promise<void> {
-  const events: CodexEvent[] = []
   const listener = (event: CodexEvent) => {
-    events.push(event)
     build.log.append('codex_event', { event })
     pushEvent(build.id, event)
   }
-  try {
-    // 1) deterministic scaffold
-    const generation = await deps.generate(project, build.workspace, projectRoot)
-    if (!generation.ok) {
-      build.log.append('failed', { stage: 'generate', error: generation.error })
-      pushEvent(build.id, { type: 'error', message: generation.error ?? 'generation failed' })
-      pushEvent(build.id, { type: 'turn_completed', status: 'failed', error: generation.error })
-      return
-    }
-    pushEvent(build.id, {
-      type: 'file_change_completed',
-      files: [`scaffold (${generation.files ?? 0} files)`],
-    })
-
-    // 2) codex turn(s) with bounded repair loop
-    await build.client.start(listener)
-    const ws = prepareWorkspace(build.workspace, build.id)
-    let turnResult = await build.client.turn(contractPrompt ?? task, {
-      cwd: build.workspace,
-      sandbox: 'workspace-write',
-      timeoutMs: 15 * 60_000,
-    })
-    build.log.append('codex_event', { turn: turnResult })
-
-    // 3) quality gates with bounded repair loop (P10.16)
-    // Quality gates (tasklist 4.2 step 18): the generated app must build
-    // (vite build = strict TS + bundling) and pass its test suite (vitest
-    // unit + Playwright e2e with mocked SSE) before it can be applied.
-    const gates = deps.gates ?? [
+  const result = await runBuildPipeline({
+    buildId: build.id,
+    workspace: build.workspace,
+    project,
+    projectRoot,
+    task,
+    contractPrompt,
+    client: build.client,
+    generate: deps.generate,
+    gates: deps.gates ?? [
+      { name: 'install', command: 'npm', args: ['install', '--no-audit', '--no-fund'] },
       { name: 'build', command: 'npm', args: ['run', 'build'] },
       { name: 'test', command: 'npm', args: ['test'] },
-    ]
-    let gateReport = await runGates(build, gates)
-    let repairs = 0
-    const maxRepairs = deps.maxRepairTurns ?? 2
-    while (!gateReport.ok && repairs < maxRepairs && !build.cancelRequested) {
-      repairs += 1
-      build.log.append('quality_gate', { stage: 'repair', attempt: repairs, report: gateReport })
-      const repairPrompt = [
-        'The last build failed quality gates. Fix the reported errors in the existing code.',
-        `Gate output:\n${gateReport.output.slice(0, 8_000)}`,
-        'Do not rewrite unaffected files. Run nothing outside the workspace.',
-      ].join('\n\n')
-      turnResult = await build.client.turn(repairPrompt, {
-        cwd: build.workspace,
-        sandbox: 'workspace-write',
-        timeoutMs: 15 * 60_000,
-      })
-      gateReport = await runGates(build, gates)
-    }
-    build.log.append('quality_gate', { stage: 'final', report: gateReport })
-
-    if (build.cancelRequested) {
-      discardBuild(ws)
-      build.log.append('cancelled', {})
-      pushEvent(build.id, {
-        type: 'turn_completed',
-        status: 'interrupted',
-        error: 'cancelled by user',
-      })
-      return
-    }
-
-    if (!gateReport.ok) {
-      discardBuild(ws)
-      build.log.append('failed', { stage: 'gates', report: gateReport })
-      pushEvent(build.id, {
-        type: 'turn_completed',
-        status: 'failed',
-        error: `quality gates failed after ${repairs} repair turn(s)`,
-      })
-      return
-    }
-
-    // 4) apply: commit + ff-merge + known-good tag
-    const commit = commitBuild(ws, `build(${build.id}): ${task.slice(0, 60)}`)
-    const applied = applyBuild(ws, commit, build.id)
-    if (!applied.ok) {
-      build.log.append('failed', { stage: 'apply', error: applied.error })
-      pushEvent(build.id, { type: 'turn_completed', status: 'failed', error: applied.error })
-      return
-    }
-    const { stat } = diffSummary(ws)
-    build.log.append('applied', { commit, stat: stat.slice(0, 2_000) })
-    pushEvent(build.id, { type: 'turn_completed', status: 'completed' })
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err)
-    build.log.append('failed', { error: message })
-    pushEvent(build.id, { type: 'error', message })
-    pushEvent(build.id, { type: 'turn_completed', status: 'failed', error: message })
-  } finally {
-    await build.client.dispose().catch(() => {})
-  }
-}
-
-interface GateReport {
-  ok: boolean
-  output: string
-  gates: { name: string; ok: boolean; output: string }[]
-}
-
-async function runGates(
-  build: ActiveBuild,
-  gates: { name: string; command: string; args: string[] }[],
-): Promise<GateReport> {
-  const results: GateReport['gates'] = []
-  for (const gate of gates) {
-    const output = await runCommand(gate.command, gate.args, build.workspace, 10 * 60_000)
-    build.log.append('quality_gate', {
-      gate: gate.name,
-      code: output.code,
-      output: output.text.slice(0, 4_000),
-    })
-    results.push({ name: gate.name, ok: output.code === 0, output: output.text.slice(0, 4_000) })
-    if (output.code !== 0) break // first failure feeds the repair loop
-  }
-  return {
-    ok: results.every((r) => r.ok),
-    output: results.map((r) => `$ ${r.name}\n${r.output}`).join('\n'),
-    gates: results,
-  }
-}
-
-function runCommand(
-  command: string,
-  args: string[],
-  cwd: string,
-  timeoutMs: number,
-): Promise<{ code: number | null; text: string }> {
-  return new Promise((resolve) => {
-    const child = spawn(command, args, {
-      cwd,
-      shell: process.platform === 'win32',
-      env: process.env,
-    })
-    let text = ''
-    const collect = (chunk: Buffer | string) => {
-      if (text.length < 200_000) text += chunk.toString()
-    }
-    child.stdout?.on('data', collect)
-    child.stderr?.on('data', collect)
-    const timer = setTimeout(() => child.kill('SIGKILL'), timeoutMs)
-    child.on('exit', (code) => {
-      clearTimeout(timer)
-      resolve({ code, text })
-    })
-    child.on('error', (err) => {
-      clearTimeout(timer)
-      resolve({ code: -1, text: err.message })
-    })
+    ],
+    maxRepairTurns: deps.maxRepairTurns,
+    log: build.log,
+    onEvent: listener,
+    isCancelled: () => build.cancelRequested,
   })
+  void result
 }
 
 export function activeBuildId(): string | undefined {

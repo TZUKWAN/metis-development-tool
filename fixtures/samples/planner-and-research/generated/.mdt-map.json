@@ -1,0 +1,77 @@
+{
+  "blueprintHash": "a701a3fcd65eee93",
+  "entries": {
+    "01a0a224-e6e5-74aa-838d-063ce35808d5": {
+      "kind": "page",
+      "file": "src/pages/HomePage.tsx",
+      "symbol": "HomePage",
+      "line": 44
+    },
+    "01a0a224-e6e5-74af-9775-3a09a2d32ac1": {
+      "kind": "page",
+      "file": "src/pages/ResearchPage.tsx",
+      "symbol": "ResearchPage",
+      "line": 23
+    },
+    "01a0a224-e6e5-74ab-88fd-eaf2f6e3d16d": {
+      "kind": "element",
+      "file": "src/pages/HomePage.tsx",
+      "symbol": "HomePage",
+      "line": 46
+    },
+    "01a0a224-e6e5-74ac-b21e-624649224245": {
+      "kind": "element",
+      "file": "src/pages/HomePage.tsx",
+      "symbol": "HomePage",
+      "line": 52
+    },
+    "01a0a224-e6e5-74ad-9dc8-3e06a8348d30": {
+      "kind": "element",
+      "file": "src/pages/HomePage.tsx",
+      "symbol": "HomePage",
+      "line": 60
+    },
+    "01a0a224-e6e5-74ae-9d7e-d4951635d01d": {
+      "kind": "element",
+      "file": "src/pages/HomePage.tsx",
+      "symbol": "HomePage",
+      "line": 67
+    },
+    "01a0a224-e6e5-74b0-8e53-d3a436aa5d91": {
+      "kind": "element",
+      "file": "src/pages/ResearchPage.tsx",
+      "symbol": "ResearchPage",
+      "line": 25
+    },
+    "01a0a224-e6e5-74a7-bd70-c43b6d7dbd01": {
+      "kind": "agent",
+      "file": "server/agents.config.json",
+      "symbol": "Planner Agent",
+      "line": 6
+    },
+    "01a0a224-e6e5-74a9-9133-c1977d0f89e1": {
+      "kind": "agent",
+      "file": "server/agents.config.json",
+      "symbol": "Research Agent",
+      "line": 28
+    },
+    "01a0a224-e6e5-74a8-9782-d91a1e463110": {
+      "kind": "capability-instance",
+      "file": "server/capabilities/web_search.js",
+      "symbol": "web_search",
+      "line": 18
+    },
+    "01a0a224-e6e5-74b1-9016-c1aa2a8a1047": {
+      "kind": "interaction",
+      "file": "src/pages/HomePage.tsx",
+      "symbol": "run_0",
+      "line": 31
+    },
+    "01a0a224-e6e5-74b2-9f5b-123079dcdf43": {
+      "kind": "interaction",
+      "file": "src/pages/HomePage.tsx",
+      "symbol": "run_1",
+      "line": 35
+    }
+  }
+}

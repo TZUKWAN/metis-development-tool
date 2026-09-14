@@ -18,11 +18,17 @@ const RUNTIME_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'capabil
 
 /** Capability ids with a bundled self-contained runtime implementation. */
 export const BUNDLED_CAPABILITY_IDS = [
+  'ask_user',
   'datetime',
+  'file_list',
+  'file_read',
+  'file_write',
+  'http_request',
   'json',
+  'python',
+  'shell',
   'web_fetch',
   'web_search',
-  'http_request',
 ] as const
 
 export interface ServerEmit {
@@ -39,7 +45,9 @@ export function emitServer(
 ): ServerEmit {
   const agentIds = new Set(blueprint.agents.map((agent) => agent.id))
   const usedInstances = usedCapabilityInstances(blueprint)
-  const usedCapabilityIds = [...new Set(usedInstances.map((instance) => instance.capabilityId))].sort()
+  const usedCapabilityIds = [
+    ...new Set(usedInstances.map((instance) => instance.capabilityId)),
+  ].sort()
 
   for (const instance of usedInstances) {
     if (!manifests.has(instance.capabilityId)) {
@@ -59,7 +67,9 @@ export function emitServer(
   for (const agent of blueprint.agents) {
     for (const ref of agent.capabilityRefs) {
       if (!usedInstances.some((instance) => instance.id === ref) && !agentIds.has(ref)) {
-        warnings.push(`agent "${agent.name}" references capability instance ${ref} which does not exist`)
+        warnings.push(
+          `agent "${agent.name}" references capability instance ${ref} which does not exist`,
+        )
       }
     }
   }
@@ -142,8 +152,18 @@ function emitCapabilityModule(
           version: '0.0.0',
           category: 'data',
           description: `Capability ${capabilityId} (manifest unavailable at generation time)`,
-          inputSchema: { type: 'object', properties: {}, required: [], additionalProperties: false },
-          outputSchema: { type: 'object', properties: {}, required: [], additionalProperties: false },
+          inputSchema: {
+            type: 'object',
+            properties: {},
+            required: [],
+            additionalProperties: false,
+          },
+          outputSchema: {
+            type: 'object',
+            properties: {},
+            required: [],
+            additionalProperties: false,
+          },
           permissions: [],
           secrets: [],
           timeoutMs: 30_000,
@@ -156,7 +176,7 @@ function emitCapabilityModule(
   try {
     runtime = readFileSync(runtimePath, 'utf8')
   } catch {
-    runtime = UNSUPPORTED_STUB
+    runtime = unsupportedStub(capabilityId)
   }
   const header = `/**
  * Generated capability module — "${capabilityId}" (generator-owned).
@@ -172,12 +192,29 @@ export const manifest = ${manifestLiteral}
   return { path: `server/capabilities/${capabilityId}.js`, content: `${header}${runtime}` }
 }
 
-const UNSUPPORTED_STUB = `export async function execute() {
+/**
+ * Throw-at-execute-time stubs for capabilities without a bundled runtime.
+ * Known ids get a message naming exactly what the generated app is missing;
+ * unknown ids fall back to the generic guidance. The emitServer warning list
+ * still records every unbundled id so lint output stays honest.
+ */
+const STUB_MESSAGES: Record<string, string> = {
+  mcp: 'MCP transport is not bundled in this generated app — add server/mcp-transport.js',
+  browser: 'browser capability requires a Playwright driver — register one in server/index.js',
+}
+
+const GENERIC_STUB_MESSAGE =
+  'this capability has no bundled runtime in the current @mdt/generator build — remove it from the project or implement server/capabilities/<id>.js'
+
+function unsupportedStub(capabilityId: string): string {
+  const message = STUB_MESSAGES[capabilityId] ?? GENERIC_STUB_MESSAGE
+  return `export async function execute() {
   throw new Error(
-    'this capability has no bundled runtime in the current @mdt/generator build — remove it from the project or implement server/capabilities/<id>.js',
+    ${JSON.stringify(message)},
   )
 }
 `
+}
 
 function emitCapabilityIndex(
   instances: CapabilityInstance[],
@@ -191,7 +228,10 @@ function emitCapabilityIndex(
     )
     .join('\n')
   const executors = usedIds
-    .map((id) => `  ${JSON.stringify(id)}: { manifest: ${importAlias(id)}Manifest, execute: ${importAlias(id)}Execute },`)
+    .map(
+      (id) =>
+        `  ${JSON.stringify(id)}: { manifest: ${importAlias(id)}Manifest, execute: ${importAlias(id)}Execute },`,
+    )
     .join('\n')
   const instanceEntries = instances.map((instance) => {
     const manifest = manifests.get(instance.capabilityId)
@@ -201,9 +241,7 @@ function emitCapabilityIndex(
     }
     const grantedScopes = (manifest?.permissions ?? [])
       .filter((permission) => {
-        const grant = instance.permissions.find(
-          (candidate) => candidate.scope === permission.scope,
-        )
+        const grant = instance.permissions.find((candidate) => candidate.scope === permission.scope)
         return grant ? grant.granted : permission.defaultGranted
       })
       .map((permission) => permission.scope)

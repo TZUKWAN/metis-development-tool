@@ -122,7 +122,10 @@ describe('lint (P11.22)', () => {
         : page,
     )
     expect(() =>
-      generateProject({ ...blueprint, pages }, { capabilityManifests: manifests, outDir: '/tmp/x' }),
+      generateProject(
+        { ...blueprint, pages },
+        { capabilityManifests: manifests, outDir: '/tmp/x' },
+      ),
     ).toThrow(GeneratorRefusedError)
     try {
       generateProject({ ...blueprint, pages }, { capabilityManifests: manifests, outDir: '/tmp/x' })

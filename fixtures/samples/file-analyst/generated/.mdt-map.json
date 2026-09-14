@@ -1,0 +1,41 @@
+{
+  "blueprintHash": "168d6d977719bf52",
+  "entries": {
+    "01a0a224-e6bf-7c98-ad97-0dbd60325b1a": {
+      "kind": "page",
+      "file": "src/pages/HomePage.tsx",
+      "symbol": "HomePage",
+      "line": 25
+    },
+    "01a0a224-e6bf-7c99-b5bf-7ef5eda08cfa": {
+      "kind": "element",
+      "file": "src/pages/HomePage.tsx",
+      "symbol": "HomePage",
+      "line": 27
+    },
+    "01a0a224-e6bf-7c9a-aa3f-5e5c6d441c37": {
+      "kind": "element",
+      "file": "src/pages/HomePage.tsx",
+      "symbol": "HomePage",
+      "line": 33
+    },
+    "01a0a224-e6bf-7c9b-a939-73c3f190286c": {
+      "kind": "element",
+      "file": "src/pages/HomePage.tsx",
+      "symbol": "HomePage",
+      "line": 39
+    },
+    "01a0a224-e6bf-7c97-88ef-1a63e89bb30e": {
+      "kind": "agent",
+      "file": "server/agents.config.json",
+      "symbol": "File Analyst",
+      "line": 8
+    },
+    "01a0a224-e6bf-7c96-87f2-b9c493db0b5a": {
+      "kind": "capability-instance",
+      "file": "server/capabilities/file_read.js",
+      "symbol": "file_read",
+      "line": 18
+    }
+  }
+}
