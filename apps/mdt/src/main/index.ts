@@ -1,6 +1,9 @@
 import { BrowserWindow, app } from 'electron'
 import path from 'node:path'
 
+import { CapabilityRegistry, registerBuiltins } from '@mdt/capabilities'
+import { generateAndWrite } from '@mdt/generator'
+import { toBuildBlueprint, type ProjectRoot } from '@mdt/schema'
 import { attachBuildEvents, registerMdtBuildIpc } from './mdt-builder'
 import { registerMdtCapabilityIpc, registerMdtSecretIpc } from './mdt-capabilities-ipc'
 import { registerMdtIoIpc } from './mdt-io'
@@ -20,12 +23,17 @@ registerMdtPreviewIpc()
 registerMdtBuildIpc({
   // the generated workspace lives inside the project directory
   projectsRoot: () => undefined,
-  // wired to @mdt/generator at build assembly (P11); until then builds
-  // surface a loud generation failure instead of pretending to succeed
-  generate: async () => ({
-    ok: false,
-    error: 'MDT generator is not wired into this build of the app',
-  }),
+  generate: async (project, workspaceRoot, projectRoot) => {
+    // build-start has already schema-parsed the project document
+    const blueprint = toBuildBlueprint(project as ProjectRoot)
+    const registry = registerBuiltins(new CapabilityRegistry())
+    const result = generateAndWrite(blueprint, {
+      capabilityManifests: new Map(registry.manifests().map((m) => [m.id, m])),
+      outDir: workspaceRoot,
+      ...(projectRoot ? { projectRoot } : {}),
+    })
+    return { ok: true, files: result.files.length, warnings: result.warnings }
+  },
 })
 // builder events stream to the focused window's webContents
 app.whenReady().then(() => {

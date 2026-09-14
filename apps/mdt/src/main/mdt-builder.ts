@@ -38,7 +38,8 @@ export interface BuildManagerDeps {
   generate: (
     blueprint: unknown,
     workspaceRoot: string,
-  ) => Promise<{ ok: boolean; error?: string; files?: number }>
+    projectRoot?: string,
+  ) => Promise<{ ok: boolean; error?: string; files?: number; warnings?: string[] }>
   /** quality gate commands run inside the workspace, in order */
   gates?: { name: string; command: string; args: string[] }[]
   maxRepairTurns?: number
@@ -115,7 +116,7 @@ export function registerMdtBuildIpc(deps: GenerateDeps): void {
       cancelRequested: false,
     }
     active = build
-    void runBuild(build, deps, args.task, blueprint.project).finally(() => {
+    void runBuild(build, deps, args.task, blueprint.project, session.root).finally(() => {
       active = undefined
     })
     return { ok: true, buildId, warning: availability.compatWarning }
@@ -156,6 +157,7 @@ async function runBuild(
   deps: GenerateDeps,
   task: string,
   project: unknown,
+  projectRoot?: string,
 ): Promise<void> {
   const events: CodexEvent[] = []
   const listener = (event: CodexEvent) => {
@@ -165,7 +167,7 @@ async function runBuild(
   }
   try {
     // 1) deterministic scaffold
-    const generation = await deps.generate(project, build.workspace)
+    const generation = await deps.generate(project, build.workspace, projectRoot)
     if (!generation.ok) {
       build.log.append('failed', { stage: 'generate', error: generation.error })
       pushEvent(build.id, { type: 'error', message: generation.error ?? 'generation failed' })
@@ -188,8 +190,12 @@ async function runBuild(
     build.log.append('codex_event', { turn: turnResult })
 
     // 3) quality gates with bounded repair loop (P10.16)
+    // Quality gates (tasklist 4.2 step 18): the generated app must build
+    // (vite build = strict TS + bundling) and pass its test suite (vitest
+    // unit + Playwright e2e with mocked SSE) before it can be applied.
     const gates = deps.gates ?? [
-      { name: 'typecheck', command: process.execPath, args: ['--version'] }, // placeholder replaced by real gates at assembly
+      { name: 'build', command: 'npm', args: ['run', 'build'] },
+      { name: 'test', command: 'npm', args: ['test'] },
     ]
     let gateReport = await runGates(build, gates)
     let repairs = 0
