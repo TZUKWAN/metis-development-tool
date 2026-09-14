@@ -13,8 +13,9 @@ import path from 'node:path'
 
 import { z } from 'zod'
 
-import { parseProject } from '@mdt/schema'
+import { parseProject, toBuildBlueprint } from '@mdt/schema'
 
+import { builderPrompt } from '@mdt/generator'
 import {
   AppServerCodexClient,
   BuildLog,
@@ -116,7 +117,8 @@ export function registerMdtBuildIpc(deps: GenerateDeps): void {
       cancelRequested: false,
     }
     active = build
-    void runBuild(build, deps, args.task, blueprint.project, session.root).finally(() => {
+    const contractPrompt = builderPrompt(toBuildBlueprint(blueprint.project), args.task)
+    void runBuild(build, deps, args.task, blueprint.project, session.root, contractPrompt).finally(() => {
       active = undefined
     })
     return { ok: true, buildId, warning: availability.compatWarning }
@@ -158,6 +160,7 @@ async function runBuild(
   task: string,
   project: unknown,
   projectRoot?: string,
+  contractPrompt?: string,
 ): Promise<void> {
   const events: CodexEvent[] = []
   const listener = (event: CodexEvent) => {
@@ -182,7 +185,7 @@ async function runBuild(
     // 2) codex turn(s) with bounded repair loop
     await build.client.start(listener)
     const ws = prepareWorkspace(build.workspace, build.id)
-    let turnResult = await build.client.turn(task, {
+    let turnResult = await build.client.turn(contractPrompt ?? task, {
       cwd: build.workspace,
       sandbox: 'workspace-write',
       timeoutMs: 15 * 60_000,
