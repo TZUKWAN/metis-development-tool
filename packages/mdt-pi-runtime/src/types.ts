@@ -20,9 +20,20 @@ export type RuntimeEvent =
   | { type: 'thinking_delta'; delta: string }
   | { type: 'tool_start'; callId: string; name: string; args: Record<string, unknown> }
   | { type: 'tool_progress'; callId: string; message: string }
-  | { type: 'tool_result'; callId: string; name: string; isError: boolean; content: Record<string, unknown> }
+  | {
+      type: 'tool_result'
+      callId: string
+      name: string
+      isError: boolean
+      content: Record<string, unknown>
+    }
   | { type: 'turn_end' }
-  | { type: 'run_end'; stopReason: 'completed' | 'cancelled' | 'error'; responseText: string; error?: NormalizedError }
+  | {
+      type: 'run_end'
+      stopReason: 'completed' | 'cancelled' | 'error'
+      responseText: string
+      error?: NormalizedError
+    }
 
 export type RuntimeEventListener = (event: RuntimeEvent) => void
 
@@ -53,5 +64,9 @@ export interface RegisteredTool {
   description: string
   /** JSON Schema object (TypeBox schemas are JSON Schema at runtime) */
   parameters: Record<string, unknown>
-  execute: (args: Record<string, unknown>, signal: AbortSignal, onProgress: (message: string) => void) => Promise<{ content: Record<string, unknown>; isError?: boolean }>
+  execute: (
+    args: Record<string, unknown>,
+    signal: AbortSignal,
+    onProgress: (message: string) => void,
+  ) => Promise<{ content: Record<string, unknown>; isError?: boolean }>
 }

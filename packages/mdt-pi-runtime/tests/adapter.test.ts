@@ -50,7 +50,9 @@ describe('createRuntimeAgent (P08.02, P08.10)', () => {
     expect(kinds[0]).toBe('run_start')
     expect(kinds[1]).toBe('turn_start')
     expect(kinds.at(-1)).toBe('run_end')
-    const deltas = events.filter((e): e is Extract<RuntimeEvent, { type: 'text_delta' }> => e.type === 'text_delta')
+    const deltas = events.filter(
+      (e): e is Extract<RuntimeEvent, { type: 'text_delta' }> => e.type === 'text_delta',
+    )
     expect(deltas.map((d) => d.delta).join('')).toBe('Hello world, this is the answer.')
   })
 
@@ -68,8 +70,12 @@ describe('createRuntimeAgent (P08.02, P08.10)', () => {
     const result = await agent.run('What time is it?')
     expect(result.stopReason).toBe('completed')
     expect(result.responseText).toBe('The time is 12:00.')
-    const start = events.find((e): e is Extract<RuntimeEvent, { type: 'tool_start' }> => e.type === 'tool_start')
-    const done = events.find((e): e is Extract<RuntimeEvent, { type: 'tool_result' }> => e.type === 'tool_result')
+    const start = events.find(
+      (e): e is Extract<RuntimeEvent, { type: 'tool_start' }> => e.type === 'tool_start',
+    )
+    const done = events.find(
+      (e): e is Extract<RuntimeEvent, { type: 'tool_result' }> => e.type === 'tool_result',
+    )
     expect(start?.name).toBe('get_time')
     expect(done?.isError).toBe(false)
     // tool result must precede the final text deltas
@@ -100,7 +106,9 @@ describe('createRuntimeAgent (P08.02, P08.10)', () => {
     const events = collect(agent)
     const result = await agent.run('do the thing')
     expect(result.stopReason).toBe('completed')
-    const done = events.find((e): e is Extract<RuntimeEvent, { type: 'tool_result' }> => e.type === 'tool_result')
+    const done = events.find(
+      (e): e is Extract<RuntimeEvent, { type: 'tool_result' }> => e.type === 'tool_result',
+    )
     expect(done?.isError).toBe(true)
   })
 
@@ -111,7 +119,11 @@ describe('createRuntimeAgent (P08.02, P08.10)', () => {
       getApiKey: () => 'unused',
       // a stream that hangs forever but honors the loop's abort signal —
       // user cancel must break the run and surface as 'cancelled'
-      streamFn: ((_model: unknown, _context: unknown, options: { signal?: AbortSignal } | undefined) => {
+      streamFn: ((
+        _model: unknown,
+        _context: unknown,
+        options: { signal?: AbortSignal } | undefined,
+      ) => {
         const signal = options?.signal
         return new Promise<never>((_, reject) => {
           const timer = setTimeout(() => reject(new Error('stream hung past test window')), 2_000)

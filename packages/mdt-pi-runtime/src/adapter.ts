@@ -54,18 +54,31 @@ export function toolFromRegistered(tool: RegisteredTool): AgentTool {
     label: tool.name,
     description: tool.description,
     parameters,
-    execute: async (toolCallId: string, rawParams: unknown, signal?: AbortSignal, onUpdate?: (u: { content: { type: 'text'; text: string }[]; details: Record<string, never> }) => void) => {
+    execute: async (
+      toolCallId: string,
+      rawParams: unknown,
+      signal?: AbortSignal,
+      onUpdate?: (u: {
+        content: { type: 'text'; text: string }[]
+        details: Record<string, never>
+      }) => void,
+    ) => {
       onUpdate?.({ content: [{ type: 'text', text: 'running' }], details: {} })
       // Contract: a failing tool THROWS. Pi converts the throw into an
       // isError tool result the model can react to — catching here would
       // hide the failure from both the model and the UI.
-      const result = await tool.execute(rawParams as Record<string, unknown>, signal ?? new AbortController().signal, (message) =>
-        onUpdate?.({ content: [{ type: 'text', text: message }], details: {} }),
+      const result = await tool.execute(
+        rawParams as Record<string, unknown>,
+        signal ?? new AbortController().signal,
+        (message) => onUpdate?.({ content: [{ type: 'text', text: message }], details: {} }),
       )
       if (result.isError) {
         throw new Error(extractText(result.content))
       }
-      return { content: [{ type: 'text', text: JSON.stringify(result.content) }], details: result.content }
+      return {
+        content: [{ type: 'text', text: JSON.stringify(result.content) }],
+        details: result.content,
+      }
     },
   }
 }
@@ -79,7 +92,9 @@ export interface RuntimeAgent {
   /** subscribe to normalized events; returns an unsubscribe function */
   subscribe(listener: RuntimeEventListener): () => void
   /** run one full agent turn-set; resolves after run_end */
-  run(input: string): Promise<{ responseText: string; stopReason: 'completed' | 'cancelled' | 'error' }>
+  run(
+    input: string,
+  ): Promise<{ responseText: string; stopReason: 'completed' | 'cancelled' | 'error' }>
   /** cancel the active run (P08.12) */
   abort(): void
   /** direct access for embedding hosts that need the Pi agent (approval bridge) */
@@ -98,7 +113,8 @@ export function createRuntimeAgent(options: CreateAgentOptions): RuntimeAgent {
       tools: tools.map(toolFromRegistered),
       messages: [],
     },
-    streamFn: streamFn ?? ((m, ctx, opts) => streamSimple(m, ctx, opts as SimpleStreamOptions | undefined)),
+    streamFn:
+      streamFn ?? ((m, ctx, opts) => streamSimple(m, ctx, opts as SimpleStreamOptions | undefined)),
     getApiKey,
     toolExecution: 'parallel',
   })
@@ -119,10 +135,19 @@ export function createRuntimeAgent(options: CreateAgentOptions): RuntimeAgent {
           break
         }
         case 'tool_execution_start':
-          listener({ type: 'tool_start', callId: event.toolCallId, name: event.toolName, args: safeJson(event.args) })
+          listener({
+            type: 'tool_start',
+            callId: event.toolCallId,
+            name: event.toolName,
+            args: safeJson(event.args),
+          })
           break
         case 'tool_execution_update':
-          listener({ type: 'tool_progress', callId: event.toolCallId, message: summarize(event.partialResult) })
+          listener({
+            type: 'tool_progress',
+            callId: event.toolCallId,
+            message: summarize(event.partialResult),
+          })
           break
         case 'tool_execution_end':
           listener({
@@ -165,7 +190,13 @@ export function createRuntimeAgent(options: CreateAgentOptions): RuntimeAgent {
         return { responseText, stopReason: 'completed' }
       } catch (err) {
         const normalized = normalizeError(err)
-        for (const l of listeners) l({ type: 'run_end', stopReason: normalized.kind === 'cancelled' ? 'cancelled' : 'error', responseText, error: normalized })
+        for (const l of listeners)
+          l({
+            type: 'run_end',
+            stopReason: normalized.kind === 'cancelled' ? 'cancelled' : 'error',
+            responseText,
+            error: normalized,
+          })
         return { responseText, stopReason: normalized.kind === 'cancelled' ? 'cancelled' : 'error' }
       }
     },
@@ -190,7 +221,8 @@ function summarize(partial: unknown): string {
     const content = (partial as { content?: unknown }).content
     if (Array.isArray(content)) {
       const text = content.find((c) => (c as { type?: string }).type === 'text')
-      if (text && typeof (text as { text?: unknown }).text === 'string') return (text as { text: string }).text.slice(0, 200)
+      if (text && typeof (text as { text?: unknown }).text === 'string')
+        return (text as { text: string }).text.slice(0, 200)
     }
   }
   return 'working'

@@ -20,12 +20,20 @@ export function normalizeError(err: unknown): NormalizedError {
 
 function classify(message: string, err: Error | undefined): ErrorKind {
   const lower = message.toLowerCase()
-  if (err?.name === 'AbortError' || lower.includes('aborted') || lower.includes('cancelled')) return 'cancelled'
+  if (err?.name === 'AbortError' || lower.includes('aborted') || lower.includes('cancelled'))
+    return 'cancelled'
   if (lower.includes('timeout') || lower.includes('etimedout')) return 'timeout'
   if (lower.startsWith('tool_error:') || lower.includes('tool execution')) return 'tool'
-  if (lower.includes('api key') || lower.includes('unauthorized') || lower.includes('401') || lower.includes('fetch failed') || lower.includes('rate limit')) {
+  if (
+    lower.includes('api key') ||
+    lower.includes('unauthorized') ||
+    lower.includes('401') ||
+    lower.includes('fetch failed') ||
+    lower.includes('rate limit')
+  ) {
     return 'provider'
   }
-  if (lower.includes('invalid') || lower.includes('schema') || lower.includes('validation')) return 'validation'
+  if (lower.includes('invalid') || lower.includes('schema') || lower.includes('validation'))
+    return 'validation'
   return 'unknown'
 }

@@ -3,7 +3,13 @@
  * no network, no API keys, deterministic event ordering.
  */
 import type { StreamFn } from '@earendil-works/pi-agent-core'
-import { createAssistantMessageEventStream, type Api, type AssistantMessageEventStream, type Context, type Model } from '@earendil-works/pi-ai'
+import {
+  createAssistantMessageEventStream,
+  type Api,
+  type AssistantMessageEventStream,
+  type Context,
+  type Model,
+} from '@earendil-works/pi-ai'
 
 export const MOCK_MODEL: Model<'openai-completions'> = {
   id: 'mock-model',
@@ -28,7 +34,14 @@ interface MockUsage {
 }
 
 function usage(): MockUsage {
-  return { input: 1, output: 1, cacheRead: 0, cacheWrite: 0, totalTokens: 2, cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 } }
+  return {
+    input: 1,
+    output: 1,
+    cacheRead: 0,
+    cacheWrite: 0,
+    totalTokens: 2,
+    cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
+  }
 }
 
 interface MockAssistantMessage {
@@ -42,7 +55,10 @@ interface MockAssistantMessage {
   timestamp: number
 }
 
-function assistantMessage(content: MockAssistantContent[], stopReason: 'stop' | 'toolUse'): MockAssistantMessage {
+function assistantMessage(
+  content: MockAssistantContent[],
+  stopReason: 'stop' | 'toolUse',
+): MockAssistantMessage {
   return {
     role: 'assistant',
     content,
@@ -85,18 +101,45 @@ export function mockStreamFn(turns: MockTurn[]): StreamFn {
         stream.push({ type: 'text_start', contentIndex: 0, partial: message() as never })
         const parts = turn.text.match(/.{1,12}/gs) ?? []
         parts.forEach((part) => {
-          content[0] = { type: 'text', text: (content[0]?.type === 'text' ? content[0].text : '') + part }
-          stream.push({ type: 'text_delta', contentIndex: 0, delta: part, partial: message() as never })
+          content[0] = {
+            type: 'text',
+            text: (content[0]?.type === 'text' ? content[0].text : '') + part,
+          }
+          stream.push({
+            type: 'text_delta',
+            contentIndex: 0,
+            delta: part,
+            partial: message() as never,
+          })
         })
-        stream.push({ type: 'text_end', contentIndex: 0, content: turn.text, partial: message() as never })
+        stream.push({
+          type: 'text_end',
+          contentIndex: 0,
+          content: turn.text,
+          partial: message() as never,
+        })
       }
       for (const tc of turn.toolCalls ?? []) {
-        const call = { type: 'toolCall' as const, id: tc.id, name: tc.name, arguments: tc.arguments }
+        const call = {
+          type: 'toolCall' as const,
+          id: tc.id,
+          name: tc.name,
+          arguments: tc.arguments,
+        }
         content.push(call)
-        stream.push({ type: 'toolcall_end', contentIndex: content.length - 1, toolCall: call, partial: message() as never })
+        stream.push({
+          type: 'toolcall_end',
+          contentIndex: content.length - 1,
+          toolCall: call,
+          partial: message() as never,
+        })
       }
       const final = message()
-      stream.push({ type: 'done', reason: turn.toolCalls?.length ? 'toolUse' : 'stop', message: final as never })
+      stream.push({
+        type: 'done',
+        reason: turn.toolCalls?.length ? 'toolUse' : 'stop',
+        message: final as never,
+      })
       stream.end(final as never)
     })()
     return stream
