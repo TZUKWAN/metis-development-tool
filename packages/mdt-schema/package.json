@@ -6,7 +6,8 @@
   "type": "module",
   "description": "MDT project model: Zod schemas, stable IDs, reference integrity, migrations, deterministic BuildBlueprint",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./testing": "./src/testing.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
