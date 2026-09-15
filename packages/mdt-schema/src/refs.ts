@@ -379,7 +379,7 @@ export function validateRefs(project: ProjectRoot, options: ValidateRefsOptions 
           message: `element references missing component ${el.semantics.componentRef}`,
         })
       }
-      for (const [key, value] of Object.entries({ ...el.visual.style, ...el.visual.props })) {
+      for (const [, value] of Object.entries({ ...el.visual.style, ...el.visual.props })) {
         if (typeof value === 'string' && value.startsWith('asset:')) {
           const assetPath = `assets/${value.slice('asset:'.length)}`
           if (!assetPaths.has(assetPath)) {

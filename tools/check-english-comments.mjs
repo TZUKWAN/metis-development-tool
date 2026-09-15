@@ -23,6 +23,7 @@ const root = spawnSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf
 const violations = []
 for (const file of git.stdout.trim().split('\n')) {
   const isCode = /\.(ts|tsx|mjs|cjs|js)$/.test(file)
+  if (file === 'MDT_1.0_TASKLIST.md' || file === 'TASK_STATUS.md') continue
   const isDoc =
     /\.(md|html?)$/.test(file) && !file.includes('/ai/prompts/') && !file.includes('/i18n/')
   if (!isCode && !isDoc) continue

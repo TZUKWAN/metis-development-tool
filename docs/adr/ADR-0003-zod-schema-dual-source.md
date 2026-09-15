@@ -7,8 +7,7 @@
 ## Context
 
 The MDT project file (`mdt.project.json`) needs both compile-time TypeScript
-types and runtime validation. Third-party tooling (tasklist P17.06: "第三方
-工具可解析") needs a published JSON Schema. Keeping hand-written TypeScript
+types and runtime validation. Third-party tooling (tasklist P17.06: ("parseable by third-party tooling") needs a published JSON Schema. Keeping hand-written TypeScript
 types and hand-written JSON Schema in sync is a classic drift bug.
 
 ## Decision

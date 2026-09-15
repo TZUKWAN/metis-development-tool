@@ -4,8 +4,6 @@
  * The renderer never spawns processes and never sees protocol details —
  * it consumes these typed events through IPC.
  */
-import type { JsonValue } from '@mdt/schema'
-
 export type CodexEvent =
   | { type: 'session_started'; sessionId: string; threadId?: string }
   | { type: 'agent_message_delta'; delta: string }

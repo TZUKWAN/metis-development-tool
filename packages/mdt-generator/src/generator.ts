@@ -20,11 +20,10 @@ import {
   unlinkSync,
   writeFileSync,
 } from 'node:fs'
-import { dirname, join, sep } from 'node:path'
+import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { blueprintHash, type BuildBlueprint, type Element } from '@mdt/schema'
-import type { CapabilityManifest } from '@mdt/capabilities'
 
 import {
   emitEnvExample,

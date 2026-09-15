@@ -1210,19 +1210,6 @@ export function App() {
     [],
   )
 
-  const applyDeck = useCallback((all: RenderSlide[], goTo?: number) => {
-    setSlides(all)
-    if (goTo != null) setCurrent(goTo)
-    setSelectedIds([])
-    setEditing(null)
-    setDirty(true)
-    // The deck is the new truth: drop an in-progress notes draft (same as undo) so a stale
-    // draft can't overwrite what the AI batch wrote via setNotes on the next flush, then
-    // re-fetch notes/comments, which aren't part of RenderSlide.
-    notesDraftRef.current = null
-    setAnnotationsNonce((n) => n + 1)
-  }, [])
-
   const addSlide = useCallback(() => slideActions.addSlide(ctxRef.current), [])
   const addSlideWithLayout = useCallback(
     (layoutPath: string) => slideActions.addSlideWithLayout(ctxRef.current, layoutPath),

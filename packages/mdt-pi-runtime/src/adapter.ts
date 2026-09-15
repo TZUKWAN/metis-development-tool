@@ -10,7 +10,7 @@ import { Agent, type AgentTool, type StreamFn } from '@earendil-works/pi-agent-c
 import { type Api, type Model, type SimpleStreamOptions } from '@earendil-works/pi-ai'
 import { streamSimple } from '@earendil-works/pi-ai/compat'
 
-import type { AgentConfig, RegisteredTool, RuntimeEvent, RuntimeEventListener } from './types'
+import type { AgentConfig, RegisteredTool, RuntimeEventListener } from './types'
 import { normalizeError } from './errors'
 
 export interface CreateAgentOptions {

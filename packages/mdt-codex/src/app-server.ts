@@ -13,7 +13,7 @@
  */
 import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process'
 
-import { JsonValueSchema, type JsonValue } from '@mdt/schema'
+import type { JsonValue } from '@mdt/schema'
 
 import { resolveCodexBinary } from './versions'
 import type { CodexClient, CodexEventListener, CodexTurnOptions, CodexTurnResult } from './types'

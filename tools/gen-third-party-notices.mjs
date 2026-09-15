@@ -14,7 +14,6 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'node:fs'
 import { join, dirname, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { execFileSync } from 'node:child_process'
 import { builtinModules, createRequire } from 'node:module'
 
 const require = createRequire(import.meta.url)
@@ -212,7 +211,6 @@ function repoOf(pkg) {
   return url ? url.replace(/^git\+/, '').replace(/\.git$/, '') : null
 }
 
-
 const hr = (title) => `\n${'='.repeat(72)}\n${title}\n${'='.repeat(72)}\n`
 const sub = (title) => `\n${'-'.repeat(72)}\n${title}\n${'-'.repeat(72)}\n`
 
@@ -244,7 +242,6 @@ for (const [name, { dir, pkg }] of resolved) {
   const notice = noticeText(dir)
   if (notice) out += `\nNOTICE:\n${notice}\n`
 }
-
 
 const GOTHIC_KR_COPYRIGHT = [
   'Copyright (c) 2010, NHN Corporation (http://www.nhncorp.com),',
@@ -327,8 +324,7 @@ const FONTS = [
 out += hr('3. Bundled fonts')
 for (const [name, spdx, copyright] of FONTS) out += sub(`${name} — ${spdx}`) + copyright + '\n'
 out += sub('SIL Open Font License 1.1 — full text')
-out +=
-  readFileSync(join(ROOT, 'packages/ui/src/fonts/LICENSE-OFL.txt'), 'utf8').trim() + '\n'
+out += readFileSync(join(ROOT, 'packages/ui/src/fonts/LICENSE-OFL.txt'), 'utf8').trim() + '\n'
 
 out += hr('4. Unicode Character Database data')
 out += `

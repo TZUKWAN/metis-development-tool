@@ -1,4 +1,4 @@
-import { existsSync, mkdtempSync, readFileSync } from 'node:fs'
+import { existsSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
@@ -120,7 +120,6 @@ describe('crash recovery (P05.04)', () => {
   it('returns null for absent or garbage snapshots', () => {
     expect(readRecoverySnapshot(root)).toBeNull()
     writeRecoverySnapshot(root, emptyProject())
-    const { writeFileSync } = require('node:fs') as typeof import('node:fs')
     writeFileSync(join(root, '.mdt', 'recovery.json'), 'garbage{')
     expect(readRecoverySnapshot(root)).toBeNull()
   })

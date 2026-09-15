@@ -61,7 +61,7 @@ export function interactionView(
   return { navigate, chat }
 }
 
-export function emitSmokeSpec(pages: FrontendPlan['pages']): string {
+export function emitSmokeSpec(_pages: FrontendPlan['pages']): string {
   return `/**
  * Generated route smoke test (generator-owned): every MDT page route renders
  * its page container. No agent service needed — pure frontend rendering.

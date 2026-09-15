@@ -40,7 +40,7 @@ export async function execute(input) {
       try {
         value = JSON.parse(text)
       } catch (err) {
-        throw new Error(`invalid JSON: ${err.message}`)
+        throw new Error(`invalid JSON: ${err.message}`, { cause: err })
       }
       const picked = input.path === undefined ? value : queryPath(value, String(input.path))
       return { result: picked, text: JSON.stringify(picked) }

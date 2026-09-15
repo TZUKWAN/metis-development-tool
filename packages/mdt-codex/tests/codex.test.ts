@@ -177,7 +177,7 @@ describe('build log + redaction (P10.17, P13.04)', () => {
     expect(out).toContain('[redacted]')
   })
 
-  it('rotateBuildLogs keeps only the newest N build dirs', () => {
+  it('rotateBuildLogs keeps only the newest N build dirs', async () => {
     const buildsDir = join(tmp, 'rotate')
     for (let i = 0; i < 25; i++) {
       const dir = join(buildsDir, `b${String(i).padStart(2, '0')}`)
@@ -187,7 +187,7 @@ describe('build log + redaction (P10.17, P13.04)', () => {
       ])
     }
     rotateBuildLogs(buildsDir, 5)
-    const { readdirSync } = require('node:fs') as typeof import('node:fs')
+    const { readdirSync } = await import('node:fs')
     expect(readdirSync(buildsDir).length).toBe(5)
   })
 })

@@ -1,3 +1,4 @@
+import { spawn } from 'node:child_process'
 /**
  * Shared test helpers for app-server protocol tests: a TestableClient that
  * spawns an explicit argv (the fake app-server child), a script writer for
@@ -29,7 +30,6 @@ export class TestableClient extends AppServerCodexClient {
   ): import('node:child_process').ChildProcessWithoutNullStreams {
     void command
     void args
-    const { spawn } = require('node:child_process') as typeof import('node:child_process')
     return spawn(this.argv[0], this.argv.slice(1), {
       stdio: ['pipe', 'pipe', 'pipe'],
     }) as import('node:child_process').ChildProcessWithoutNullStreams
@@ -46,7 +46,6 @@ export class TestableClient extends AppServerCodexClient {
 /** A client whose spawn target never exists — exercises the spawn-error path. */
 export class BrokenSpawnClient extends AppServerCodexClient {
   protected override spawnProcess(): import('node:child_process').ChildProcessWithoutNullStreams {
-    const { spawn } = require('node:child_process') as typeof import('node:child_process')
     return spawn('definitely-missing-codex-binary-xyz', ['app-server'], {
       stdio: ['pipe', 'pipe', 'pipe'],
     }) as import('node:child_process').ChildProcessWithoutNullStreams

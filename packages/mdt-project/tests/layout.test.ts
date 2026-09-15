@@ -48,12 +48,13 @@ describe('atomicWriteFileSync', () => {
     expect(readFileSync(file, 'utf8')).toBe('{"a":1}')
   })
 
-  it('overwrites an existing target and leaves no tmp files behind', () => {
+  it('overwrites an existing target and leaves no tmp files behind', async () => {
     const file = join(root, 'doc.json')
     atomicWriteFileSync(file, 'first')
     atomicWriteFileSync(file, 'second')
     expect(readFileSync(file, 'utf8')).toBe('second')
-    const siblings = require('node:fs').readdirSync(root) as string[]
+    const { readdirSync } = await import('node:fs')
+    const siblings = readdirSync(root) as string[]
     expect(siblings.every((f) => !f.includes('.tmp-'))).toBe(true)
   })
 

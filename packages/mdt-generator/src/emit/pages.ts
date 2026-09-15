@@ -290,7 +290,7 @@ registerVariables(generatedVariables)
 // ---------------------------------------------------------------------------
 
 function emitPageFile(input: FrontendEmitInput, overlayKind: OverlayKind | undefined): string {
-  const { plan, blueprint, page } = { ...input, page: input.plan.page }
+  const { plan, page } = { ...input, page: input.plan.page }
   const isOverlay = overlayKind !== undefined
 
   const imports = new Set<string>([

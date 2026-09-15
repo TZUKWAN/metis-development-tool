@@ -13,7 +13,6 @@ import type {
   CapabilityInstance,
   Component,
   DataBinding,
-  Element,
   Interaction,
   Page,
   ProjectRoot,

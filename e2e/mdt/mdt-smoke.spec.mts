@@ -66,14 +66,24 @@ test('welcome screen has no critical accessibility violations (P14.19)', async (
   // @axe-core/playwright's builder opens a new page — unsupported in the
   // Electron driver; the page CSP blocks <script> injection too, so the
   // axe source is evaluated via the Playwright runtime bridge instead.
-  const axeSource = readFileSync(path.resolve(here, '../../node_modules/axe-core/axe.min.js'), 'utf8')
+  const axeSource = readFileSync(
+    path.resolve(here, '../../node_modules/axe-core/axe.min.js'),
+    'utf8',
+  )
   await page.evaluate(axeSource)
   // scope to the welcome dialog: P14.19 covers the main flow surface; the
   // full inherited ribbon gets its own a11y pass (docs/release/KNOWN_ISSUES.md)
   const results = (await page.evaluate(
-    `window.axe.run(document.querySelector('div[role=\"dialog\"]'), { resultTypes: ['violations'] })`,
+    `window.axe.run(document.querySelector('div[role="dialog"]'), { resultTypes: ['violations'] })`,
   )) as { violations: { id: string; impact: string | null }[] }
-  const serious = results.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious')
-  console.log('A11Y_DETAIL', JSON.stringify(serious.map((v) => ({ id: v.id, nodes: v.nodes.map((n) => n.target.join(' ')) }))))
+  const serious = results.violations.filter(
+    (v) => v.impact === 'critical' || v.impact === 'serious',
+  )
+  console.log(
+    'A11Y_DETAIL',
+    JSON.stringify(
+      serious.map((v) => ({ id: v.id, nodes: v.nodes.map((n) => n.target.join(' ')) })),
+    ),
+  )
   expect(serious).toEqual([])
 })

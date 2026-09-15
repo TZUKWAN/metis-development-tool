@@ -17,7 +17,6 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { generateProject } from '../src/generator'
 import { builtinManifests, goldenBlueprint } from './helpers/blueprint'
 import type { BuildBlueprint, CapabilityInstance } from '@mdt/schema'
-import type { CapabilityManifest } from '@mdt/capabilities'
 
 const manifests = builtinManifests()
 

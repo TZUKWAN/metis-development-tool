@@ -4,9 +4,7 @@ import { sha256Hex } from '../src/sha256'
 
 describe('sha256Hex (FIPS-180 vectors)', () => {
   it('empty string', () => {
-    expect(sha256Hex('')).toBe(
-      'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
-    )
+    expect(sha256Hex('')).toBe('e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855')
   })
 
   it('"abc"', () => {
@@ -16,13 +14,13 @@ describe('sha256Hex (FIPS-180 vectors)', () => {
   })
 
   it('448-bit message (two-block boundary)', () => {
-    expect(
-      sha256Hex('abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq'),
-    ).toBe('248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1')
+    expect(sha256Hex('abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq')).toBe(
+      '248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1',
+    )
   })
 
   it('utf-8 multibyte input', () => {
-    // echo -n '你好' | sha256sum
+    // echo -n <UTF-8 hello> | sha256sum
     expect(sha256Hex('你好')).toBe(
       '670d9743542cae3ea7ebe36af56bd53648b0a1126162e78d81a32934a711302e',
     )

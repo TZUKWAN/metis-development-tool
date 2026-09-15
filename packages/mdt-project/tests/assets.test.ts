@@ -1,4 +1,4 @@
-import { existsSync, mkdtempSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, unlinkSync, writeFileSync, mkdtempSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
@@ -33,14 +33,13 @@ describe('AssetStore (P05.06, P05.07)', () => {
     expect(existsSync(join(root, first.path))).toBe(true)
   })
 
-  it('survives source file deletion (bytes are copied into the project)', () => {
-    const { mkdirSync } = require('node:fs') as typeof import('node:fs')
+  it('survives source file deletion (bytes are copied into the project)', async () => {
+    const { mkdirSync } = await import('node:fs')
     mkdirSync(root, { recursive: true })
     const src = join(root, 'src.png')
     writeFileSync(src, Buffer.from([9, 8, 7]))
     const store = new AssetStore(root)
     const asset = store.importFrom(src, createId)
-    const { unlinkSync } = require('node:fs') as typeof import('node:fs')
     unlinkSync(src)
     expect(store.read(asset.path)?.[0]).toBe(9)
   })
@@ -113,7 +112,6 @@ describe('project lock (P05.08)', () => {
   })
 
   it('reclaims a stale lock from a dead process (crash recovery)', () => {
-    const { mkdirSync, writeFileSync } = require('node:fs') as typeof import('node:fs')
     mkdirSync(join(root, '.mdt'), { recursive: true })
     const deadPid = 4_194_304
     // plant a lock from a (virtually never live) dead process

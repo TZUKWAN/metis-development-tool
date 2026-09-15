@@ -5,7 +5,7 @@
  * vite-build quality gates run for real; the LLM turn is scripted so CI
  * stays hermetic (real-Codex acceptance is a separate manual gate, P18.08).
  */
-import { existsSync, mkdtempSync, readFileSync, cpSync } from 'node:fs'
+import { mkdtempSync, readFileSync, cpSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 

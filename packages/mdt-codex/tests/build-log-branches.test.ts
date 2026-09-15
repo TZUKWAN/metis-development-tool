@@ -4,6 +4,8 @@ import { join } from 'node:path'
 
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
+import { readdirSync } from 'node:fs'
+
 import { BuildLog, rotateBuildLogs } from '../src/build-log'
 
 let tmp: string
@@ -45,7 +47,6 @@ describe('build log edge branches (P10.17)', () => {
     await new Promise((resolve) => setTimeout(resolve, 20)) // ensure distinct mtimes
     mkdirSync(join(buildsDir, 'newest'), { recursive: true })
     rotateBuildLogs(buildsDir, 1)
-    const { readdirSync } = require('node:fs') as typeof import('node:fs')
     expect(readdirSync(buildsDir)).toEqual(['newest'])
   })
 })

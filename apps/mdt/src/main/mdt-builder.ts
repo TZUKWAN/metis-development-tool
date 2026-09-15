@@ -7,7 +7,6 @@
  * (bounded) → apply (ff-merge + known-good tag) or discard/rollback.
  * Every stage appends redacted JSONL to the build log.
  */
-import { spawn } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
 
@@ -15,17 +14,12 @@ import { z } from 'zod'
 
 import { parseProject, toBuildBlueprint } from '@mdt/schema'
 
-import { runBuildPipeline, type BuildPipelineOptions } from './build-pipeline'
+import { runBuildPipeline } from './build-pipeline'
 import { builderPrompt } from '@mdt/generator'
 import {
   AppServerCodexClient,
   BuildLog,
   FakeCodexClient,
-  applyBuild,
-  commitBuild,
-  diffSummary,
-  discardBuild,
-  prepareWorkspace,
   rollbackBuild,
   type CodexClient,
   type CodexEvent,

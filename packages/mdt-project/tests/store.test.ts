@@ -1,4 +1,12 @@
-import { existsSync, mkdtempSync, readFileSync, writeFileSync, chmodSync, mkdirSync } from 'node:fs'
+import {
+  existsSync,
+  mkdtempSync,
+  readFileSync,
+  readdirSync,
+  writeFileSync,
+  chmodSync,
+  mkdirSync,
+} from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
@@ -58,7 +66,7 @@ describe('create/open/save (P05.01, P05.02)', () => {
     const project = createProject(root, 'Demo')
     project.name = 'Renamed'
     saveProject(root, project)
-    const files = require('node:fs').readdirSync(root) as string[]
+    const files = readdirSync(root) as string[]
     expect(files.some((f) => f.includes('.tmp-'))).toBe(false)
     const opened = openProject(root)
     expect(opened.parse.ok).toBe(true)

@@ -2,9 +2,6 @@
  * Build pipeline core (tasklist P10.20, P14.15) — pure Node, no Electron,
  * so the integration suite drives the exact production pipeline.
  */
-import fs from 'node:fs'
-import path from 'node:path'
-
 import { spawn } from 'node:child_process'
 
 import {
@@ -54,7 +51,7 @@ export async function runBuildPipeline(
   options: BuildPipelineOptions,
 ): Promise<BuildPipelineResult> {
   const { buildId, workspace, client, log, onEvent } = options
-  let cancelRequested = false
+  const cancelRequested = false
   try {
     // 1) deterministic scaffold
     const generation = await options.generate(options.project, workspace, options.projectRoot)

@@ -6,7 +6,7 @@
  * app produces on Build. These directories feed the P18.07/P18.11
  * acceptance runs (three from-zero builds + standalone verification).
  */
-import { mkdirSync, writeFileSync } from 'node:fs'
+import { writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 import { beforeAll, describe, expect, test } from 'vitest'
@@ -184,18 +184,6 @@ function elementByName(
   const el = page.elements.find((e) => e.name === name)
   if (!el) throw new Error(`sample spec error: element "${name}" not found on "${page.name}"`)
   return el
-}
-
-function persistSample(name: string, project: ProjectRoot, blueprint: BuildBlueprint): void {
-  const dir = join(outRoot, name)
-  mkdirSync(dir, { recursive: true })
-  writeFileSync(join(dir, 'mdt.project.json'), JSON.stringify(project, null, 2) + '\n')
-  // the generated app lands in generated/, mirroring the desktop Build flow
-  generateAndWrite(blueprint, {
-    capabilityManifests: manifests,
-    outDir: join(dir, 'generated'),
-    projectRoot: dir,
-  })
 }
 
 // ---------------------------------------------------------------------------

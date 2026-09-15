@@ -13,7 +13,7 @@ const artifactPath = join(
 
 /**
  * Keeps the committed JSON Schema artifact in lockstep with the Zod source
- * (P04.01: "双源一致"). Update deliberately with `npm run gen:schema`;
+ * (P04.01: single source kept in lockstep). Update deliberately with `npm run gen:schema`;
  * plain `vitest run` fails when the artifact has drifted.
  */
 describe('published JSON Schema artifact', () => {

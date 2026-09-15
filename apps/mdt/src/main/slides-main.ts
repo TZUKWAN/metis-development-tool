@@ -47,13 +47,11 @@ import {
   resolveGroupChildId,
   runTxn,
   type Op,
-  type OpRecord,
   type TxnRequest,
   type TxnResult,
   mapScriptOps,
 } from '@genoffice/pptx-ops'
 import { matchesElementRef } from '@genoffice/pptx-engine/identity'
-import { buildPagePptx, parsePageSpec } from '@genoffice/pipelines/slides'
 import { getUiLang, normalizeLang, setUiLang } from '@genoffice/i18n'
 import {
   copyElementData,
@@ -73,7 +71,6 @@ import {
   listMasterParts,
   parseMasterPart,
   EMU_PER_PT,
-  slideDurableId,
   getSlideComments,
   getSlideNotes,
   getSlideTransition,
@@ -194,7 +191,6 @@ import {
   editorAttachedIds,
   beginHistoryBatch,
   buildAllRenderSlides,
-  carryHistoryForReplacement,
   dialogParent,
   endHistoryBatch,
   getFontMetrics,
