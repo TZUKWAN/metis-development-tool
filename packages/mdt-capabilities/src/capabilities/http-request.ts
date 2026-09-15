@@ -155,6 +155,7 @@ export const httpRequestCapability: Capability = {
       } catch (err) {
         throw new Error(
           `http_request: response declared json but the body failed to parse: ${(err as Error).message}`,
+          { cause: err },
         )
       }
       output.json = parsed as Record<string, unknown>

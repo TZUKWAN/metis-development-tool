@@ -50,7 +50,7 @@ export const jsonCapability: Capability = {
         try {
           value = JSON.parse(text)
         } catch (err) {
-          throw new Error(`invalid JSON: ${(err as Error).message}`)
+          throw new Error(`invalid JSON: ${(err as Error).message}`, { cause: err })
         }
         const picked = input.path === undefined ? value : queryPath(value, String(input.path))
         return { result: picked as Record<string, unknown>, text: JSON.stringify(picked) }

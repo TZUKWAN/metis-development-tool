@@ -79,7 +79,7 @@ export function runCapabilityContractTests(
       // raced timeout.
       const raced = await Promise.race([
         capability.execute(minimalInput(capability), ctx).then(
-          (v) => 'resolved' as const,
+          () => 'resolved' as const,
           () => 'rejected' as const,
         ),
         new Promise<'hung'>((r) => setTimeout(() => r('hung'), 5_000)),
