@@ -19,7 +19,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { spawnSync } from 'node:child_process'
+import { runXmllint, xmllintRunnerAvailable } from './xmllint-runner.mjs'
 import JSZip from 'jszip'
 import { DOMParser, XMLSerializer } from '@xmldom/xmldom'
 
@@ -37,7 +37,7 @@ const PART_SCHEMA = [
 ]
 
 export function xmllintAvailable() {
-  return spawnSync('xmllint', ['--version'], { encoding: 'utf8' }).status === 0
+  return xmllintRunnerAvailable()
 }
 
 /** Markup Compatibility preprocessing against the base schema (no extension namespace understood). */
@@ -96,10 +96,7 @@ export async function validatePptx(input) {
       fs.writeFileSync(file, await zip.file(name).async('nodebuffer'))
       raw.push({ name, file })
     }
-    const wf = spawnSync('xmllint', ['--noout', '--nonet', ...raw.map((p) => p.file)], {
-      encoding: 'utf8',
-      maxBuffer: 256 << 20,
-    })
+    const wf = await runXmllint(['--noout', '--nonet', ...raw.map((p) => p.file)])
     if (wf.error) throw wf.error
     const malformed = new Set()
     for (const line of wf.stderr.split(/\r?\n/)) {
@@ -120,17 +117,13 @@ export async function validatePptx(input) {
       groups.get(schema).push({ name, file })
     }
     for (const [schema, parts] of groups) {
-      const r = spawnSync(
-        'xmllint',
-        [
-          '--noout',
-          '--nonet',
-          '--schema',
-          path.join(SCHEMA_DIR, schema),
-          ...parts.map((p) => p.file),
-        ],
-        { encoding: 'utf8', maxBuffer: 256 << 20 },
-      )
+      const r = await runXmllint([
+        '--noout',
+        '--nonet',
+        '--schema',
+        path.join(SCHEMA_DIR, schema),
+        ...parts.map((p) => p.file),
+      ])
       if (r.error) throw r.error
       // xmllint emits CRLF line endings on Windows; a stray \r would defeat
       // the " validates" / " fails to validate" summary-line filter below.
