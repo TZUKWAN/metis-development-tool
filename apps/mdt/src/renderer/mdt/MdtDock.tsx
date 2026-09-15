@@ -132,12 +132,14 @@ export function MdtDock(): React.ReactElement | null {
             Build
           </button>
           <button
+            role="tab"
+            aria-selected={false}
             type="button"
             title="Project menu"
             onClick={() => setShowWelcome(true)}
-            style={{ padding: 8 }}
+            style={{ flex: 1, padding: 8 }}
           >
-            ⌂
+            Project
           </button>
         </div>
         {tab === 'agents' && <AgentsPanel />}

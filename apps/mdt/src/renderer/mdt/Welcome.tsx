@@ -49,7 +49,7 @@ export function Welcome({
         }}
       >
         <h1 style={{ fontSize: 20, marginTop: 0 }}>Metis Development Tool</h1>
-        <p style={{ opacity: 0.8 }}>
+        <p style={{ color: 'var(--text-weak, #555)' }}>
           Design agent applications like a presentation: pages, connections, agents, build.
         </p>
 
@@ -73,7 +73,7 @@ export function Welcome({
 
         <h2 style={{ fontSize: 14 }}>Recent Projects</h2>
         {recent.length === 0 ? (
-          <p style={{ opacity: 0.6 }}>No recent projects yet.</p>
+          <p style={{ color: 'var(--text-weak, #555)' }}>No recent projects yet.</p>
         ) : (
           <ul style={{ listStyle: 'none', padding: 0 }}>
             {recent.map((entry) => (
@@ -86,7 +86,7 @@ export function Welcome({
                 </button>
                 <span
                   style={{
-                    opacity: 0.55,
+                    opacity: 1,
                     fontSize: 12,
                     flex: 1,
                     overflow: 'hidden',
@@ -108,7 +108,7 @@ export function Welcome({
         )}
 
         <h2 style={{ fontSize: 14 }}>Docs</h2>
-        <p style={{ opacity: 0.8 }}>
+        <p style={{ color: 'var(--text-weak, #555)' }}>
           See the repository README and <code>docs/guide/</code> for the full workflow (design →
           connect → build → run → export).
         </p>

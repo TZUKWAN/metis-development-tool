@@ -6,6 +6,7 @@
  */
 import { test, expect, type Page } from '@playwright/test'
 import { _electron as electron, type ElectronApplication } from 'playwright-core'
+import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import url from 'node:url'
 
@@ -53,4 +54,26 @@ test('MDT dock exposes Agents / Interactions / Semantics / Build tabs (P06.01)',
   }
   await tablist.getByRole('tab', { name: 'Build' }).click()
   await expect(page.getByText('Open a project first.')).toBeVisible()
+})
+
+test('welcome screen has no critical accessibility violations (P14.19)', async () => {
+  // ensure the welcome dialog is open (it is part of the main flow surface)
+  const dialog = page.getByRole('dialog', { name: /welcome to metis development tool/i })
+  if (!(await dialog.isVisible())) {
+    await page.getByTitle('Project menu').click()
+  }
+  await expect(dialog).toBeVisible()
+  // @axe-core/playwright's builder opens a new page — unsupported in the
+  // Electron driver; the page CSP blocks <script> injection too, so the
+  // axe source is evaluated via the Playwright runtime bridge instead.
+  const axeSource = readFileSync(path.resolve(here, '../../node_modules/axe-core/axe.min.js'), 'utf8')
+  await page.evaluate(axeSource)
+  // scope to the welcome dialog: P14.19 covers the main flow surface; the
+  // full inherited ribbon gets its own a11y pass (docs/release/KNOWN_ISSUES.md)
+  const results = (await page.evaluate(
+    `window.axe.run(document.querySelector('div[role=\"dialog\"]'), { resultTypes: ['violations'] })`,
+  )) as { violations: { id: string; impact: string | null }[] }
+  const serious = results.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious')
+  console.log('A11Y_DETAIL', JSON.stringify(serious.map((v) => ({ id: v.id, nodes: v.nodes.map((n) => n.target.join(' ')) }))))
+  expect(serious).toEqual([])
 })
