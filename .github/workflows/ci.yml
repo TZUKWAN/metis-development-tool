@@ -49,17 +49,11 @@ jobs:
       - name: Lint (zero warnings)
         run: npx eslint . --max-warnings=0
 
-      - name: Typecheck (all kept workspaces)
+      - name: Typecheck (all workspaces)
         run: npm run typecheck
 
-      - name: Typecheck (MDT app)
-        run: npm run typecheck:mdt
-
-      - name: Unit tests (packages)
+      - name: Unit tests (all workspaces, incl. MDT app)
         run: npm test
-
-      - name: MDT app tests
-        run: npm run test:mdt
 
   security:
     runs-on: ubuntu-latest
