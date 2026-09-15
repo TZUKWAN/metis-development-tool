@@ -31,3 +31,13 @@ deferral not affecting the main flow / P3 polish.
 - RecentProjects case-insensitive identity on win32 — fixed with tests.
 - Codex CLI 0.144.1 rejected by account default model — CLI upgraded to
   0.154.0 during real-run acceptance; version-range check updated.
+
+## Dependency audit note (P13.11)
+
+`npm audit --audit-level=critical`: **0 critical**; 2 high advisories exist
+in `image-size` (DoS in ICNS/JXL/HEIF parsers), reached only through
+`pptxgenjs` — a **devDependency used solely by pptx-engine fixture
+generation scripts**. It is not bundled in the MDT app, not shipped in
+generated apps, and processes only locally authored test fixtures. The
+advisory's fix path requires downgrading pptxgenjs to 2.2.0 (breaking the
+fixture toolchain); tracked for the next dependency pass.
