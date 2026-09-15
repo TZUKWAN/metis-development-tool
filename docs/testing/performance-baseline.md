@@ -53,3 +53,8 @@ dominates (9 s). Vite production build of a generated app: ~0.6–0.8 s.
 - First attempt hit a transient Windows EPERM on the electron-unpack
   rename (antivirus/lock class); clean retry succeeded — CI packaging
   jobs run on clean runners, where this has not been observed.
+
+## E2E flake gate (P14.25)
+
+Desktop smoke suite (`e2e/mdt`): 5 consecutive full runs on the release
+candidate build — 5 × 4 tests, **0 failures, 0 retries** (2026-09-15).
