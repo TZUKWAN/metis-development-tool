@@ -184,3 +184,192 @@ describe('validateRefs (P04.13)', () => {
     expect(report.ok).toBe(true)
   })
 })
+
+describe('validateRefs branch coverage', () => {
+  const home = () => homePage({ elements: [buttonElement(), textElement({ name: 'Chat', role: 'chat', semantics: { handles: [], agentRef: undefined } })] })
+
+  it('close with missing target page flags', () => {
+    const h = home()
+    const project = emptyProject({
+      pages: [h],
+      interactions: [{ id: createId(), sourcePageId: h.id, trigger: 'click', enabled: true, action: { type: 'close', targetPageId: createId() } }],
+    })
+    expect(validateRefs(project).issues.map((i) => i.code)).toContain('interaction.targetPage.missing')
+  })
+
+  it('toggleVisibility target outside page flags', () => {
+    const h = home()
+    const project = emptyProject({
+      pages: [h],
+      interactions: [{ id: createId(), sourcePageId: h.id, trigger: 'click', enabled: true, action: { type: 'toggleVisibility', targetElementId: createId() } }],
+    })
+    expect(validateRefs(project).issues.map((i) => i.code)).toContain('interaction.targetElement.missing')
+  })
+
+  it('submit with missing form element flags', () => {
+    const h = home()
+    const project = emptyProject({
+      pages: [h],
+      interactions: [{ id: createId(), sourcePageId: h.id, trigger: 'submit', enabled: true, action: { type: 'submit', formElementId: createId() } }],
+    })
+    expect(validateRefs(project).issues.map((i) => i.code)).toContain('interaction.targetElement.missing')
+  })
+
+  it('source element missing flags', () => {
+    const h = home()
+    const project = emptyProject({
+      pages: [h],
+      interactions: [{ id: createId(), sourcePageId: h.id, sourceElementId: createId(), trigger: 'click', enabled: true, action: { type: 'back' } }],
+    })
+    expect(validateRefs(project).issues.map((i) => i.code)).toContain('interaction.sourceElement.missing')
+  })
+
+  it('bindOutput flags missing agent and missing target element', () => {
+    const h = home()
+    const project = emptyProject({
+      pages: [h],
+      interactions: [
+        {
+          id: createId(),
+          sourcePageId: h.id,
+          trigger: 'click',
+          enabled: true,
+          action: {
+            type: 'bindOutput',
+            source: { type: 'agentOutput', agentId: createId() },
+            targetElementId: createId(),
+            property: 'text',
+          },
+        },
+      ],
+    })
+    const codes = validateRefs(project).issues.map((i) => i.code)
+    expect(codes).toContain('interaction.agent.missing')
+    expect(codes).toContain('interaction.targetElement.missing')
+  })
+
+  it('bindOutput capability source missing flags', () => {
+    const h = home({ elements: [textElement()] })
+    const project = emptyProject({
+      pages: [h],
+      interactions: [
+        {
+          id: createId(),
+          sourcePageId: h.id,
+          trigger: 'load',
+          enabled: true,
+          action: {
+            type: 'bindOutput',
+            source: { type: 'capabilityOutput', capabilityInstanceId: createId() },
+            targetElementId: h.elements[0].id,
+            property: 'text',
+          },
+        },
+      ],
+    })
+    expect(validateRefs(project).issues.map((i) => i.code)).toContain('interaction.capability.missing')
+  })
+
+  it('sendToAgent payload variable/capability sources validated; chat element flagged when absent', () => {
+    const h = home()
+    const agent = researchAgent()
+    const project = emptyProject({
+      pages: [h],
+      agents: [agent],
+      variables: [{ id: createId(), name: 'v', scope: 'session', type: 'string' }],
+      interactions: [
+        {
+          id: createId(),
+          sourcePageId: h.id,
+          sourceElementId: h.elements[1].id,
+          trigger: 'click',
+          enabled: true,
+          action: {
+            type: 'sendToAgent',
+            agentId: agent.id,
+            payload: { type: 'variable', variableId: createId() },
+            chatElementId: createId(),
+          },
+        },
+      ],
+    })
+    const codes = validateRefs(project).issues.map((i) => i.code)
+    expect(codes).toContain('interaction.targetElement.missing')
+    expect(codes).toContain('binding.variable.missing')
+  })
+
+  it('invokeCapability arg sources validated', () => {
+    const h = home()
+    const instance = { id: createId(), capabilityId: 'web_fetch', version: '1.0.0', config: {}, secrets: {}, permissions: [] }
+    const project = emptyProject({
+      pages: [h],
+      capabilities: [instance],
+      interactions: [
+        {
+          id: createId(),
+          sourcePageId: h.id,
+          trigger: 'click',
+          enabled: true,
+          action: {
+            type: 'invokeCapability',
+            capabilityInstanceId: instance.id,
+            args: { url: { type: 'variable', variableId: createId() } },
+          },
+        },
+      ],
+    })
+    expect(validateRefs(project, { capabilityInputSchemas: new Map([['web_fetch', { required: ['url'] }]]) }).issues.map((i) => i.code)).toContain('binding.variable.missing')
+  })
+
+  it('setVariable missing variable flags; literal value passes', () => {
+    const h = home()
+    const project = emptyProject({
+      pages: [h],
+      interactions: [
+        { id: createId(), sourcePageId: h.id, trigger: 'click', enabled: true, action: { type: 'setVariable', variableId: createId(), value: { type: 'literal', value: 'x' } } },
+      ],
+    })
+    expect(validateRefs(project).issues.map((i) => i.code)).toContain('interaction.variable.missing')
+  })
+
+  it('bindings validate sources and capability/agent references', () => {
+    const h = home()
+    const project = emptyProject({
+      pages: [h],
+      bindings: [
+        { id: createId(), source: { type: 'agentOutput', agentId: createId() }, target: { elementId: createId(), property: 'items' } },
+      ],
+    })
+    const codes = validateRefs(project).issues.map((i) => i.code)
+    expect(codes).toContain('binding.agent.missing')
+    expect(codes).toContain('binding.targetElement.missing')
+  })
+
+  it('page-scoped variable with missing page flags', () => {
+    const project = emptyProject({
+      variables: [{ id: createId(), name: 'rows', scope: 'page', pageId: createId(), type: 'json' }],
+    })
+    expect(validateRefs(project).issues.map((i) => i.code)).toContain('variable.page.missing')
+  })
+
+  it('chat element agentRef and settings.defaultAgentId validated', () => {
+    const h = homePage({
+      elements: [textElement({ role: 'chat', semantics: { handles: [], agentRef: createId() } })],
+    })
+    const project = emptyProject({ pages: [h], settings: { ...emptyProject().settings, defaultAgentId: createId() } })
+    const codes = validateRefs(project).issues.map((i) => i.code)
+    expect(codes).toContain('element.agent.missing')
+    expect(codes).toContain('agent.defaultMissing')
+  })
+
+  it('capabilityOutput binding with missing instance flags', () => {
+    const h = home({ elements: [textElement()] })
+    const project = emptyProject({
+      pages: [h],
+      bindings: [
+        { id: createId(), source: { type: 'capabilityOutput', capabilityInstanceId: createId() }, target: { elementId: h.elements[0].id, property: 'text' } },
+      ],
+    })
+    expect(validateRefs(project).issues.map((i) => i.code)).toContain('binding.capability.missing')
+  })
+})

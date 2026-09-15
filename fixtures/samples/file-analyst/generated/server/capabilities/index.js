@@ -15,7 +15,7 @@ export const capabilityExecutors = {
 /** Project capability instances with resolved config/permission wiring. */
 export const capabilityInstances = [
   {
-    instanceId: "01a0a224-e6bf-7c96-87f2-b9c493db0b5a",
+    instanceId: "a0000000-0000-7000-8000-000000000015",
     capabilityId: "file_read",
     config: {},
     secretEnv: {},

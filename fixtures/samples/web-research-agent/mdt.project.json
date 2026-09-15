@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "id": "01a0a224-e67b-71b4-a3b8-3906f981c10f",
+  "id": "a0000000-0000-7000-8000-000000000001",
   "name": "Web Research Agent",
   "createdAt": "2026-09-15T00:00:00.000Z",
   "updatedAt": "2026-09-15T00:00:00.000Z",
   "pages": [
     {
-      "id": "01a0a224-e67b-71b8-be48-78580663f964",
+      "id": "a0000000-0000-7000-8000-000000000005",
       "name": "Home",
       "type": "page",
       "viewport": {
@@ -17,7 +17,7 @@
       "background": {},
       "elements": [
         {
-          "id": "01a0a224-e67c-7fff-bcd1-bfbeeb574620",
+          "id": "a0000000-0000-7000-8000-000000000006",
           "name": "Title",
           "role": "text",
           "visual": {
@@ -44,7 +44,7 @@
           "children": []
         },
         {
-          "id": "01a0a224-e67d-7f3f-abce-9ee346124915",
+          "id": "a0000000-0000-7000-8000-000000000007",
           "name": "Query Input",
           "role": "input",
           "visual": {
@@ -72,7 +72,7 @@
           "children": []
         },
         {
-          "id": "01a0a224-e67d-7c83-a02e-e4d8e9a50929",
+          "id": "a0000000-0000-7000-8000-000000000008",
           "name": "Search Button",
           "role": "button",
           "visual": {
@@ -104,7 +104,7 @@
       "metadata": {}
     },
     {
-      "id": "01a0a224-e67d-7c84-9ab3-374c6296cda1",
+      "id": "a0000000-0000-7000-8000-000000000009",
       "name": "Results",
       "type": "page",
       "viewport": {
@@ -115,7 +115,7 @@
       "background": {},
       "elements": [
         {
-          "id": "01a0a224-e67d-7c85-a57b-07379c8d9445",
+          "id": "a0000000-0000-7000-8000-000000000010",
           "name": "Findings List",
           "role": "list",
           "visual": {
@@ -146,7 +146,7 @@
   "components": [],
   "agents": [
     {
-      "id": "01a0a224-e67b-71b7-a745-68f8f46efeb7",
+      "id": "a0000000-0000-7000-8000-000000000004",
       "name": "Research Agent",
       "description": "",
       "instructions": "You are a web research assistant. Search the web, fetch the most relevant pages, and answer with a short list of findings. Always cite sources.",
@@ -160,8 +160,8 @@
         }
       },
       "capabilityRefs": [
-        "01a0a224-e67b-71b5-9acd-f7c9ca4398c7",
-        "01a0a224-e67b-71b6-8d06-68a5be2db7a4"
+        "a0000000-0000-7000-8000-000000000002",
+        "a0000000-0000-7000-8000-000000000003"
       ],
       "memory": {
         "enabled": false
@@ -171,7 +171,7 @@
   ],
   "capabilities": [
     {
-      "id": "01a0a224-e67b-71b5-9acd-f7c9ca4398c7",
+      "id": "a0000000-0000-7000-8000-000000000002",
       "capabilityId": "web_search",
       "version": "1.0.0",
       "config": {},
@@ -184,7 +184,7 @@
       ]
     },
     {
-      "id": "01a0a224-e67b-71b6-8d06-68a5be2db7a4",
+      "id": "a0000000-0000-7000-8000-000000000003",
       "capabilityId": "web_fetch",
       "version": "1.0.0",
       "config": {},
@@ -199,43 +199,43 @@
   ],
   "interactions": [
     {
-      "id": "01a0a224-e67d-7c86-ad71-3d73e753dc6a",
-      "sourcePageId": "01a0a224-e67b-71b8-be48-78580663f964",
-      "sourceElementId": "01a0a224-e67d-7c83-a02e-e4d8e9a50929",
+      "id": "a0000000-0000-7000-8000-000000000011",
+      "sourcePageId": "a0000000-0000-7000-8000-000000000005",
+      "sourceElementId": "a0000000-0000-7000-8000-000000000008",
       "trigger": "click",
       "enabled": true,
       "action": {
         "type": "sendToAgent",
-        "agentId": "01a0a224-e67b-71b7-a745-68f8f46efeb7",
+        "agentId": "a0000000-0000-7000-8000-000000000004",
         "payload": {
           "type": "elementValue",
-          "elementId": "01a0a224-e67d-7f3f-abce-9ee346124915"
+          "elementId": "a0000000-0000-7000-8000-000000000007"
         }
       }
     },
     {
-      "id": "01a0a224-e67d-7c87-a2c4-11a2efb3ca9c",
-      "sourcePageId": "01a0a224-e67b-71b8-be48-78580663f964",
-      "sourceElementId": "01a0a224-e67d-7c83-a02e-e4d8e9a50929",
+      "id": "a0000000-0000-7000-8000-000000000012",
+      "sourcePageId": "a0000000-0000-7000-8000-000000000005",
+      "sourceElementId": "a0000000-0000-7000-8000-000000000008",
       "trigger": "click",
       "enabled": true,
       "action": {
         "type": "navigate",
-        "targetPageId": "01a0a224-e67d-7c84-9ab3-374c6296cda1"
+        "targetPageId": "a0000000-0000-7000-8000-000000000009"
       }
     },
     {
-      "id": "01a0a224-e67d-7c88-8af0-7eb703bfa3aa",
-      "sourcePageId": "01a0a224-e67d-7c84-9ab3-374c6296cda1",
+      "id": "a0000000-0000-7000-8000-000000000013",
+      "sourcePageId": "a0000000-0000-7000-8000-000000000009",
       "trigger": "load",
       "enabled": true,
       "action": {
         "type": "bindOutput",
         "source": {
           "type": "agentOutput",
-          "agentId": "01a0a224-e67b-71b7-a745-68f8f46efeb7"
+          "agentId": "a0000000-0000-7000-8000-000000000004"
         },
-        "targetElementId": "01a0a224-e67d-7c85-a57b-07379c8d9445",
+        "targetElementId": "a0000000-0000-7000-8000-000000000010",
         "property": "items"
       }
     }
@@ -260,6 +260,6 @@
       "target": "web-agent",
       "dependencyOverrides": {}
     },
-    "defaultAgentId": "01a0a224-e67b-71b7-a745-68f8f46efeb7"
+    "defaultAgentId": "a0000000-0000-7000-8000-000000000004"
   }
 }

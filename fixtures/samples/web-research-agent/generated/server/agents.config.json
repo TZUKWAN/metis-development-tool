@@ -2,11 +2,11 @@
   "agents": [
     {
       "capabilityInstanceIds": [
-        "01a0a224-e67b-71b5-9acd-f7c9ca4398c7",
-        "01a0a224-e67b-71b6-8d06-68a5be2db7a4"
+        "a0000000-0000-7000-8000-000000000002",
+        "a0000000-0000-7000-8000-000000000003"
       ],
       "description": "",
-      "id": "01a0a224-e67b-71b7-a745-68f8f46efeb7",
+      "id": "a0000000-0000-7000-8000-000000000004",
       "instructions": "You are a web research assistant. Search the web, fetch the most relevant pages, and answer with a short list of findings. Always cite sources.",
       "isDefault": true,
       "memory": {

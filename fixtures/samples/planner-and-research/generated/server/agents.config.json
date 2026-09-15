@@ -3,7 +3,7 @@
     {
       "capabilityInstanceIds": [],
       "description": "",
-      "id": "01a0a224-e6e5-74a7-bd70-c43b6d7dbd01",
+      "id": "a0000000-0000-7000-8000-000000000022",
       "instructions": "You are a planner. Break the user request into concrete research questions. Answer with a numbered list.",
       "isDefault": true,
       "memory": {
@@ -22,10 +22,10 @@
     },
     {
       "capabilityInstanceIds": [
-        "01a0a224-e6e5-74a8-9782-d91a1e463110"
+        "a0000000-0000-7000-8000-000000000023"
       ],
       "description": "",
-      "id": "01a0a224-e6e5-74a9-9133-c1977d0f89e1",
+      "id": "a0000000-0000-7000-8000-000000000024",
       "instructions": "You are a web research assistant. Answer the given research question with a cited summary.",
       "isDefault": false,
       "memory": {

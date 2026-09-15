@@ -77,6 +77,8 @@ type MockAssistantContent =
 
 export interface MockTurn {
   text?: string
+  /** optional thinking deltas emitted before the text */
+  thinking?: string
   toolCalls?: { id: string; name: string; arguments: Record<string, unknown> }[]
 }
 
@@ -97,6 +99,17 @@ export function mockStreamFn(turns: MockTurn[]): StreamFn {
     // consumes concurrently with queued microtask pushes and can miss events.
     ;(() => {
       stream.push({ type: 'start', partial: message() as never })
+      if (turn.thinking) {
+        const parts = turn.thinking.match(/.{1,12}/gs) ?? []
+        parts.forEach((part) => {
+          stream.push({
+            type: 'thinking_delta',
+            contentIndex: 0,
+            delta: part,
+            partial: message() as never,
+          })
+        })
+      }
       if (turn.text) {
         stream.push({ type: 'text_start', contentIndex: 0, partial: message() as never })
         const parts = turn.text.match(/.{1,12}/gs) ?? []

@@ -7,7 +7,6 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { execFileSync } from 'node:child_process'
 
-import { AppServerCodexClient } from '../src/app-server'
 import { FakeCodexClient } from '../src/fake'
 import { BuildLog, rotateBuildLogs } from '../src/build-log'
 import {
@@ -21,6 +20,7 @@ import {
 import { redactText } from '../src/redact'
 import { checkAvailability, parseVersion, resolveCodexBinary } from '../src/versions'
 import type { CodexEvent } from '../src/types'
+import { TestableClient, fakeServerArgv } from './helpers'
 
 let root: string
 let tmp: string
@@ -38,21 +38,11 @@ afterEach(() => {
   }
 })
 
-function fakeServerArgs(script: Record<string, unknown>): string[] {
-  const file = join(tmp, `script-${Math.random().toString(36).slice(2)}.json`)
-  writeFileSync(file, JSON.stringify(script))
-  return [join(__dirname, '../testdata/fake-app-server.mjs'), file]
-}
-
 describe('AppServerCodexClient (P10.02, P10.05)', () => {
   it('wired: initialize → thread/start → turn/start → events → turn/completed', async () => {
-    const scriptFile = join(tmp, 'script-ok.json')
-    writeFileSync(scriptFile, JSON.stringify({ respondTurnStart: true, emitTurnCompleted: true }))
-    const client = new TestableClient([
-      process.execPath,
-      join(__dirname, '../testdata/fake-app-server.mjs'),
-      scriptFile,
-    ])
+    const client = new TestableClient(
+      fakeServerArgv(tmp, { respondTurnStart: true, emitTurnCompleted: true }),
+    )
     const events: CodexEvent[] = []
     await client.start((e) => events.push(e))
     const result = await client.turn('Implement the blueprint.', {
@@ -70,16 +60,9 @@ describe('AppServerCodexClient (P10.02, P10.05)', () => {
   })
 
   it('unparsable lines surface as errors, not crashes (P10.15)', async () => {
-    const scriptFile = join(tmp, 'script-garbage.json')
-    writeFileSync(
-      scriptFile,
-      JSON.stringify({ respondTurnStart: true, emitTurnCompleted: true, replyGarbage: true }),
+    const client = new TestableClient(
+      fakeServerArgv(tmp, { respondTurnStart: true, emitTurnCompleted: true, replyGarbage: true }),
     )
-    const client = new TestableClient([
-      process.execPath,
-      join(__dirname, '../testdata/fake-app-server.mjs'),
-      scriptFile,
-    ])
     const events: CodexEvent[] = []
     await client.start((e) => events.push(e))
     const result = await client.turn('go', { cwd: root, timeoutMs: 5_000 })
@@ -89,40 +72,16 @@ describe('AppServerCodexClient (P10.02, P10.05)', () => {
   })
 
   it('child exit mid-session fails the next request and rejects pending work (P10.05)', async () => {
-    const scriptFile = join(tmp, 'script-exit.json')
-    writeFileSync(scriptFile, JSON.stringify({ exitAfterInitialize: true }))
-    const client = new TestableClient([
-      process.execPath,
-      join(__dirname, '../testdata/fake-app-server.mjs'),
-      scriptFile,
-    ])
+    const client = new TestableClient(fakeServerArgv(tmp, { exitAfterInitialize: true }))
     const events: CodexEvent[] = []
     // handshake succeeds (the fake answers initialize, THEN exits)
     await client.start((e) => events.push(e))
-    await expect(
-      client.turn('go', { cwd: root, timeoutMs: 5_000 }),
-    ).rejects.toThrow(/exited|not running|timed out/)
+    await expect(client.turn('go', { cwd: root, timeoutMs: 5_000 })).rejects.toThrow(
+      /exited|not running|timed out/,
+    )
     await client.dispose()
   })
 })
-
-/** TestableClient: spawns an explicit argv (the fake app-server). */
-class TestableClient extends AppServerCodexClient {
-  constructor(private readonly argv: string[]) {
-    super('definitely-not-used')
-  }
-  protected override spawnProcess(
-    command: string,
-    args: string[],
-  ): import('node:child_process').ChildProcessWithoutNullStreams {
-    void command
-    void args
-    const { spawn } = require('node:child_process') as typeof import('node:child_process')
-    return spawn(this.argv[0], this.argv.slice(1), {
-      stdio: ['pipe', 'pipe', 'pipe'],
-    }) as import('node:child_process').ChildProcessWithoutNullStreams
-  }
-}
 
 describe('FakeCodexClient (P14.08, P14.15)', () => {
   it('scripts events, file edits, failures and cancellation', async () => {

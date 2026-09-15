@@ -145,13 +145,11 @@ export async function execute(input, ctx) {
   ctx.log(`web_search provider=${providerName} count=${count} query=${redact(query)}`)
   const results = await provider.search(query, { count, apiKey, signal: ctx.signal })
   return {
-    results: results
-      .slice(0, count)
-      .map((r) => ({
-        title: String(r?.title ?? ''),
-        url: String(r?.url ?? ''),
-        snippet: String(r?.snippet ?? ''),
-      })),
+    results: results.slice(0, count).map((r) => ({
+      title: String(r?.title ?? ''),
+      url: String(r?.url ?? ''),
+      snippet: String(r?.snippet ?? ''),
+    })),
     provider: providerName,
   }
 }

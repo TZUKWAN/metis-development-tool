@@ -20,7 +20,7 @@ test('chat send streams the mocked agent response', async ({ page }) => {
     await route.fulfill({ status: 200, contentType: 'text/event-stream', body })
   })
   await page.goto("/")
-  const chatBox = page.locator('[data-mdt-id="01a0a224-e6e5-74ae-9d7e-d4951635d01d"]')
+  const chatBox = page.locator('[data-mdt-id="a0000000-0000-7000-8000-000000000029"]')
   await chatBox.locator('input[type="text"]').fill('Hello agent')
   await chatBox.getByRole('button', { name: 'Send' }).click()
   await expect(chatBox.locator('.mdt-chat-assistant').filter({ hasText: 'Mocked answer' })).toBeVisible()

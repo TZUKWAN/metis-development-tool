@@ -14,5 +14,5 @@ export interface PageRoute {
 }
 
 export const pageRoutes: PageRoute[] = [
-  { path: '/', pageId: '01a0a224-e6bf-7c98-ad97-0dbd60325b1a', component: HomePage },
+  { path: '/', pageId: 'a0000000-0000-7000-8000-000000000017', component: HomePage },
 ]

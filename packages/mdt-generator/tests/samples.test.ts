@@ -12,15 +12,26 @@ import { join } from 'node:path'
 import { beforeAll, describe, expect, test } from 'vitest'
 
 import { CapabilityRegistry, registerBuiltins, type CapabilityManifest } from '@mdt/capabilities'
-import { createId, type BuildBlueprint, type ProjectRoot } from '@mdt/schema'
+import type { BuildBlueprint, ProjectRoot } from '@mdt/schema'
 
 import { generateAndWrite, lintBlueprint } from '../src/index'
 
 const outRoot = join(__dirname, '../../../fixtures/samples')
 
+/** Deterministic ids: the committed fixtures must be byte-stable across
+ * regeneration runs (no randomness), while still satisfying the UUIDv7
+ * identity pattern. */
+let nextId: () => string
+
+function fixedIdFactory(): () => string {
+  let n = 0
+  return () => `a0000000-0000-7000-8000-${String(++n).padStart(12, '0')}`
+}
+
 let manifests: Map<string, CapabilityManifest>
 
 beforeAll(() => {
+  nextId = fixedIdFactory()
   const registry = registerBuiltins(new CapabilityRegistry())
   manifests = new Map(registry.manifests().map((m) => [m.id, m]))
 })
@@ -67,7 +78,7 @@ function textElement(
   placeholder?: string,
 ): ProjectRoot['pages'][number]['elements'][number] {
   const element: ProjectRoot['pages'][number]['elements'][number] = {
-    id: createId(),
+    id: nextId(),
     name,
     role: role as ProjectRoot['pages'][number]['elements'][number]['role'],
     visual: {
@@ -92,7 +103,7 @@ function textElement(
 function buildProject(spec: SampleSpec): ProjectRoot {
   const project: ProjectRoot = {
     schemaVersion: 1,
-    id: createId(),
+    id: nextId(),
     name: spec.name,
     createdAt: '2026-09-15T00:00:00.000Z',
     updatedAt: '2026-09-15T00:00:00.000Z',
@@ -116,7 +127,7 @@ function buildProject(spec: SampleSpec): ProjectRoot {
     const capabilityRefs: string[] = []
     for (const cap of agentSpec.capabilities) {
       const instance: ProjectRoot['capabilities'][number] = {
-        id: createId(),
+        id: nextId(),
         capabilityId: cap.capabilityId,
         version: '1.0.0',
         config: {},
@@ -127,7 +138,7 @@ function buildProject(spec: SampleSpec): ProjectRoot {
       capabilityRefs.push(instance.id)
     }
     project.agents.push({
-      id: createId(),
+      id: nextId(),
       name: agentSpec.name,
       description: '',
       instructions: agentSpec.instructions,
@@ -145,7 +156,7 @@ function buildProject(spec: SampleSpec): ProjectRoot {
 
   for (const pageSpec of spec.pages) {
     project.pages.push({
-      id: createId(),
+      id: nextId(),
       name: pageSpec.name,
       type: pageSpec.type ?? 'page',
       viewport: { width: 1440, height: 1024, preset: 'desktop-1440' },
@@ -231,7 +242,7 @@ const researchSpec: SampleSpec = {
     const results = pages[1]!
     return [
       {
-        id: createId(),
+        id: nextId(),
         sourcePageId: home.id,
         sourceElementId: elementByName(home, 'Search Button').id,
         trigger: 'click',
@@ -244,7 +255,7 @@ const researchSpec: SampleSpec = {
         },
       },
       {
-        id: createId(),
+        id: nextId(),
         sourcePageId: home.id,
         sourceElementId: elementByName(home, 'Search Button').id,
         trigger: 'click',
@@ -252,7 +263,7 @@ const researchSpec: SampleSpec = {
         action: { type: 'navigate', targetPageId: results.id },
       },
       {
-        id: createId(),
+        id: nextId(),
         sourcePageId: results.id,
         trigger: 'load',
         enabled: true,
@@ -341,7 +352,7 @@ const multiAgentSpec: SampleSpec = {
     const research = pages[1]!
     return [
       {
-        id: createId(),
+        id: nextId(),
         sourcePageId: home.id,
         sourceElementId: elementByName(home, 'Plan Button').id,
         trigger: 'click',
@@ -354,7 +365,7 @@ const multiAgentSpec: SampleSpec = {
         },
       },
       {
-        id: createId(),
+        id: nextId(),
         sourcePageId: home.id,
         sourceElementId: elementByName(home, 'Plan Button').id,
         trigger: 'click',

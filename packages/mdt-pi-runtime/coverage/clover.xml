@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1789431872632" clover="3.2.0">
+  <project timestamp="1789431872632" name="All files">
+    <metrics statements="94" coveredstatements="89" conditionals="83" coveredconditionals="74" methods="20" coveredmethods="19" elements="197" coveredelements="182" complexity="0" loc="94" ncloc="94" packages="1" files="5" classes="5"/>
+    <file name="adapter.ts" path="D:\MDHPROJECT\metis-development-tool\packages\mdt-pi-runtime\src\adapter.ts">
+      <metrics statements="70" coveredstatements="66" conditionals="50" coveredconditionals="41" methods="15" coveredmethods="14"/>
+      <line num="27" count="10" type="stmt"/>
+      <line num="46" count="10" type="stmt"/>
+      <line num="51" count="4" type="stmt"/>
+      <line num="52" count="4" type="stmt"/>
+      <line num="66" count="4" type="stmt"/>
+      <line num="70" count="4" type="stmt"/>
+      <line num="73" count="1" type="stmt"/>
+      <line num="75" count="3" type="cond" truecount="2" falsecount="0"/>
+      <line num="76" count="1" type="stmt"/>
+      <line num="78" count="2" type="stmt"/>
+      <line num="87" count="1" type="cond" truecount="1" falsecount="1"/>
+      <line num="88" count="0" type="stmt"/>
+      <line num="105" count="9" type="stmt"/>
+      <line num="106" count="9" type="stmt"/>
+      <line num="107" count="9" type="stmt"/>
+      <line num="109" count="9" type="stmt"/>
+      <line num="117" count="0" type="cond" truecount="1" falsecount="1"/>
+      <line num="122" count="9" type="stmt"/>
+      <line num="123" count="9" type="stmt"/>
+      <line num="124" count="9" type="stmt"/>
+      <line num="125" count="144" type="stmt"/>
+      <line num="126" count="140" type="cond" truecount="7" falsecount="0"/>
+      <line num="128" count="34" type="stmt"/>
+      <line num="129" count="34" type="cond" truecount="2" falsecount="0"/>
+      <line num="130" count="15" type="stmt"/>
+      <line num="131" count="15" type="stmt"/>
+      <line num="132" count="19" type="cond" truecount="2" falsecount="0"/>
+      <line num="133" count="2" type="stmt"/>
+      <line num="135" count="34" type="stmt"/>
+      <line num="138" count="3" type="stmt"/>
+      <line num="144" count="3" type="stmt"/>
+      <line num="146" count="4" type="stmt"/>
+      <line num="151" count="4" type="stmt"/>
+      <line num="153" count="3" type="stmt"/>
+      <line num="160" count="3" type="stmt"/>
+      <line num="162" count="13" type="stmt"/>
+      <line num="163" count="13" type="stmt"/>
+      <line num="165" count="13" type="stmt"/>
+      <line num="166" count="13" type="stmt"/>
+      <line num="168" count="70" type="stmt"/>
+      <line num="173" count="9" type="stmt"/>
+      <line num="175" count="10" type="stmt"/>
+      <line num="176" count="10" type="stmt"/>
+      <line num="179" count="10" type="stmt"/>
+      <line num="180" count="10" type="stmt"/>
+      <line num="181" count="10" type="stmt"/>
+      <line num="182" count="10" type="stmt"/>
+      <line num="183" count="10" type="stmt"/>
+      <line num="184" count="10" type="stmt"/>
+      <line num="185" count="9" type="cond" truecount="4" falsecount="0"/>
+      <line num="186" count="1" type="stmt"/>
+      <line num="187" count="1" type="stmt"/>
+      <line num="189" count="8" type="stmt"/>
+      <line num="190" count="8" type="stmt"/>
+      <line num="192" count="1" type="stmt"/>
+      <line num="193" count="1" type="stmt"/>
+      <line num="194" count="2" type="stmt"/>
+      <line num="200" count="1" type="cond" truecount="1" falsecount="1"/>
+      <line num="204" count="1" type="stmt"/>
+      <line num="205" count="1" type="stmt"/>
+      <line num="212" count="6" type="stmt"/>
+      <line num="213" count="6" type="cond" truecount="1" falsecount="1"/>
+      <line num="215" count="0" type="stmt"/>
+      <line num="220" count="4" type="cond" truecount="4" falsecount="1"/>
+      <line num="221" count="4" type="stmt"/>
+      <line num="222" count="4" type="cond" truecount="1" falsecount="1"/>
+      <line num="223" count="4" type="stmt"/>
+      <line num="224" count="4" type="cond" truecount="3" falsecount="1"/>
+      <line num="225" count="4" type="stmt"/>
+      <line num="228" count="0" type="stmt"/>
+    </file>
+    <file name="capability-bridge.ts" path="D:\MDHPROJECT\metis-development-tool\packages\mdt-pi-runtime\src\capability-bridge.ts">
+      <metrics statements="7" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="3"/>
+      <line num="24" count="6" type="stmt"/>
+      <line num="25" count="6" type="stmt"/>
+      <line num="30" count="5" type="stmt"/>
+      <line num="39" count="2" type="stmt"/>
+      <line num="40" count="2" type="stmt"/>
+      <line num="43" count="5" type="stmt"/>
+      <line num="44" count="4" type="stmt"/>
+    </file>
+    <file name="errors.ts" path="D:\MDHPROJECT\metis-development-tool\packages\mdt-pi-runtime\src\errors.ts">
+      <metrics statements="17" coveredstatements="16" conditionals="33" coveredconditionals="33" methods="2" coveredmethods="2"/>
+      <line num="9" count="11" type="cond" truecount="2" falsecount="0"/>
+      <line num="10" count="8" type="cond" truecount="2" falsecount="0"/>
+      <line num="11" count="8" type="stmt"/>
+      <line num="13" count="3" type="cond" truecount="2" falsecount="0"/>
+      <line num="14" count="2" type="stmt"/>
+      <line num="15" count="2" type="cond" truecount="2" falsecount="0"/>
+      <line num="17" count="0" type="stmt"/>
+      <line num="22" count="9" type="stmt"/>
+      <line num="23" count="9" type="cond" truecount="5" falsecount="0"/>
+      <line num="24" count="1" type="stmt"/>
+      <line num="25" count="8" type="cond" truecount="4" falsecount="0"/>
+      <line num="26" count="6" type="cond" truecount="4" falsecount="0"/>
+      <line num="27" count="5" type="cond" truecount="2" falsecount="0"/>
+      <line num="34" count="1" type="stmt"/>
+      <line num="36" count="4" type="cond" truecount="5" falsecount="0"/>
+      <line num="37" count="1" type="stmt"/>
+      <line num="38" count="3" type="stmt"/>
+    </file>
+    <file name="index.ts" path="D:\MDHPROJECT\metis-development-tool\packages\mdt-pi-runtime\src\index.ts">
+      <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+    </file>
+    <file name="types.ts" path="D:\MDHPROJECT\metis-development-tool\packages\mdt-pi-runtime\src\types.ts">
+      <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+    </file>
+  </project>
+</coverage>

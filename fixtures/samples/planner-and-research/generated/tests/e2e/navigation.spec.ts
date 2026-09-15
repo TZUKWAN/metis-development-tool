@@ -6,7 +6,7 @@ import { expect, test } from '@playwright/test'
 
 test('navigate interaction: click moves to the target page', async ({ page }) => {
   await page.goto("/")
-  await page.locator('[data-mdt-id="01a0a224-e6e5-74ad-9dc8-3e06a8348d30"]').click()
+  await page.locator('[data-mdt-id="a0000000-0000-7000-8000-000000000028"]').click()
   await expect(page.locator('.mdt-page').first()).toBeVisible()
   await expect(page).toHaveURL(new RegExp("/research$"))
 })

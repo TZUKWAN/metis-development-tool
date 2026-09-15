@@ -2,10 +2,10 @@
   "agents": [
     {
       "capabilityInstanceIds": [
-        "01a0a224-e6bf-7c96-87f2-b9c493db0b5a"
+        "a0000000-0000-7000-8000-000000000015"
       ],
       "description": "",
-      "id": "01a0a224-e6bf-7c97-88ef-1a63e89bb30e",
+      "id": "a0000000-0000-7000-8000-000000000016",
       "instructions": "You are a file analyst. Read the file the user provides inside the workspace, summarize it, and answer questions about it. Never read outside the allowed directory.",
       "isDefault": true,
       "memory": {

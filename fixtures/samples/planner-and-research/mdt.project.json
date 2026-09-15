@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "id": "01a0a224-e6e5-74a6-baf6-e8b616711fda",
+  "id": "a0000000-0000-7000-8000-000000000021",
   "name": "Planner and Research",
   "createdAt": "2026-09-15T00:00:00.000Z",
   "updatedAt": "2026-09-15T00:00:00.000Z",
   "pages": [
     {
-      "id": "01a0a224-e6e5-74aa-838d-063ce35808d5",
+      "id": "a0000000-0000-7000-8000-000000000025",
       "name": "Home",
       "type": "page",
       "viewport": {
@@ -17,7 +17,7 @@
       "background": {},
       "elements": [
         {
-          "id": "01a0a224-e6e5-74ab-88fd-eaf2f6e3d16d",
+          "id": "a0000000-0000-7000-8000-000000000026",
           "name": "Title",
           "role": "text",
           "visual": {
@@ -44,7 +44,7 @@
           "children": []
         },
         {
-          "id": "01a0a224-e6e5-74ac-b21e-624649224245",
+          "id": "a0000000-0000-7000-8000-000000000027",
           "name": "Request Input",
           "role": "input",
           "visual": {
@@ -72,7 +72,7 @@
           "children": []
         },
         {
-          "id": "01a0a224-e6e5-74ad-9dc8-3e06a8348d30",
+          "id": "a0000000-0000-7000-8000-000000000028",
           "name": "Plan Button",
           "role": "button",
           "visual": {
@@ -101,7 +101,7 @@
           "children": []
         },
         {
-          "id": "01a0a224-e6e5-74ae-9d7e-d4951635d01d",
+          "id": "a0000000-0000-7000-8000-000000000029",
           "name": "Plan Chat",
           "role": "chat",
           "visual": {
@@ -129,7 +129,7 @@
       "metadata": {}
     },
     {
-      "id": "01a0a224-e6e5-74af-9775-3a09a2d32ac1",
+      "id": "a0000000-0000-7000-8000-000000000030",
       "name": "Research",
       "type": "page",
       "viewport": {
@@ -140,7 +140,7 @@
       "background": {},
       "elements": [
         {
-          "id": "01a0a224-e6e5-74b0-8e53-d3a436aa5d91",
+          "id": "a0000000-0000-7000-8000-000000000031",
           "name": "Research Chat",
           "role": "chat",
           "visual": {
@@ -171,7 +171,7 @@
   "components": [],
   "agents": [
     {
-      "id": "01a0a224-e6e5-74a7-bd70-c43b6d7dbd01",
+      "id": "a0000000-0000-7000-8000-000000000022",
       "name": "Planner Agent",
       "description": "",
       "instructions": "You are a planner. Break the user request into concrete research questions. Answer with a numbered list.",
@@ -191,7 +191,7 @@
       "isDefault": true
     },
     {
-      "id": "01a0a224-e6e5-74a9-9133-c1977d0f89e1",
+      "id": "a0000000-0000-7000-8000-000000000024",
       "name": "Research Agent",
       "description": "",
       "instructions": "You are a web research assistant. Answer the given research question with a cited summary.",
@@ -205,7 +205,7 @@
         }
       },
       "capabilityRefs": [
-        "01a0a224-e6e5-74a8-9782-d91a1e463110"
+        "a0000000-0000-7000-8000-000000000023"
       ],
       "memory": {
         "enabled": false
@@ -215,7 +215,7 @@
   ],
   "capabilities": [
     {
-      "id": "01a0a224-e6e5-74a8-9782-d91a1e463110",
+      "id": "a0000000-0000-7000-8000-000000000023",
       "capabilityId": "web_search",
       "version": "1.0.0",
       "config": {},
@@ -230,30 +230,30 @@
   ],
   "interactions": [
     {
-      "id": "01a0a224-e6e5-74b1-9016-c1aa2a8a1047",
-      "sourcePageId": "01a0a224-e6e5-74aa-838d-063ce35808d5",
-      "sourceElementId": "01a0a224-e6e5-74ad-9dc8-3e06a8348d30",
+      "id": "a0000000-0000-7000-8000-000000000032",
+      "sourcePageId": "a0000000-0000-7000-8000-000000000025",
+      "sourceElementId": "a0000000-0000-7000-8000-000000000028",
       "trigger": "click",
       "enabled": true,
       "action": {
         "type": "sendToAgent",
-        "agentId": "01a0a224-e6e5-74a7-bd70-c43b6d7dbd01",
+        "agentId": "a0000000-0000-7000-8000-000000000022",
         "payload": {
           "type": "elementValue",
-          "elementId": "01a0a224-e6e5-74ac-b21e-624649224245"
+          "elementId": "a0000000-0000-7000-8000-000000000027"
         },
-        "chatElementId": "01a0a224-e6e5-74ae-9d7e-d4951635d01d"
+        "chatElementId": "a0000000-0000-7000-8000-000000000029"
       }
     },
     {
-      "id": "01a0a224-e6e5-74b2-9f5b-123079dcdf43",
-      "sourcePageId": "01a0a224-e6e5-74aa-838d-063ce35808d5",
-      "sourceElementId": "01a0a224-e6e5-74ad-9dc8-3e06a8348d30",
+      "id": "a0000000-0000-7000-8000-000000000033",
+      "sourcePageId": "a0000000-0000-7000-8000-000000000025",
+      "sourceElementId": "a0000000-0000-7000-8000-000000000028",
       "trigger": "click",
       "enabled": true,
       "action": {
         "type": "navigate",
-        "targetPageId": "01a0a224-e6e5-74af-9775-3a09a2d32ac1"
+        "targetPageId": "a0000000-0000-7000-8000-000000000030"
       }
     }
   ],
@@ -277,6 +277,6 @@
       "target": "web-agent",
       "dependencyOverrides": {}
     },
-    "defaultAgentId": "01a0a224-e6e5-74a7-bd70-c43b6d7dbd01"
+    "defaultAgentId": "a0000000-0000-7000-8000-000000000022"
   }
 }
