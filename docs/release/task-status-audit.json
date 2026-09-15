@@ -1,37 +1,20 @@
 {
-  "generatedAt": "2026-09-15T17:10:19.926Z",
+  "generatedAt": "2026-09-15T18:27:06.642Z",
   "canonicalTotal": 310,
   "rowCount": 310,
   "counts": {
-    "TODO": 22,
+    "TODO": 5,
     "IN_PROGRESS": 0,
     "BLOCKED": 0,
-    "REOPENED": 16,
-    "DONE": 272
+    "REOPENED": 5,
+    "DONE": 300
   },
   "todoIds": [
-    "P06.20",
-    "P06.21",
-    "P06.22",
-    "P06.23",
-    "P06.24",
-    "P06.25",
-    "P06.26",
-    "P06.30",
-    "P08.11",
-    "P08.14",
     "P10.09",
     "P12.10",
     "P14.12",
-    "P14.21",
-    "P14.22",
-    "P14.23",
-    "P15.09",
-    "P18.10",
     "P18.12",
-    "P18.14",
-    "P18.19",
-    "P18.20"
+    "P18.19"
   ],
   "reopenedEvidence": [],
   "problems": []
