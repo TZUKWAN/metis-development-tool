@@ -15,11 +15,7 @@
  * These tests are hermetic (no network, no Electron) and use the real
  * production modules.
  */
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs'
-import { tmpdir } from 'node:os'
-import { join } from 'node:path'
-
-import { afterAll, describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
 import { createId, validateRefs, parseProject, type ProjectRoot } from '@mdt/schema'
 

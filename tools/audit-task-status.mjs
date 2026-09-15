@@ -29,7 +29,7 @@ if (canonical.length !== 310) {
 }
 
 // ---- rows from TASK_STATUS.md ----
-const LEGAL = ['TODO', 'IN_PROGRESS', 'BLOCKED', 'REOPENED', 'DONE']
+// Legal statuses are enforced by the regex below (single source of truth).
 const rows = new Map()
 for (const line of status.split('\n')) {
   const m = line.match(/^\| (P\d\d\.\d\d) \| (TODO|IN_PROGRESS|BLOCKED|REOPENED|DONE)\b/i)

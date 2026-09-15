@@ -48,7 +48,6 @@ describe('P14.23 — repeated builds (20x)', () => {
     { timeout: 300_000 },
     async () => {
       const project = loadSample()
-      const blueprint = toBuildBlueprint(project)
       const workspace = mkdtempSync(join(tmpdir(), 'mdt-stress-'))
       // seed the workspace with the committed scaffold so pipeline generate
       // has a patch-boundary base (as the real builder does)

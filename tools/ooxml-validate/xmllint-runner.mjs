@@ -8,7 +8,7 @@
  * --schema). Both paths return the spawnSync-like shape the validators
  * consume: { status, stdout, stderr }.
  */
-import { spawnSync, execFileSync } from 'node:child_process'
+import { spawnSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -20,17 +20,6 @@ let systemOk
 function systemAvailable() {
   systemOk ??= spawnSync('xmllint', ['--version'], { encoding: 'utf8' }).status === 0
   return systemOk
-}
-
-function wasmAvailable() {
-  try {
-    execFileSync(process.execPath, ['--eval', ''], { timeout: 5_000 })
-    // Probe bundle presence synchronously; the module itself loads async.
-    readFileSync(wasmEntry)
-    return true
-  } catch {
-    return false
-  }
 }
 
 let wasmValidate

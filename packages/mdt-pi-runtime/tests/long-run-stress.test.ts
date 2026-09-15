@@ -8,10 +8,6 @@
  * emitting events back-to-back — the runtime processes every event and the
  * pipeline is exercised identically regardless of pacing.
  */
-import { mkdtempSync } from 'node:fs'
-import { tmpdir } from 'node:os'
-import { join } from 'node:path'
-
 import { describe, expect, it } from 'vitest'
 
 import type { RegisteredTool, RuntimeEvent } from '../src/types'
