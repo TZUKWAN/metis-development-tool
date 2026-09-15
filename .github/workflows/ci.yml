@@ -46,8 +46,8 @@ jobs:
       - name: Format check
         run: npm run format:check
 
-      - name: Lint
-        run: npm run lint
+      - name: Lint (zero warnings)
+        run: npx eslint . --max-warnings=0
 
       - name: Typecheck (all kept workspaces)
         run: npm run typecheck

@@ -102,6 +102,7 @@ import * as pictureEditActions from './picture-edit-actions'
 import * as arrangeActions from './arrange-actions'
 import * as tableActions from './table-actions'
 import * as styleActions from './style-actions'
+import { insertMdtControl, type MdtControlRole } from './mdt/mdt-insert'
 import { handleGlobalKeydown } from './keyboard-actions'
 import { buildCtxItems } from './context-menu-items'
 
@@ -765,7 +766,8 @@ export function App() {
       // Fetch the layout list asynchronously (doesn't block opening)
       void window.slidesApi.getLayouts().then((r) => setLayoutsResult(r))
     },
-    [fitZoom],
+    // Module-level t reads the live language at call time; setters/refs are stable
+    [],
   )
 
   const setSelectedId = useCallback((id: string | null, additive = false) => {
@@ -1324,6 +1326,12 @@ export function App() {
     (target: number) => insertActions.insertZoom(ctxRef.current, target),
     [],
   )
+  // MDT control pipeline: ribbon role → marked engine element → MDT semantics overlay
+  const onInsertMdtControl = useCallback((role: MdtControlRole) => {
+    setEditing(null)
+    setEditingCell(null)
+    void insertMdtControl(ctxRef.current, role)
+  }, [])
   const openHeaderFooter = useCallback(() => insertActions.openHeaderFooter(ctxRef.current), [])
   const applyHf = useCallback(
     (opts: { footer: string | null; slideNum: boolean; date: string | null; dateAuto: boolean }) =>
@@ -1824,7 +1832,10 @@ export function App() {
    * Sidebar grouping: split the page sequence by each section's first-page index (section i
    * covers [start_i, start_{i+1})); pages before the first section start go into an
    * "unsectioned" group — tolerating stale section data after page insertions/deletions.
+   * The translated default-section name is resolved per render so a language switch
+   * (new string) recomputes the groups.
    */
+  const defaultSectionName = t('appSectionDefault')
   const sectionGroups = useMemo(() => {
     if (!sections.length || !slides.length) return null
     const total = slides.length
@@ -1839,7 +1850,7 @@ export function App() {
     }
     const groups: Array<{ id: string | null; name: string; start: number; end: number }> = []
     if (starts[0]! > 0)
-      groups.push({ id: null, name: t('appSectionDefault'), start: 0, end: starts[0]! })
+      groups.push({ id: null, name: defaultSectionName, start: 0, end: starts[0]! })
     sections.forEach((s, i) => {
       groups.push({
         id: s.id,
@@ -1849,7 +1860,7 @@ export function App() {
       })
     })
     return groups
-  }, [sections, slides.length, lang])
+  }, [sections, slides.length, defaultSectionName])
 
   /** Canvas right-click: select the hit element first (replace the selection if it isn't in it), clear selection on blank */
   const onCanvasContextMenu = useCallback(

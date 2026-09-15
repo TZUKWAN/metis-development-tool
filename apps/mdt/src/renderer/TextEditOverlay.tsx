@@ -724,7 +724,10 @@ export function TextEditOverlay({
         sel.addRange(range)
       }
     }
-  }, [node, norm, caretPoint, replaceWith])
+    // Derived primitives (anchor/box/insets/vertText) are listed explicitly: they
+    // only change when node or the fresh-body insets' scale does (norm covers scale),
+    // so re-init timing is unchanged — the overlay is populated once per edit open.
+  }, [node, norm, caretPoint, replaceWith, anchor, box.h, box.w, insets.l, insets.t, insets.r, insets.b, vertText])
 
   const commit = () => {
     savedSel = null
