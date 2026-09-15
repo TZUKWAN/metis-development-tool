@@ -75,8 +75,8 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
 
-      - name: npm audit (block critical)
-        run: npm audit --audit-level=critical || echo "::warning::npm audit reported issues — triage in docs/testing/security-audit.md"
+      - name: npm audit gate (blocks critical/high; allowlist in docs/release/audit-allowlist.json)
+        run: node tools/audit-gate.mjs
 
       - name: Dependency license scan
         run: npm run licenses

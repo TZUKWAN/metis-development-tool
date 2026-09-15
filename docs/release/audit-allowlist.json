@@ -1,0 +1,25 @@
+{
+  "$comment": "Accepted npm audit advisories for the release security gate (tools/audit-gate.mjs). Every entry needs a concrete justification and an expiry date; expired entries stop being accepted automatically. Triage notes live in docs/testing/security-audit.md.",
+  "advisories": [
+    {
+      "id": "GHSA-w3rx-r6r6-pgpr",
+      "package": "image-size",
+      "severity": "high",
+      "title": "image-size: ICNS parser allows denial of service through an infinite loop",
+      "affected_range": "<=2.0.2",
+      "introduced_by": "pptxgenjs (devDependency of @genoffice/pptx-engine)",
+      "justification": "image-size is only reachable through pptxgenjs, a devDependency used by the fixture-generation toolchain. It is never bundled into shipped desktop artifacts (apps/mdt build.files packages out/** only), so the parser is not exposed to untrusted input in production. No fixed version of pptxgenjs is available yet; re-triage on expiry.",
+      "expires": "2026-12-31"
+    },
+    {
+      "id": "GHSA-5p2g-fcmc-qvqq",
+      "package": "image-size",
+      "severity": "high",
+      "title": "image-size: JXL and HEIF parsers allow denial of service through infinite loops",
+      "affected_range": "<=2.0.2",
+      "introduced_by": "pptxgenjs (devDependency of @genoffice/pptx-engine)",
+      "justification": "Same exposure as GHSA-w3rx-r6r6-pgpr: dev-only fixture toolchain via pptxgenjs, never bundled into shipped artifacts. Re-triage on expiry or when pptxgenjs bumps image-size above 2.0.2.",
+      "expires": "2026-12-31"
+    }
+  ]
+}
