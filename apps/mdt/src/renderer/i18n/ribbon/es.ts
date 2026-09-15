@@ -59,8 +59,7 @@ export const es = {
     'Copiar formato (haga clic para copiar y aplicar el formato; ⌘⇧C copiar formato / ⌘⇧V pegar formato)',
   ribbonGroupSlides: 'Páginas',
   ribbonNewSlide: 'Nueva página',
-  ribbonNewSlideTip:
-    'Nueva página en blanco (conserva el fondo del diseño de la página actual)',
+  ribbonNewSlideTip: 'Nueva página en blanco (conserva el fondo del diseño de la página actual)',
   ribbonChooseLayout: 'Elegir diseño',
   ribbonChooseLayoutNew: 'Nueva página con diseño',
   ribbonChooseLayoutChange: 'Cambiar diseño de la página actual',
@@ -259,8 +258,7 @@ export const es = {
   ribbonAudioTip: 'Insertar un audio local (incrustado en pptx, reproducible en PowerPoint)',
   ribbonScreenRec: 'Grabación de pantalla',
   ribbonStopRec: 'Detener grabación',
-  ribbonScreenRecTip:
-    'Grabar la pantalla; al detenerla se inserta como vídeo en la página actual',
+  ribbonScreenRecTip: 'Grabar la pantalla; al detenerla se inserta como vídeo en la página actual',
   ribbonStopRecTip: 'Detener la grabación e insertarla en la página actual',
   ribbonGroupSelect: 'Seleccionar',
   ribbonSelectTip: 'Seleccionar: salir del dibujo y volver a la edición de elementos',
@@ -281,8 +279,7 @@ export const es = {
   ribbonEraseAll: 'Borrar todo',
   ribbonEraseAllTip: 'Eliminar toda la entrada de lápiz de la página actual',
   ribbonGroupThemes: 'Temas',
-  ribbonApplyThemeTip:
-    'Aplicar el tema «{name}» (colores + fuentes, aplicado a todas las páginas)',
+  ribbonApplyThemeTip: 'Aplicar el tema «{name}» (colores + fuentes, aplicado a todas las páginas)',
   ribbonThemeOffice: 'Office',
   ribbonThemeEmber: 'Ascua',
   ribbonThemeIndigo: 'Índigo',
@@ -318,8 +315,7 @@ export const es = {
   ribbonGroupTiming: 'Intervalos',
   ribbonTransApplyAllTip: 'Aplicar la transición de esta página a todas las páginas',
   ribbonPreview: 'Vista previa',
-  ribbonAnimPreviewTip:
-    'Reproducir todas las animaciones de esta página en el lienzo de edición',
+  ribbonAnimPreviewTip: 'Reproducir todas las animaciones de esta página en el lienzo de edición',
   ribbonGroupAnimation: 'Animación',
   ribbonAnimNoneTip: 'Quitar todas las animaciones de la forma seleccionada',
   ribbonAnimAppear: 'Aparecer',

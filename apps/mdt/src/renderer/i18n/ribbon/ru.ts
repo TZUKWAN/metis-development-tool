@@ -57,7 +57,7 @@ export const ru = {
   ribbonBrushTipDefault:
     'Формат по образцу (щёлкните, чтобы скопировать и применить формат; ⌘⇧C копировать формат / ⌘⇧V вставить формат)',
   ribbonGroupSlides: 'Страницы',
-  ribbonNewSlide: 'Создать страница',
+  ribbonNewSlide: 'Создать страницу',
   ribbonNewSlideTip: 'Новая пустая страница (наследует фон макета текущей страницы)',
   ribbonChooseLayout: 'Выбрать макет',
   ribbonChooseLayoutNew: 'Новая страница с макетом',
@@ -307,7 +307,7 @@ export const ru = {
   ribbonTransRandom: 'Случайный',
   ribbonTransNoneTip: 'Удалить переход с текущей страницы',
   ribbonTransApplyTip:
-    'Использовать переход «{name}» на этой странице (действует в показ страниц PowerPoint)',
+    'Использовать переход «{name}» на этой странице (действует в показе страниц PowerPoint)',
   ribbonGroupTiming: 'Время показа страниц',
   ribbonTransApplyAllTip: 'Применить переход этой страницы ко всем страницам',
   ribbonPreview: 'Просмотр',
@@ -337,7 +337,7 @@ export const ru = {
   ribbonAnimEmphasis: 'Выделение',
   ribbonAnimExit: 'Выход',
   ribbonAnimApplyTip:
-    '{cls}: {name} (заменяет анимации выделенной фигуры; действует в показ страниц PowerPoint)',
+    '{cls}: {name} (заменяет анимации выделенной фигуры; действует в показе страниц PowerPoint)',
   ribbonGroupMotionPaths: 'Пути перемещения',
   ribbonPathLineRight: 'Линия (вправо)',
   ribbonPathLineDown: 'Линия (вниз)',
@@ -345,7 +345,7 @@ export const ru = {
   ribbonPathCircle: 'Круг',
   ribbonPathZigzag: 'Зигзаг',
   ribbonMotionPathTip:
-    'Путь перемещения: {name} (добавляет выделенной фигуре анимацию движения по пути; действует в показ страниц PowerPoint)',
+    'Путь перемещения: {name} (добавляет выделенной фигуре анимацию движения по пути; действует в показе страниц PowerPoint)',
   ribbonGroupAdvancedAnim: 'Расширенная анимация',
   ribbonAddAnimation: 'Добавить анимацию',
   ribbonAddAnimationTip: 'Добавить анимацию после уже имеющихся у выделенной фигуры',
@@ -364,21 +364,21 @@ export const ru = {
   ribbonAnimDelayTip: 'Задержка после запуска до начала (секунды)',
   ribbonGroupStartShow: 'Начать показ страниц',
   ribbonFromBeginning: 'С начала',
-  ribbonFromBeginningTip: 'Полноэкранный показ с 1-го страницы (F5; скрытые страницы пропускаются)',
+  ribbonFromBeginningTip: 'Полноэкранный показ с 1-й страницы (F5; скрытые страницы пропускаются)',
   ribbonFromCurrent: 'С текущей страницы',
   ribbonFromCurrentTip: 'Полноэкранный показ с текущей страницы (⇧F5)',
   ribbonPresenterView: 'Режим докладчика',
   ribbonPresenterViewTip:
-    'Режим докладчика: заметки / следующий страница / таймер / перо; при нескольких мониторах показ идёт во весь экран на другом',
+    'Режим докладчика: заметки / следующая страница / таймер / перо; при нескольких мониторах показ идёт во весь экран на другом',
   ribbonCustomShow: 'Произвольный показ',
   ribbonCustomShowTip:
     'Произвольный показ: показать часть страниц в заданном порядке (можно создать несколько и запускать одним щелчком)',
   ribbonGroupSetUp: 'Настройка',
-  ribbonSetUpShow: 'Настройка показ страниц',
+  ribbonSetUpShow: 'Настройка показа страниц',
   ribbonNotSupported: '{name} (пока не поддерживается)',
-  ribbonHideSlide: 'Скрыть страница',
+  ribbonHideSlide: 'Скрыть страницу',
   ribbonHideSlideTip:
-    'Скрыть текущий страница (остаётся в файле, пропускается при показе; сохраняется в pptx)',
+    'Скрыть текущую страницу (остаётся в файле, пропускается при показе; сохраняется в pptx)',
   ribbonUnhideSlideTip: 'Отменить скрытие текущей страницы (снова показывается при показе)',
   ribbonRehearse: 'Настройка времени',
   ribbonRehearseTip:
@@ -410,7 +410,8 @@ export const ru = {
   ribbonViewNormal: 'Обычный',
   ribbonViewNormalTip: 'Обычный режим: эскизы + холст редактирования',
   ribbonViewOutline: 'Режим структуры',
-  ribbonViewOutlineTip: 'Режим структуры: просмотр и переход по страницам в виде текстовой структуры',
+  ribbonViewOutlineTip:
+    'Режим структуры: просмотр и переход по страницам в виде текстовой структуры',
   ribbonViewSorter: 'Сортировщик страниц',
   ribbonViewSorterTip:
     'Сортировщик страниц: сетка со всеми страницами, двойной щелчок для редактирования',
@@ -435,7 +436,7 @@ export const ru = {
   ribbonZoomIn: 'Увеличить',
   ribbonZoomOut: 'Уменьшить',
   ribbonFitWindow: 'Вписать в окно',
-  ribbonFitWindowTip: 'Подобрать масштаб, чтобы страница поместился целиком',
+  ribbonFitWindowTip: 'Подобрать масштаб, чтобы страница поместилась целиком',
   ribbonGroupTableStyles: 'Стили таблиц',
   ribbonTableStyleNone: 'Без стиля',
   ribbonTableStyleLightGrid: 'Светлая сетка',

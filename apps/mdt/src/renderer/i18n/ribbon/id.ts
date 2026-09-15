@@ -58,7 +58,8 @@ export const id = {
     'Penyalin Format (klik untuk menyalin dan menerapkan format; ⌘⇧C salin format / ⌘⇧V tempel format)',
   ribbonGroupSlides: 'Halaman',
   ribbonNewSlide: 'Halaman Baru',
-  ribbonNewSlideTip: 'Halaman kosong baru (mempertahankan latar belakang tata letak halaman saat ini)',
+  ribbonNewSlideTip:
+    'Halaman kosong baru (mempertahankan latar belakang tata letak halaman saat ini)',
   ribbonChooseLayout: 'Pilih Tata Letak',
   ribbonChooseLayoutNew: 'Halaman Baru dengan Tata Letak',
   ribbonChooseLayoutChange: 'Ubah Tata Letak Halaman Saat Ini',
@@ -219,7 +220,8 @@ export const id = {
   ribbonCurrentSlideSuffix: ' (saat ini)',
   ribbonGroupComments: 'Komentar',
   ribbonComment: 'Komentar',
-  ribbonNewCommentTip: 'Komentar baru di halaman saat ini (disimpan ke pptx, terlihat di PowerPoint)',
+  ribbonNewCommentTip:
+    'Komentar baru di halaman saat ini (disimpan ke pptx, terlihat di PowerPoint)',
   ribbonInsertTextBoxTip: 'Sisipkan kotak teks',
   ribbonWordArt: 'WordArt',
   ribbonWordArtTip: 'Sisipkan WordArt (teks besar dengan gaya isian/kontur)',
@@ -254,7 +256,8 @@ export const id = {
   ribbonAudioTip: 'Sisipkan audio lokal (disematkan di pptx, dapat diputar di PowerPoint)',
   ribbonScreenRec: 'Rekaman Layar',
   ribbonStopRec: 'Hentikan Rekaman',
-  ribbonScreenRecTip: 'Rekam layar; setelah dihentikan disisipkan sebagai video ke halaman saat ini',
+  ribbonScreenRecTip:
+    'Rekam layar; setelah dihentikan disisipkan sebagai video ke halaman saat ini',
   ribbonStopRecTip: 'Hentikan rekaman dan sisipkan ke halaman saat ini',
   ribbonGroupSelect: 'Pilih',
   ribbonSelectTip: 'Pilih: keluar dari menggambar dan kembali mengedit elemen',
@@ -411,7 +414,7 @@ export const id = {
   ribbonViewNormalTip: 'Tampilan normal: gambar mini + kanvas pengeditan',
   ribbonViewOutline: 'Tampilan Kerangka',
   ribbonViewOutlineTip:
-    'Tampilan kerangka: menelusuri dan berpindah antarslide sebagai kerangka teks',
+    'Tampilan kerangka: menelusuri dan berpindah antarhalaman sebagai kerangka teks',
   ribbonViewSorter: 'Pengurut Halaman',
   ribbonViewSorterTip: 'Pengurut halaman: ikhtisar kisi semua halaman, klik ganda untuk mengedit',
   ribbonViewReading: 'Tampilan Baca',

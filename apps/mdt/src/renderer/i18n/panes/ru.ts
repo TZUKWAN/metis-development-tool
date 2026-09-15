@@ -9,7 +9,7 @@ export const ru = {
   paneAnimTitle: 'Область анимации · Страница {n}',
   paneAnimPreview: 'Воспроизвести предварительный просмотр анимации этой страницы',
   paneAnimCollapse: 'Свернуть область анимации',
-  paneAnimEmpty: 'На этом странице пока нет анимации',
+  paneAnimEmpty: 'На этой странице пока нет анимации',
   paneAnimEmptySub:
     'Выберите фигуру и эффект на вкладке «Анимация». Анимация записывается в pptx и работает также в PowerPoint.',
   paneAnimDelete: 'Удалить эту анимацию',
@@ -53,7 +53,7 @@ export const ru = {
 
   paneCommentsTitle: 'Примечания · Страница {n}',
   paneCommentsCollapse: 'Свернуть область примечаний',
-  paneCommentsEmpty: 'На этом странице пока нет примечаний',
+  paneCommentsEmpty: 'На этой странице пока нет примечаний',
   paneCommentsEmptySub:
     'Введите текст ниже — примечания записываются в pptx и видны также в PowerPoint.',
   paneCommentsDelete: 'Удалить примечание',
@@ -85,7 +85,7 @@ export const ru = {
   paneCsdPageCount: 'Страниц: {n}',
   paneCsdNew: 'Создать',
   paneCsdDelete: 'Удалить',
-  paneCsdName: 'Имя показ страниц',
+  paneCsdName: 'Имя показа страниц',
   paneCsdNamePlaceholder: 'Имя произвольного показа',
   paneCsdAllSlides: 'Страницы презентации',
   paneCsdSlideN: 'Страница {n}',

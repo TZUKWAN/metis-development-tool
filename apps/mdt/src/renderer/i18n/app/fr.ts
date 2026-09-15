@@ -48,8 +48,7 @@ export const fr = {
   appStatusLinkSet: 'Lien hypertexte défini (activé au clic pendant un diaporama PowerPoint)',
   appStatusLinkRemoved: 'Lien hypertexte supprimé',
   appZoomButtonText: '▸ Page {page}',
-  appStatusZoomInserted:
-    'Zoom inséré : cliquez pendant le diaporama pour accéder à la page {page}',
+  appStatusZoomInserted: 'Zoom inséré : cliquez pendant le diaporama pour accéder à la page {page}',
   appStatusHfApplied: 'En-tête et pied de page appliqués à toutes les pages',
   appStatusHfUnchanged: 'Aucune modification de l’en-tête et du pied de page',
   appStatusEquationInserted: 'Équation insérée',

@@ -70,7 +70,7 @@ export const pl = {
   ribbonNoLayouts: 'Brak informacji o układzie',
   ribbonAddSection: 'Dodaj sekcję',
   ribbonAddSectionTip:
-    'Dodaje sekcję przed bieżącym stroną, aby ułatwić organizację długich prezentacji',
+    'Dodaje sekcję przed bieżącą stroną, aby ułatwić organizację długich prezentacji',
   ribbonGroupFont: 'Czcionka',
   ribbonFontsSystem: 'Czcionki systemowe',
   ribbonFontsDownloadable: 'Czcionki do pobrania',
@@ -275,8 +275,7 @@ export const pl = {
   ribbonEraseAll: 'Wymaż wszystko',
   ribbonEraseAllTip: 'Usuń całe pismo odręczne z bieżącej strony',
   ribbonGroupThemes: 'Motywy',
-  ribbonApplyThemeTip:
-    'Zastosuj motyw "{name}" (kolory + czcionki, stosowane do wszystkich stron)',
+  ribbonApplyThemeTip: 'Zastosuj motyw "{name}" (kolory + czcionki, stosowane do wszystkich stron)',
   ribbonThemeOffice: 'Office',
   ribbonThemeEmber: 'Żar',
   ribbonThemeIndigo: 'Indygo',
@@ -370,7 +369,7 @@ export const pl = {
   ribbonFromCurrentTip: 'Pokaz pełnoekranowy od bieżącej strony (⇧F5)',
   ribbonPresenterView: 'Widok prezentera',
   ribbonPresenterViewTip:
-    'Widok prezentera: notatki / następny strona / czasomierz / pióro; przy wielu ekranach pokaz działa na pełnym ekranie na drugim ekranie',
+    'Widok prezentera: notatki / następna strona / czasomierz / pióro; przy wielu ekranach pokaz działa na pełnym ekranie na drugim ekranie',
   ribbonCustomShow: 'Pokaz niestandardowy',
   ribbonCustomShowTip:
     'Pokaz niestandardowy: prezentuj wybrane strony w wybranej kolejności (utwórz kilka, a następnie uruchamiaj jednym kliknięciem)',
@@ -379,8 +378,8 @@ export const pl = {
   ribbonNotSupported: '{name} (jeszcze nieobsługiwane)',
   ribbonHideSlide: 'Ukryj stronę',
   ribbonHideSlideTip:
-    'Ukryj bieżący strona (pozostaje w pliku, pomijany podczas pokazu; zapisywane w pptx)',
-  ribbonUnhideSlideTip: 'Odkryj bieżący strona (znów wyświetlany podczas pokazu)',
+    'Ukryj bieżącą stronę (pozostaje w pliku, pomijana podczas pokazu; zapisywana w pptx)',
+  ribbonUnhideSlideTip: 'Odkryj bieżącą stronę (znów wyświetlana podczas pokazu)',
   ribbonRehearse: 'Próba tempa',
   ribbonRehearseTip:
     'Próba tempa: uruchamia pokaz od początku i rejestruje czas każdego strony; zapisz jako czasy automatycznej zmiany stron (zapisywane w pptx)',
@@ -388,7 +387,7 @@ export const pl = {
   ribbonGroupProofing: 'Sprawdzanie',
   ribbonSpellCheck: 'Pisownia',
   ribbonSpellCheckTip:
-    'AI sprawdza każdy strona pod kątem literówek, gramatyki i interpunkcji i poprawia je bezpośrednio',
+    'AI sprawdza każdą stronę pod kątem literówek, gramatyki i interpunkcji i poprawia je bezpośrednio',
   ribbonSpellCheckPrompt:
     'Sprawdź tę prezentację strona po stronie pod kątem literówek, gramatyki i interpunkcji: popraw problemy bezpośrednio za pomocą narzędzi, zachowując układ i znaczenie; na końcu krótko zgłoś zmiany dla każdego strony, pomijając strony bez problemów.',
   ribbonTranslate: 'Przetłumacz',

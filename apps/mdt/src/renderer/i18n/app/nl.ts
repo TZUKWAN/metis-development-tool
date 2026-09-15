@@ -148,7 +148,7 @@ export const nl = {
   appStatusMergeFailed: 'Kan deze cel niet samenvoegen/splitsen',
   appPrintProgress: 'Afdrukken voorbereiden…',
   appPrintTitle: 'Afdrukken',
-  appPrintLayoutFull: "Volledige pagina",
+  appPrintLayoutFull: 'Volledige pagina',
   appPrintLayoutHandout2: 'Hand-outs (2 per pagina)',
   appPrintLayoutHandout3: 'Hand-outs (3 per pagina)',
   appPrintLayoutHandout6: 'Hand-outs (6 per pagina)',

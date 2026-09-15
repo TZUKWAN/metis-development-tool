@@ -39,8 +39,7 @@ export const en = {
   appWordArtPlaceholder: 'Your text here',
   appStatusWordArtInserted: 'WordArt inserted; double-click to edit text',
   appStatusDateInserted: 'Date and time inserted (updates automatically when opened in PowerPoint)',
-  appStatusSlideNumInserted:
-    'Page number inserted (updates automatically during page show/export)',
+  appStatusSlideNumInserted: 'Page number inserted (updates automatically during page show/export)',
   appStatusLinkSet: 'Hyperlink set (activates on click during a PowerPoint page show)',
   appStatusLinkRemoved: 'Hyperlink removed',
   appZoomButtonText: '▸ Page {page}',

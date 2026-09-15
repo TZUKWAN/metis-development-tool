@@ -213,8 +213,7 @@ export const cs = {
   ribbonCurrentSlideSuffix: ' (aktuální)',
   ribbonGroupComments: 'Komentáře',
   ribbonComment: 'Komentář',
-  ribbonNewCommentTip:
-    'Nový komentář k aktuální straně (uložen do pptx, viditelný v PowerPointu)',
+  ribbonNewCommentTip: 'Nový komentář k aktuální straně (uložen do pptx, viditelný v PowerPointu)',
   ribbonInsertTextBoxTip: 'Vložit textové pole',
   ribbonWordArt: 'WordArt',
   ribbonWordArtTip: 'Vložit WordArt (velký text s výplní/obrysem)',
@@ -266,7 +265,7 @@ export const cs = {
   ribbonGroupHighlighterStyle: 'Styl zvýrazňovače',
   ribbonGroupClear: 'Vymazat',
   ribbonEraseAll: 'Vymazat vše',
-  ribbonEraseAllTip: 'Odstranit veškerý rukopis na aktuálním strany',
+  ribbonEraseAllTip: 'Odstranit veškerý rukopis na aktuální straně',
   ribbonGroupThemes: 'Motivy',
   ribbonApplyThemeTip: 'Použít motiv „{name}“ (barvy + písma, použije se na všechny strany)',
   ribbonThemeOffice: 'Office',
@@ -372,8 +371,8 @@ export const cs = {
   ribbonNotSupported: '{name} (zatím není podporováno)',
   ribbonHideSlide: 'Skrýt stranu',
   ribbonHideSlideTip:
-    'Skrýt aktuální strana (zůstane v souboru, během prezentace se přeskočí; uloží se do pptx)',
-  ribbonUnhideSlideTip: 'Zobrazit aktuální strana (během prezentace se znovu zobrazí)',
+    'Skrýt aktuální stranu (zůstane v souboru, během prezentace se přeskočí; uloží se do pptx)',
+  ribbonUnhideSlideTip: 'Zobrazit aktuální stranu (během prezentace se znovu zobrazí)',
   ribbonRehearse: 'Vyzkoušet časování',
   ribbonRehearseTip:
     'Vyzkoušet časování: spustí prezentaci od začátku a zaznamená čas na každou stranu; uloží se jako časování automatického přechodu (uloží se do pptx)',
@@ -383,12 +382,11 @@ export const cs = {
   ribbonSpellCheckTip:
     'AI zkontroluje na každé straně překlepy, gramatiku a interpunkci a přímo je opraví',
   ribbonSpellCheckPrompt:
-    'Zkontroluj tuto prezentaci stranu po straně na překlepy, gramatiku a interpunkci: chyby oprav přímo pomocí nástrojů a zachovej rozložení i význam; poté stručně shrň změny u každé strany a strany bez chyb vynech.',
+    'Zkontroluj tuto prezentaci strana po straně na překlepy, gramatiku a interpunkci: chyby oprav přímo pomocí nástrojů a zachovej rozložení i význam; poté stručně shrň změny u každé strany a strany bez chyb vynech.',
   ribbonTranslate: 'Přeložit',
-  ribbonTranslateTip:
-    'AI přeloží text aktuální strany do zvoleného jazyka (nahradí původní text)',
+  ribbonTranslateTip: 'AI přeloží text aktuální strany do zvoleného jazyka (nahradí původní text)',
   ribbonTranslatePrompt:
-    'Přelož veškerý text na aktuálním strany do jazyka {lang}: původní text nahraď pomocí nástrojů a zachovej rozložení, velikosti písma i barvy.',
+    'Přelož veškerý text na aktuální straně do jazyka {lang}: původní text nahraď pomocí nástrojů a zachovej rozložení, velikosti písma i barvy.',
   ribbonLangEnglish: 'Angličtina',
   ribbonLangSimplifiedChinese: 'Zjednodušená čínština',
   ribbonLangTraditionalChinese: 'Tradiční čínština',

@@ -41,10 +41,8 @@ export const ja = {
   appWordArtPlaceholder: 'ここに文字を入力',
   appStatusWordArtInserted: 'ワードアートを挿入しました。ダブルクリックで文字を編集',
   appStatusDateInserted: '日付と時刻を挿入しました（PowerPoint で開くと自動的に更新）',
-  appStatusSlideNumInserted:
-    'ページ番号を挿入しました（ページショー/エクスポート時に自動更新）',
-  appStatusLinkSet:
-    'ハイパーリンクを設定しました（PowerPoint のページショーでクリックすると有効）',
+  appStatusSlideNumInserted: 'ページ番号を挿入しました（ページショー/エクスポート時に自動更新）',
+  appStatusLinkSet: 'ハイパーリンクを設定しました（PowerPoint のページショーでクリックすると有効）',
   appStatusLinkRemoved: 'ハイパーリンクを削除しました',
   appZoomButtonText: '▸ ページ {page}',
   appStatusZoomInserted:
@@ -198,8 +196,7 @@ export const ja = {
   appReadingNext: '次のページ ›',
   appReadingExit: '閲覧表示を終了',
   appThumbHiddenTitle: '非表示ページ（ページショーではスキップ）',
-  appSorterHiddenTitle:
-    '非表示ページ（ページショーではスキップ）。ダブルクリックで標準表示で編集',
+  appSorterHiddenTitle: '非表示ページ（ページショーではスキップ）。ダブルクリックで標準表示で編集',
   appSorterItemTitle: 'ダブルクリックで標準表示で編集',
   appOutlineNoText: '（テキストなし）',
   appSectionHeaderTitle: 'クリックで折りたたみ/展開。右クリックでセクションを管理',

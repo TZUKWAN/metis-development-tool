@@ -59,8 +59,7 @@ export const hi = {
   appStatusModel3dInserted:
     '3D मॉडल एम्बेड किया गया (कैनवास पर प्लेसहोल्डर दिखता है; मॉडल फ़ाइल .pptx में सहेजी गई है)',
   appStatusRecordingEmpty: 'रिकॉर्डिंग खाली है; कुछ भी सम्मिलित नहीं किया गया',
-  appStatusRecordingInserted:
-    'स्क्रीन रिकॉर्डिंग वर्तमान पृष्ठ में सम्मिलित की गई (एम्बेडेड webm)',
+  appStatusRecordingInserted: 'स्क्रीन रिकॉर्डिंग वर्तमान पृष्ठ में सम्मिलित की गई (एम्बेडेड webm)',
   appStatusRecording:
     'स्क्रीन रिकॉर्ड हो रही है… रोकने और सम्मिलित करने के लिए "स्क्रीन रिकॉर्डिंग" पर फिर से क्लिक करें',
   appStatusRecordingUnavailable:

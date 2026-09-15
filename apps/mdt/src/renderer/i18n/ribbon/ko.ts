@@ -237,8 +237,7 @@ export const ko = {
   ribbonWordArtPresetBlackGold: '채우기: 검정, 윤곽선: 금색',
   ribbonWordArtPresetSilverDark: '채우기: 은색, 윤곽선: 진한 회색',
   ribbonHeaderFooter: '머리글/바닥글',
-  ribbonHeaderFooterTip:
-    '머리글/바닥글(날짜 / 바닥글 텍스트 / 페이지 번호, 모든 페이지에 적용)',
+  ribbonHeaderFooterTip: '머리글/바닥글(날짜 / 바닥글 텍스트 / 페이지 번호, 모든 페이지에 적용)',
   ribbonDateTime: '날짜 및 시간',
   ribbonDateTimeTip: '날짜 및 시간 텍스트 상자 삽입(동적 필드, PowerPoint에서 열면 자동 업데이트)',
   ribbonSlideNumber: '페이지 번호',
@@ -363,8 +362,7 @@ export const ko = {
   // Slide show
   ribbonGroupStartShow: '페이지 쇼 시작',
   ribbonFromBeginning: '처음부터',
-  ribbonFromBeginningTip:
-    '1번 페이지부터 전체 화면으로 페이지 쇼 시작(F5, 숨긴 페이지는 건너뜀)',
+  ribbonFromBeginningTip: '1번 페이지부터 전체 화면으로 페이지 쇼 시작(F5, 숨긴 페이지는 건너뜀)',
   ribbonFromCurrent: '현재 페이지부터',
   ribbonFromCurrentTip: '현재 페이지부터 전체 화면으로 페이지 쇼 시작(⇧F5)',
   ribbonPresenterView: '발표자 보기',

@@ -62,7 +62,7 @@ export const de = {
   ribbonChooseLayout: 'Layout auswählen',
   ribbonChooseLayoutNew: 'Neue Seite mit Layout',
   ribbonChooseLayoutChange: 'Layout der aktuellen Seite ändern',
-  ribbonLayoutTitleSlide: 'Titelfolie',
+  ribbonLayoutTitleSlide: 'Titelseite',
   ribbonLayoutTitleAndContent: 'Titel und Inhalt',
   ribbonLayoutSectionHeader: 'Abschnittsüberschrift',
   ribbonLayoutTwoContent: 'Zwei Inhalte',

@@ -7,9 +7,9 @@ export const pt = {
   paneMoveDown: 'Mover para Baixo',
 
   paneAnimTitle: 'Painel de Animação · Página {n}',
-  paneAnimPreview: 'Reproduzir a visualização das animações deste página',
+  paneAnimPreview: 'Reproduzir a visualização das animações desta página',
   paneAnimCollapse: 'Recolher o Painel de Animação',
-  paneAnimEmpty: 'Nenhuma animação neste página',
+  paneAnimEmpty: 'Nenhuma animação nesta página',
   paneAnimEmptySub:
     'Selecione uma forma e escolha um efeito na guia "Animações". As animações são gravadas no pptx e também funcionam no PowerPoint.',
   paneAnimDelete: 'Remover esta animação',
@@ -53,7 +53,7 @@ export const pt = {
 
   paneCommentsTitle: 'Comentários · Página {n}',
   paneCommentsCollapse: 'Recolher o Painel de Comentários',
-  paneCommentsEmpty: 'Nenhum comentário neste página',
+  paneCommentsEmpty: 'Nenhum comentário nesta página',
   paneCommentsEmptySub:
     'Digite abaixo — os comentários são gravados no pptx e também ficam visíveis no PowerPoint.',
   paneCommentsDelete: 'Excluir comentário',
@@ -90,7 +90,7 @@ export const pt = {
   paneCsdAllSlides: 'Páginas na apresentação',
   paneCsdSlideN: 'Página {n}',
   paneCsdOrder: 'Páginas na apresentação personalizada',
-  paneCsdOrderEmpty: 'Marque os páginas à esquerda para adicioná-los',
+  paneCsdOrderEmpty: 'Marque as páginas à esquerda para adicioná-los',
   paneCsdCreateHint: 'Clique em "Nova" para criar uma apresentação personalizada',
   paneCsdClose: 'Fechar',
   paneCsdPlay: 'Mostrar',
@@ -159,7 +159,8 @@ export const pt = {
   paneBgTile: 'Lado a lado',
   paneBgHideGraphics: 'Ocultar elementos gráficos do plano de fundo',
   paneBgReset: 'Redefinir plano de fundo',
-  paneBgResetTip: 'Remove o plano de fundo próprio deste página e restaura o do layout/página mestre',
+  paneBgResetTip:
+    'Remove o plano de fundo próprio desta página e restaura o do layout/página mestre',
   paneFormatEmpty:
     'Selecione um elemento na tela para editar sua posição, tamanho e preenchimento.',
   paneFormatPicture: 'Imagem',
@@ -261,15 +262,15 @@ export const pt = {
   panePresenterEnded:
     'Fim da apresentação de páginas. Pressione Esc ou "Finalizar Apresentação" para sair.',
   panePresenterBlackOn: 'Tela em preto (pressione B para retomar)',
-  panePresenterPen: 'Caneta (desenhe no página; o público vê ao vivo)',
+  panePresenterPen: 'Caneta (desenhe na página; o público vê ao vivo)',
   panePresenterLaser: 'Apontador laser (visível para o público)',
-  panePresenterEraseInk: 'Apagar toda a tinta deste página',
+  panePresenterEraseInk: 'Apagar toda a tinta desta página',
   panePresenterBlackTip: 'Tela em preto ativada/desativada (B)',
   panePresenterPrevTip: 'Anterior (←/PgUp)',
   panePresenterNextTip: 'Próximo (→/Espaço/PgDn)',
   panePresenterSlideOf: 'Página {cur} de {total}',
-  panePresenterNextSlide: 'Próximo Página',
-  panePresenterLastSlide: '(Último página)',
+  panePresenterNextSlide: 'Próxima Página',
+  panePresenterLastSlide: '(Última página)',
   panePresenterNotes: 'Anotações',
   panePresenterNoNotes: '(Sem anotações)',
   panePresenterNotesBigger: 'Aumentar o texto das anotações',
@@ -278,6 +279,6 @@ export const pt = {
 
   paneShowEndedClick: 'Fim da apresentação de páginas. Clique para sair.',
   paneShowEnded: 'Fim da apresentação de páginas.',
-  paneShowRehearseTip: 'Testar Intervalos: tempo neste página / tempo total',
+  paneShowRehearseTip: 'Testar Intervalos: tempo nesta página / tempo total',
   paneShowRehearseTotal: 'Total {time}',
 } satisfies Record<keyof typeof zh, string>

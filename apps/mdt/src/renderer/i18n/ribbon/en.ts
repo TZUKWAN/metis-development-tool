@@ -231,8 +231,7 @@ export const en = {
   ribbonWordArtPresetBlackGold: 'Fill: Black; Outline: Gold',
   ribbonWordArtPresetSilverDark: 'Fill: Silver; Outline: Dark Gray',
   ribbonHeaderFooter: 'Header & Footer',
-  ribbonHeaderFooterTip:
-    'Header & footer (date / footer text / page number, applied to all pages)',
+  ribbonHeaderFooterTip: 'Header & footer (date / footer text / page number, applied to all pages)',
   ribbonDateTime: 'Date & Time',
   ribbonDateTimeTip:
     'Insert a date & time text box (dynamic field, updates when opened in PowerPoint)',
@@ -408,8 +407,7 @@ export const en = {
   ribbonViewReading: 'Reading View',
   ribbonViewReadingTip: 'Reading view: full-screen page-by-page browsing (Esc to exit)',
   ribbonViewMaster: 'Page Master',
-  ribbonViewMasterTip:
-    'Edit the page master and layouts (changes affect all pages that use them)',
+  ribbonViewMasterTip: 'Edit the page master and layouts (changes affect all pages that use them)',
   ribbonGroupShow: 'Show',
   ribbonRuler: 'Ruler',
   ribbonRulerTip: 'Show or hide the ruler (inches)',

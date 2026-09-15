@@ -70,7 +70,8 @@ export const nl = {
   ribbonLayoutBlank: 'Leeg',
   ribbonNoLayouts: 'Geen indelingsgegevens',
   ribbonAddSection: 'Sectie toevoegen',
-  ribbonAddSectionTip: 'Voegt een sectie toe vóór de huidige pagina om lange presentaties te ordenen',
+  ribbonAddSectionTip:
+    'Voegt een sectie toe vóór de huidige pagina om lange presentaties te ordenen',
   ribbonGroupFont: 'Lettertype',
   ribbonFontsSystem: 'Systeemlettertypen',
   ribbonFontsDownloadable: 'Downloadbare lettertypen',
@@ -213,7 +214,8 @@ export const nl = {
   ribbonLinkTip: 'Een hyperlink toevoegen aan het geselecteerde element (webpagina of pagina)',
   ribbonLinkTipDisabled: 'Selecteer eerst een element om een koppeling toe te voegen',
   ribbonZoomJump: 'Zoom',
-  ribbonZoomJumpTip: 'Een navigatieknop invoegen die tijdens de voorstelling naar een pagina springt',
+  ribbonZoomJumpTip:
+    'Een navigatieknop invoegen die tijdens de voorstelling naar een pagina springt',
   ribbonZoomJumpItem: 'Ga naar pagina {n}',
   ribbonCurrentSlideSuffix: ' (huidige)',
   ribbonGroupComments: 'Opmerkingen',
@@ -276,7 +278,8 @@ export const nl = {
   ribbonEraseAll: 'Alles wissen',
   ribbonEraseAllTip: 'Alle inkt op de huidige pagina verwijderen',
   ribbonGroupThemes: "Thema's",
-  ribbonApplyThemeTip: 'Thema "{name}" toepassen (kleuren + lettertypen, toegepast op alle pagina\'s)',
+  ribbonApplyThemeTip:
+    'Thema "{name}" toepassen (kleuren + lettertypen, toegepast op alle pagina\'s)',
   ribbonThemeOffice: 'Office',
   ribbonThemeEmber: 'Gloed',
   ribbonThemeIndigo: 'Indigo',
@@ -418,7 +421,8 @@ export const nl = {
   ribbonViewOutlineTip:
     "Overzichtsweergave: blader door pagina's en spring ernaartoe als tekstoverzicht",
   ribbonViewSorter: 'Paginasorteerder',
-  ribbonViewSorterTip: "Paginasorteerder: rasteroverzicht van alle pagina's, dubbelklik om te bewerken",
+  ribbonViewSorterTip:
+    "Paginasorteerder: rasteroverzicht van alle pagina's, dubbelklik om te bewerken",
   ribbonViewReading: 'Leesweergave',
   ribbonViewReadingTip:
     'Leesweergave: pagina voor pagina op volledig scherm bladeren (Esc om af te sluiten)',

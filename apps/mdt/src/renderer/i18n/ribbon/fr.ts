@@ -217,8 +217,7 @@ export const fr = {
   ribbonLinkTip: "Ajouter un lien hypertexte à l'élément sélectionné (page web ou page)",
   ribbonLinkTipDisabled: "Sélectionnez d'abord un élément pour ajouter un lien",
   ribbonZoomJump: 'Zoom',
-  ribbonZoomJumpTip:
-    'Insérer un bouton de navigation qui accède à une page pendant le diaporama',
+  ribbonZoomJumpTip: 'Insérer un bouton de navigation qui accède à une page pendant le diaporama',
   ribbonZoomJumpItem: 'Atteindre la page {n}',
   ribbonCurrentSlideSuffix: ' (actuelle)',
   ribbonGroupComments: 'Commentaires',
@@ -259,8 +258,7 @@ export const fr = {
   ribbonAudioTip: 'Insérer un audio local (incorporé au pptx, lisible dans PowerPoint)',
   ribbonScreenRec: "Enregistrement de l'écran",
   ribbonStopRec: "Arrêter l'enregistrement",
-  ribbonScreenRecTip:
-    "Enregistrer l'écran ; inséré comme vidéo dans la page actuelle à l'arrêt",
+  ribbonScreenRecTip: "Enregistrer l'écran ; inséré comme vidéo dans la page actuelle à l'arrêt",
   ribbonStopRecTip: "Arrêter l'enregistrement et l'insérer dans la page actuelle",
   ribbonGroupSelect: 'Sélectionner',
   ribbonSelectTip: 'Sélectionner : quitter le dessin et revenir à la modification des éléments',
@@ -317,8 +315,7 @@ export const fr = {
   ribbonGroupTiming: 'Minutage',
   ribbonTransApplyAllTip: 'Appliquer la transition de cette page à toutes les pages',
   ribbonPreview: 'Aperçu',
-  ribbonAnimPreviewTip:
-    'Lire toutes les animations de cette page dans le canevas de modification',
+  ribbonAnimPreviewTip: 'Lire toutes les animations de cette page dans le canevas de modification',
   ribbonGroupAnimation: 'Animation',
   ribbonAnimNoneTip: 'Supprimer toutes les animations de la forme sélectionnée',
   ribbonAnimAppear: 'Apparaître',
@@ -388,8 +385,7 @@ export const fr = {
   ribbonHideSlide: 'Masquer la page',
   ribbonHideSlideTip:
     'Masquer la page actuelle (conservée dans le fichier, ignorée pendant le diaporama ; enregistrée dans le pptx)',
-  ribbonUnhideSlideTip:
-    'Réafficher la page actuelle (à nouveau visible pendant le diaporama)',
+  ribbonUnhideSlideTip: 'Réafficher la page actuelle (à nouveau visible pendant le diaporama)',
   ribbonRehearse: 'Vérification du minutage',
   ribbonRehearseTip:
     'Vérification du minutage : lancer le diaporama depuis le début et enregistrer le temps par page ; enregistrer ensuite comme minutage de défilement automatique (enregistré dans le pptx)',
@@ -421,11 +417,9 @@ export const fr = {
   ribbonViewNormal: 'Normal',
   ribbonViewNormalTip: 'Mode Normal : miniatures + canevas de modification',
   ribbonViewOutline: 'Mode Plan',
-  ribbonViewOutlineTip:
-    'Mode Plan : parcourir les pages et y accéder sous forme de plan textuel',
+  ribbonViewOutlineTip: 'Mode Plan : parcourir les pages et y accéder sous forme de plan textuel',
   ribbonViewSorter: 'Trieuse de pages',
-  ribbonViewSorterTip:
-    "Trieuse de pages : vue d'ensemble en grille, double-cliquez pour modifier",
+  ribbonViewSorterTip: "Trieuse de pages : vue d'ensemble en grille, double-cliquez pour modifier",
   ribbonViewReading: 'Mode Lecture',
   ribbonViewReadingTip:
     'Mode Lecture : parcourir en plein écran page par page (Échap pour quitter)',

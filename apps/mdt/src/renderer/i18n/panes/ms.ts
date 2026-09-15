@@ -246,7 +246,8 @@ export const ms = {
   panePresenterEndShow: 'Tamatkan Persembahan',
   panePresenterEndTip: 'Tamatkan persembahan (Esc)',
   panePresenterSwap: 'Tukar Paparan',
-  panePresenterSwapTip: 'Tukar paparan yang menunjukkan Pandangan Penyampai dan persembahan halaman',
+  panePresenterSwapTip:
+    'Tukar paparan yang menunjukkan Pandangan Penyampai dan persembahan halaman',
   panePresenterNoSecond: 'Paparan kedua tidak dikesan',
   panePresenterUseShow: 'Guna Persembahan Halaman',
   panePresenterUseShowTip: 'Beralih kepada persembahan halaman biasa pada paparan ini',

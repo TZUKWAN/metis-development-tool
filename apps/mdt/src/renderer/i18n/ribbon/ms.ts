@@ -413,7 +413,8 @@ export const ms = {
   ribbonViewNormal: 'Normal',
   ribbonViewNormalTip: 'Pandangan normal: imej kecil + kanvas pengeditan',
   ribbonViewOutline: 'Pandangan Rangka',
-  ribbonViewOutlineTip: 'Pandangan rangka: semak imbas dan lompat antara halaman sebagai rangka teks',
+  ribbonViewOutlineTip:
+    'Pandangan rangka: semak imbas dan lompat antara halaman sebagai rangka teks',
   ribbonViewSorter: 'Pengisih Halaman',
   ribbonViewSorterTip:
     'Pengisih halaman: gambaran keseluruhan grid semua halaman, dwiklik untuk mengedit',

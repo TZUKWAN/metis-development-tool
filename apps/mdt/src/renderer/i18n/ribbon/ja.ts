@@ -264,8 +264,7 @@ export const ja = {
   ribbonSelectTip: '選択：描画を終了して要素の編集に戻る',
   ribbonGroupDrawTools: '描画ツール',
   ribbonPen: 'ペン',
-  ribbonPenTip:
-    'ペン：ページ上に手書き（ページ上のインク画像として保存）；もう一度クリックで解除',
+  ribbonPenTip: 'ペン：ページ上に手書き（ページ上のインク画像として保存）；もう一度クリックで解除',
   ribbonHighlighter: '蛍光ペン',
   ribbonHighlighterTip: '蛍光ペン：半透明の太い線；もう一度クリックで解除',
   ribbonEraser: '消しゴム',
@@ -370,8 +369,7 @@ export const ja = {
   // Slide show
   ribbonGroupStartShow: 'ページショーの開始',
   ribbonFromBeginning: '最初から',
-  ribbonFromBeginningTip:
-    'ページ 1 から全画面でページショーを開始（F5；非表示ページはスキップ）',
+  ribbonFromBeginningTip: 'ページ 1 から全画面でページショーを開始（F5；非表示ページはスキップ）',
   ribbonFromCurrent: '現在のページから',
   ribbonFromCurrentTip: '現在のページから全画面でページショーを開始（⇧F5）',
   ribbonPresenterView: '発表者ツール',

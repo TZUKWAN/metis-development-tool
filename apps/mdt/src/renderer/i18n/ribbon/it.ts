@@ -57,8 +57,7 @@ export const it = {
     'Copia formato (fai clic per copiare e applicare la formattazione; ⌘⇧C copia il formato / ⌘⇧V applica il formato)',
   ribbonGroupSlides: 'Pagine',
   ribbonNewSlide: 'Nuova Pagina',
-  ribbonNewSlideTip:
-    'Nuova pagina vuota (mantiene lo sfondo del layout della pagina corrente)',
+  ribbonNewSlideTip: 'Nuova pagina vuota (mantiene lo sfondo del layout della pagina corrente)',
   ribbonChooseLayout: 'Scegli Layout',
   ribbonChooseLayoutNew: 'Nuova pagina con layout',
   ribbonChooseLayoutChange: 'Cambia layout della pagina corrente',
@@ -282,8 +281,7 @@ export const it = {
   ribbonEraseAll: 'Cancella Tutto',
   ribbonEraseAllTip: "Elimina tutto l'input penna dalla pagina corrente",
   ribbonGroupThemes: 'Temi',
-  ribbonApplyThemeTip:
-    'Applica il tema "{name}" (colori + caratteri, applicato a tutte le pagine)',
+  ribbonApplyThemeTip: 'Applica il tema "{name}" (colori + caratteri, applicato a tutte le pagine)',
   ribbonThemeOffice: 'Office',
   ribbonThemeEmber: 'Brace',
   ribbonThemeIndigo: 'Indaco',
@@ -319,8 +317,7 @@ export const it = {
   ribbonGroupTiming: 'Intervallo',
   ribbonTransApplyAllTip: 'Applica la transizione di questa pagina a tutte le pagine',
   ribbonPreview: 'Anteprima',
-  ribbonAnimPreviewTip:
-    'Riproduci tutte le animazioni di questa pagina nel canvas di modifica',
+  ribbonAnimPreviewTip: 'Riproduci tutte le animazioni di questa pagina nel canvas di modifica',
   ribbonGroupAnimation: 'Animazione',
   ribbonAnimNoneTip: 'Rimuovi tutte le animazioni dalla forma selezionata',
   ribbonAnimAppear: 'Comparsa',
