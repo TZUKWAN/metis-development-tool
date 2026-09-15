@@ -25,6 +25,7 @@ const mdtApi = {
 
   capabilityList: () => invoke('mdt:capability-list'),
   designSlides: () => invoke('mdt:design-slides'),
+  getVersion: () => invoke('app:get-version'),
   secretList: () => invoke('mdt:secret-list'),
   secretSet: (name: string, value: string) => invoke('mdt:secret-set', { name, value }),
   secretDelete: (name: string) => invoke('mdt:secret-delete', { name }),

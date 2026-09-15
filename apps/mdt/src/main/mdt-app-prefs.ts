@@ -3,11 +3,13 @@
  * channels previously belonged to the removed shell — MDT now owns them.
  * Theme: 'system' (renderer applies prefers-color-scheme); auto-save: on.
  */
-import { ipcMain } from 'electron'
+import { app, ipcMain } from 'electron'
 
 export function registerMdtAppPrefsIpc(): void {
   ipcMain.removeHandler?.('app:get-theme')
   ipcMain.handle('app:get-theme', () => 'system')
+  ipcMain.removeHandler?.('app:get-version')
+  ipcMain.handle('app:get-version', () => app.getVersion())
   ipcMain.removeHandler?.('app:get-auto-save-default')
   ipcMain.handle('app:get-auto-save-default', () => true)
 }

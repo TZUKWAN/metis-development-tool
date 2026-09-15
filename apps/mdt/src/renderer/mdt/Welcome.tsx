@@ -2,7 +2,7 @@
  * MDT welcome screen (tasklist P03.12): exactly New Project, Open Project,
  * Recent Projects and Docs — no GenOffice suite surface.
  */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type React from 'react'
 
 interface WelcomeProps {
@@ -14,6 +14,8 @@ interface WelcomeProps {
   onRemoveRecent: (path: string) => void
 }
 
+let cachedVersion = ''
+
 export function Welcome({
   onClose,
   onNew,
@@ -23,6 +25,16 @@ export function Welcome({
   onRemoveRecent,
 }: WelcomeProps): React.ReactElement {
   const [name, setName] = useState('My Agent App')
+  const [version, setVersion] = useState(cachedVersion)
+  useEffect(() => {
+    void window.mdtApi
+      ?.getVersion()
+      .then((v) => {
+        cachedVersion = String(v ?? '')
+        setVersion(cachedVersion)
+      })
+      .catch(() => {})
+  }, [])
   return (
     <div
       role="dialog"
@@ -48,7 +60,9 @@ export function Welcome({
           boxShadow: '0 12px 40px rgba(0,0,0,.3)',
         }}
       >
-        <h1 style={{ fontSize: 20, marginTop: 0 }}>Metis Development Tool</h1>
+        <h1 style={{ fontSize: 20, marginTop: 0 }}>
+          Metis Development Tool{version ? ` ${version}` : ''}
+        </h1>
         <p style={{ color: 'var(--text-weak, #555)' }}>
           Design agent applications like a presentation: pages, connections, agents, build.
         </p>
