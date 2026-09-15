@@ -6,7 +6,14 @@ import { describe, expect, it } from 'vitest'
 
 import { ProjectRootSchema, type ProjectRoot } from '@mdt/schema'
 
-import { deriveGraph, describeInteraction, lintGraph, type GraphIssue } from './interaction-graph'
+import {
+  collectInteractiveHandles,
+  deriveGraph,
+  describeInteraction,
+  lintGraph,
+  MAX_INTERACTIVE_HANDLES,
+  type GraphIssue,
+} from './interaction-graph'
 
 // Fixed UUIDv7-shaped ids (version 7, variant 10) keep tests deterministic.
 const PID = {
@@ -306,6 +313,113 @@ describe('deriveGraph', () => {
       label: 'load → bind agent "Helper" output to "Transcript"',
     })
     expect(edges.find((e) => e.id === IID.load1)?.enabled).toBe(false)
+  })
+})
+
+// ---------------------------------------------------------------------------
+
+/** Minimal valid element fixture: role drives everything the graph needs. */
+function el(id: string, name: string, role: string, children: unknown[] = []) {
+  return {
+    id,
+    name,
+    role,
+    visual: { kind: role, geometry: { x: 0, y: 0, width: 10, height: 10 }, style: {}, props: {} },
+    children,
+  }
+}
+
+describe('interactiveHandles (P07.06)', () => {
+  const interactive = [
+    ['00000000-0000-7000-8000-0000000003a1', 'Save', 'button'],
+    ['00000000-0000-7000-8000-0000000003a2', 'Query', 'input'],
+    ['00000000-0000-7000-8000-0000000003a3', 'Chat', 'chat'],
+    ['00000000-0000-7000-8000-0000000003a4', 'Done', 'checkbox'],
+    ['00000000-0000-7000-8000-0000000003a5', 'Pick', 'select'],
+    ['00000000-0000-7000-8000-0000000003a6', 'Tabs', 'tabs'],
+    ['00000000-0000-7000-8000-0000000003a7', 'Rows', 'datatable'],
+    ['00000000-0000-7000-8000-0000000003a8', 'Files', 'filepicker'],
+  ] as const
+  // 11th+ interactive elements below exercise the cap
+  const overflow = [
+    ['00000000-0000-7000-8000-0000000003b1', 'Nine', 'list'],
+    ['00000000-0000-7000-8000-0000000003b2', 'Ten', 'textarea'],
+    ['00000000-0000-7000-8000-0000000003b3', 'Eleven', 'form'],
+  ] as const
+
+  it('filters to INTERACTIVE_ROLES and includes group children', () => {
+    const elements = [
+      el('00000000-0000-7000-8000-0000000002c1', 'Title', 'text'),
+      el('00000000-0000-7000-8000-0000000002c2', 'Hero', 'image'),
+      el('00000000-0000-7000-8000-0000000002c3', 'Card', 'group', [
+        el('00000000-0000-7000-8000-0000000002c4', 'OK', 'button'),
+        el('00000000-0000-7000-8000-0000000002c5', 'Caption', 'text'),
+      ]),
+      el(EID.chat, 'Chat', 'chat'),
+    ]
+    const handles = collectInteractiveHandles(elements as never)
+    // the non-interactive roles never become handles; the nested button does
+    expect(handles.map((h) => h.elementId)).toEqual([
+      '00000000-0000-7000-8000-0000000002c4',
+      EID.chat,
+    ])
+    expect(handles[0]).toMatchObject({ name: 'OK', role: 'button' })
+  })
+
+  it('caps at 8 handles per page node', () => {
+    const elements = [...interactive, ...overflow].map(([id, name, role]) => el(id, name, role))
+    const handles = collectInteractiveHandles(elements as never)
+    expect(handles).toHaveLength(MAX_INTERACTIVE_HANDLES)
+    expect(handles.map((h) => h.name)).not.toContain('Nine')
+  })
+
+  it('prioritizes button/input/chat, keeping encounter order within each tier', () => {
+    const elements = [...interactive, ...overflow].map(([id, name, role]) => el(id, name, role))
+    const handles = collectInteractiveHandles(elements as never)
+    // button → input → chat first (document order inside the tier), then the
+    // remaining interactive roles in document order, truncated at the cap
+    expect(handles.map((h) => h.name)).toEqual([
+      'Save',
+      'Query',
+      'Chat',
+      'Done',
+      'Pick',
+      'Tabs',
+      'Rows',
+      'Files',
+    ])
+  })
+
+  it('deriveGraph exposes the handles on the page node (and not on agents)', () => {
+    const project = makeProject({
+      pages: [
+        page(PID.home, 'Home', 'page', {
+          elements: [
+            el(EID.chat, 'Chat', 'chat'),
+            el('00000000-0000-7000-8000-0000000002d1', 'Go', 'button'),
+          ],
+        }),
+        page(PID.detail, 'Detail'),
+      ],
+      agents: [
+        {
+          id: AID.helper,
+          name: 'Helper',
+          modelPolicy: { provider: 'm', model: 'm' },
+          capabilityRefs: [],
+        },
+      ],
+      interactions: [],
+    })
+    const { nodes } = deriveGraph(project)
+    const home = nodes.find((n) => n.id === PID.home)
+    // both roles are priority-tier, so document order holds within the tier
+    expect(home?.interactiveHandles?.map((h) => h.elementId)).toEqual([
+      EID.chat,
+      '00000000-0000-7000-8000-0000000002d1',
+    ])
+    expect(nodes.find((n) => n.id === PID.detail)?.interactiveHandles).toEqual([])
+    expect(nodes.find((n) => n.id === AID.helper)?.interactiveHandles).toBeUndefined()
   })
 })
 

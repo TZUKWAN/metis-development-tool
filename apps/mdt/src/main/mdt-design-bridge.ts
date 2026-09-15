@@ -8,6 +8,7 @@ import { ipcMain } from 'electron'
 
 import { elementDurableId, slideDurableId } from '@genoffice/pptx-engine/identity'
 import type { Slide, SlideElement } from '@genoffice/pptx-engine'
+import { parseMdtMarker } from '@mdt/design'
 import type { DesignElementRef, DesignPageRef } from '@mdt/design'
 
 interface DeckLike {
@@ -49,6 +50,11 @@ function toRef(el: SlideElement): DesignElementRef | null {
 }
 
 function kindOf(el: SlideElement): string {
+  // Inserted MDT controls carry their role as a marker in the element name
+  // ("MDT:button:<uuid>"): the marker wins over the engine type so the derive
+  // assigns the right role even without an overlay entry (P06.19–P06.26)
+  const marker = parseMdtMarker(el.name ?? '')
+  if (marker) return marker
   switch (el.type) {
     case 'text':
       return 'text'

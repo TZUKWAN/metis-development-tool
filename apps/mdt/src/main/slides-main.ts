@@ -1474,6 +1474,7 @@ export function registerSlidesIpc(): void {
                 },
               }
             : {}),
+          ...(op.name ? { name: op.name } : {}),
         },
       ],
     })

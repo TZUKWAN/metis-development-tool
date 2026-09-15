@@ -436,6 +436,19 @@ export function IconShapes(props: IconProps) {
   )
 }
 
+/** MDT Controls (Insert tab): a button, a field and an input bar */
+export function IconMdtControls(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <rect x="2.5" y="4.5" width="12" height="6.5" rx="1.6" />
+      <path d="M5.5 7.75h6" />
+      <rect x="17" y="4.5" width="4.5" height="6.5" rx="1.2" />
+      <rect x="2.5" y="14" width="19" height="5.5" rx="1.6" />
+      <path d="M5.5 16.75h7" />
+    </Svg>
+  )
+}
+
 export function IconLink(props: IconProps) {
   return (
     <Svg {...props}>

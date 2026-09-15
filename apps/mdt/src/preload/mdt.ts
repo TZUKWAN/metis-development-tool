@@ -25,6 +25,12 @@ const mdtApi = {
 
   capabilityList: () => invoke('mdt:capability-list'),
   designSlides: () => invoke('mdt:design-slides'),
+  /**
+   * Page thumbnails for the Interaction Canvas (P07.03): per-page render
+   * tree + content hash for the (optionally filtered) pages of the open
+   * deck. The renderer rasterizes and caches by hash.
+   */
+  designThumbnails: (pageIds?: string[]) => invoke('mdt:design-thumbnails', { pageIds }),
   getVersion: () => invoke('app:get-version'),
   secretList: () => invoke('mdt:secret-list'),
   secretSet: (name: string, value: string) => invoke('mdt:secret-set', { name, value }),

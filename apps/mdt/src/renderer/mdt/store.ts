@@ -5,12 +5,13 @@
  * The store persists through the main process (project IO IPC) and feeds
  * the Interaction Canvas, Agents panel and Builder.
  */
-import { createId, validateRefs, type ProjectRoot } from '@mdt/schema'
+import { createId, validateRefs, type ElementRole, type ProjectRoot } from '@mdt/schema'
 import { create } from 'zustand'
 
 import {
   derivePages,
   emptyOverlay,
+  isMdtMarker,
   type DerivedElement,
   type DesignPageRef,
   type MdtOverlay,
@@ -21,15 +22,49 @@ export interface MdtUiState {
   currentPageId: string | undefined
 }
 
+/**
+ * Semantics waiting for the element inserted by the MDT control pipeline
+ * (mdt-insert.ts) to appear in a derivation. Keyed by the marker carried in
+ * the engine element's name ("MDT:<role>:<uuid>"); consumed by
+ * `syncFromDesign` the first time a derived element matches (P06.19–P06.26).
+ */
+export interface PendingElementSemantics {
+  marker: string
+  role: ElementRole
+  /** accessible/semantic name; also becomes the element's friendly display name */
+  label: string
+  placeholder?: string
+  options?: string[]
+  agentRef?: string
+}
+
+/** Exact marker match first, then FIFO for any other marker-named element. */
+export function matchPendingSemantics(
+  pending: PendingElementSemantics[],
+  elName: string,
+): { entry: PendingElementSemantics; rest: PendingElementSemantics[] } | undefined {
+  const idx = pending.findIndex((p) => p.marker === elName)
+  const i = idx >= 0 ? idx : isMdtMarker(elName) && pending.length > 0 ? 0 : -1
+  if (i < 0) return undefined
+  const entry = pending[i]!
+  return { entry, rest: [...pending.slice(0, i), ...pending.slice(i + 1)] }
+}
+
 export interface MdtStore {
   project: ProjectRoot | null
   overlay: MdtOverlay
   ui: MdtUiState
   dirty: boolean
   refIssues: { code: string; message: string; path: string }[]
+  /** insert-time semantics not yet matched to a derived element (see above) */
+  pendingSemantics: PendingElementSemantics[]
 
   /** called when the slides engine reports the current deck structure */
   syncFromDesign(pages: DesignPageRef[]): void
+  /** queue semantics for the next derived element matching the marker */
+  queuePendingSemantics(entry: PendingElementSemantics): void
+  /** pop the pending entry matching a (marker) element name, if any */
+  consumePendingSemantics(elName: string): PendingElementSemantics | undefined
   setActiveView(view: MdtUiState['activeView']): void
   setCurrentPage(pageId: string): void
 
@@ -76,11 +111,21 @@ export const useMdtStore = create<MdtStore>((set, get) => ({
   ui: { activeView: 'designer', currentPageId: undefined },
   dirty: false,
   refIssues: [],
+  pendingSemantics: [],
 
   syncFromDesign(pages) {
     const { project, overlay } = get()
     if (!project) return
     const derived = derivePages(pages, overlay, createId)
+    // Insert pipeline: consume queued semantics for marker-named elements as
+    // the derivation assigns them stable ids
+    let pending = get().pendingSemantics
+    const consume = (elName: string): PendingElementSemantics | undefined => {
+      const m = matchPendingSemantics(pending, elName)
+      if (!m) return undefined
+      pending = m.rest
+      return m.entry
+    }
     const updated: ProjectRoot = {
       ...project,
       pages: derived.pages.map((page) => {
@@ -91,12 +136,15 @@ export const useMdtStore = create<MdtStore>((set, get) => ({
           type: overlay.pageTypes[page.slideId] ?? existing?.type ?? 'page',
           viewport: existing?.viewport ?? { width: 1440, height: 1024, preset: 'desktop-1440' },
           background: existing?.background ?? {},
-          elements: page.elements.map((el) =>
-            toSchemaElement(
-              el,
-              existing?.elements.find((e) => e.id === el.id),
-            ),
-          ),
+          elements: page.elements.map((el) => {
+            const existingEl = existing?.elements.find((e) => e.id === el.id)
+            return applyPendingSemantics(
+              toSchemaElement(el, existingEl),
+              el.name,
+              existingEl,
+              consume,
+            )
+          }),
           metadata: existing?.metadata ?? {},
         }
       }),
@@ -106,7 +154,19 @@ export const useMdtStore = create<MdtStore>((set, get) => ({
       overlay: derived.overlay,
       dirty: true,
       refIssues: collectIssues(updated),
+      ...(pending !== get().pendingSemantics ? { pendingSemantics: pending } : {}),
     })
+  },
+
+  queuePendingSemantics(entry) {
+    set({ pendingSemantics: [...get().pendingSemantics, entry] })
+  },
+
+  consumePendingSemantics(elName) {
+    const m = matchPendingSemantics(get().pendingSemantics, elName)
+    if (!m) return undefined
+    set({ pendingSemantics: m.rest })
+    return m.entry
   },
 
   setActiveView(view) {
@@ -148,6 +208,7 @@ export const useMdtStore = create<MdtStore>((set, get) => ({
       overlay: emptyOverlay(),
       dirty: true,
       ui: { ...get().ui, currentPageId: undefined },
+      pendingSemantics: [],
     })
   },
 
@@ -157,6 +218,7 @@ export const useMdtStore = create<MdtStore>((set, get) => ({
       overlay,
       dirty: false,
       ui: { ...get().ui, currentPageId: project.pages[0]?.id },
+      pendingSemantics: [],
     })
   },
 
@@ -408,6 +470,35 @@ function toSchemaElement(
     locked: existing?.locked ?? false,
     hidden: existing?.hidden ?? false,
     children: el.children.map((c) => toSchemaElement(c, undefined)),
+  }
+}
+
+/**
+ * Insert pipeline (P06.19–P06.26): a freshly inserted MDT control derives with
+ * its marker name ("MDT:<role>:<uuid>"). The queued semantics assign the real
+ * role/label/placeholder/options and swap the marker for a friendly name; on
+ * later syncs the friendly name is kept (the engine keeps the marker).
+ */
+function applyPendingSemantics(
+  el: ProjectRoot['pages'][number]['elements'][number],
+  derivedName: string,
+  existing: ProjectRoot['pages'][number]['elements'][number] | undefined,
+  consume: (elName: string) => PendingElementSemantics | undefined,
+): ProjectRoot['pages'][number]['elements'][number] {
+  if (!isMdtMarker(derivedName)) return el
+  const entry = consume(derivedName)
+  if (!entry) return { ...el, name: existing?.name ?? el.name }
+  return {
+    ...el,
+    name: entry.label.trim() !== '' ? entry.label : el.name,
+    role: entry.role,
+    semantics: {
+      ...el.semantics,
+      label: entry.label,
+      ...(entry.placeholder !== undefined ? { placeholder: entry.placeholder } : {}),
+      ...(entry.options !== undefined ? { options: entry.options } : {}),
+      ...(entry.agentRef !== undefined ? { agentRef: entry.agentRef } : {}),
+    },
   }
 }
 

@@ -1,10 +1,12 @@
 /**
  * MDT Interaction Canvas (tasklist P07): a @xyflow/react graph of pages
  * (plus agents) with one edge per interaction. Drag connections to create
- * interactions, click an edge to inspect/edit it, drag nodes to persist
- * canvas positions in page metadata, double-click a page to open it in the
- * designer. Real page thumbnails land later via the deck offscreen
- * renderer; nodes show a placeholder card until then (P07.05+, P07.21–23).
+ * interactions (from a specific element's handle on the node's left edge or
+ * from the page-level handle), click an edge to inspect/edit it, drag nodes
+ * to persist canvas positions in page metadata, double-click a page to open
+ * it in the designer. Pages render live deck thumbnails via the
+ * `mdt:design-thumbnails` channel, cached by content hash so only dirty
+ * pages re-rasterize (P07.03).
  */
 import '@xyflow/react/dist/style.css'
 
@@ -47,15 +49,22 @@ import {
   type GraphNodeKind,
 } from './interaction-graph'
 import { useMdtStore } from './store'
+import { useDesignThumbnails } from './use-design-thumbnails'
 
 // ---------------------------------------------------------------------------
 // Canvas view-model types
 // ---------------------------------------------------------------------------
 
+type PageHandleInfo = { elementId: string; name: string; role: string }
+
 type PageNodeData = {
   kind: Exclude<GraphNodeKind, 'agent'>
   label: string
   elementCount: number
+  /** connection-source handles for interactive elements (P07.06) */
+  handles: PageHandleInfo[]
+  /** rendered deck thumbnail (data URL) when one is available (P07.03) */
+  thumbnail?: string
 }
 type AgentNodeData = { kind: 'agent'; label: string; capabilityCount: number }
 type PageCanvasNode = Node<PageNodeData, 'mdtPage'>
@@ -81,18 +90,18 @@ const PageNodeView = memo(function PageNodeView({
   selected,
 }: NodeProps<PageCanvasNode>): React.ReactElement {
   const badge = KIND_BADGE[data.kind] ?? KIND_BADGE.page!
+  const handleCount = data.handles.length
   return (
     <div
       style={{
         width: 200,
         border: `1px solid ${selected ? '#2563eb' : '#cbd5e1'}`,
         borderRadius: 8,
-        overflow: 'hidden',
+        overflow: 'visible',
         background: '#fff',
         boxShadow: selected ? '0 0 0 2px #bfdbfe' : '0 1px 3px rgba(15, 23, 42, 0.15)',
       }}
     >
-      {/* placeholder until real thumbnails come from the offscreen renderer */}
       <div
         style={{
           height: 64,
@@ -101,9 +110,19 @@ const PageNodeView = memo(function PageNodeView({
           placeItems: 'center',
           fontSize: 11,
           color: '#334155',
+          overflow: 'hidden',
         }}
       >
-        {data.label}
+        {data.thumbnail ? (
+          <img
+            src={data.thumbnail}
+            alt={`${data.label} thumbnail`}
+            draggable={false}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+          />
+        ) : (
+          data.label
+        )}
       </div>
       <div
         style={{
@@ -127,7 +146,49 @@ const PageNodeView = memo(function PageNodeView({
           {data.kind} · {data.elementCount} el
         </span>
       </div>
-      <Handle type="target" position={Position.Left} />
+      {/* element connection-source handles along the left edge (P07.06) */}
+      {data.handles.map((h, i) => {
+        const top = `${((i + 1) / (handleCount + 1)) * 100}%`
+        return (
+          <div
+            key={h.elementId}
+            style={{ position: 'absolute', left: 2, top, transform: 'translateY(-50%)' }}
+          >
+            <span
+              style={{
+                display: 'block',
+                maxWidth: 74,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                fontSize: 8,
+                lineHeight: '12px',
+                padding: '0 4px',
+                borderRadius: 7,
+                background: 'rgba(226, 232, 240, 0.92)',
+                color: '#334155',
+                pointerEvents: 'none',
+              }}
+            >
+              {h.name}
+            </span>
+            <Handle
+              id={h.elementId}
+              type="source"
+              position={Position.Left}
+              style={{
+                top: '50%',
+                left: -5,
+                width: 6,
+                height: 6,
+                background: '#64748b',
+                border: 'none',
+              }}
+            />
+          </div>
+        )
+      })}
+      <Handle type="target" position={Position.Left} style={{ top: 14 }} />
       <Handle type="source" position={Position.Right} />
     </div>
   )
@@ -517,6 +578,13 @@ const InspectorPanel = memo(function InspectorPanel({
 interface PendingConnection {
   source: string
   target: string
+  /**
+   * Element handle the connection was dragged from (P07.06). When present,
+   * the created interaction is bound to that element directly — no need to
+   * pick a source element in the inspector afterwards.
+   */
+  sourceElementId?: string
+  sourceElementName?: string
 }
 
 const CreationPopover = memo(function CreationPopover({
@@ -539,6 +607,9 @@ const CreationPopover = memo(function CreationPopover({
     onCreate({
       id: createId(),
       sourcePageId: sourceNode.id,
+      // a connection dragged from an element handle skips the inspector
+      // dropdown: the trigger element was already chosen on drag start
+      ...(pending.sourceElementId ? { sourceElementId: pending.sourceElementId } : {}),
       trigger: 'click',
       enabled: true,
       action: actionForTarget(actionType, targetNode.id),
@@ -564,7 +635,9 @@ const CreationPopover = memo(function CreationPopover({
     >
       <div style={{ marginBottom: 6 }}>
         <strong>
-          {sourceNode.label} → {targetNode.label}
+          {sourceNode.label}
+          {pending.sourceElementName ? ` · ${pending.sourceElementName}` : ''} →{' '}
+          {targetNode.label}
         </strong>
       </div>
       {choices.map((c) => (
@@ -606,6 +679,7 @@ function InteractionCanvasInner(): React.ReactElement {
   const [lintExpanded, setLintExpanded] = useState(false)
   const reactFlow = useReactFlow<CanvasNode, CanvasEdge>()
   const catalog = useCapabilityCatalog()
+  const thumbnails = useDesignThumbnails()
 
   // graph derivation + lint run only when the store project changes (P07.23)
   const graph = useMemo(
@@ -647,11 +721,17 @@ function InteractionCanvasInner(): React.ReactElement {
               id: n.id,
               type: 'mdtPage' as const,
               position: n.position,
-              data: { kind: n.kind, label: n.label, elementCount: n.elementCount ?? 0 },
+              data: {
+                kind: n.kind,
+                label: n.label,
+                elementCount: n.elementCount ?? 0,
+                handles: n.interactiveHandles ?? [],
+                ...(thumbnails.get(n.id) ? { thumbnail: thumbnails.get(n.id) } : {}),
+              },
             },
       ),
     )
-  }, [graph, setNodes])
+  }, [graph, setNodes, thumbnails])
 
   // drop the selection when the inspected interaction disappears
   useEffect(() => {
@@ -707,10 +787,28 @@ function InteractionCanvasInner(): React.ReactElement {
     [setCurrentPage, setActiveView],
   )
 
-  const handleConnect = useCallback((connection: Connection) => {
-    if (!connection.source || !connection.target || connection.source === connection.target) return
-    setPendingConnection({ source: connection.source, target: connection.target })
-  }, [])
+  const handleConnect = useCallback(
+    (connection: Connection) => {
+      if (!connection.source || !connection.target || connection.source === connection.target)
+        return
+      // React Flow reports the dragged-from handle's id: an element handle
+      // (P07.06) binds the trigger to that element directly; the page-level
+      // right-side handle has no id and stays page-level.
+      const sourceElementId = connection.sourceHandle ?? undefined
+      const sourceElementName = sourceElementId
+        ? graph.nodes
+            .find((n) => n.id === connection.source)
+            ?.interactiveHandles?.find((h) => h.elementId === sourceElementId)?.name
+        : undefined
+      setPendingConnection({
+        source: connection.source,
+        target: connection.target,
+        ...(sourceElementId ? { sourceElementId } : {}),
+        ...(sourceElementName ? { sourceElementName } : {}),
+      })
+    },
+    [graph],
+  )
 
   const isValidConnection = useCallback(
     (connection: Connection | CanvasEdge): boolean => {

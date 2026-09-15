@@ -10,6 +10,7 @@ import { Agent, type AgentTool, type StreamFn } from '@earendil-works/pi-agent-c
 import { type Api, type Model, type SimpleStreamOptions } from '@earendil-works/pi-ai'
 import { streamSimple } from '@earendil-works/pi-ai/compat'
 
+import { createApprovalHook, type ApprovalBridge } from './approval'
 import type { AgentConfig, RegisteredTool, RuntimeEventListener } from './types'
 import { normalizeError } from './errors'
 
@@ -20,6 +21,17 @@ export interface CreateAgentOptions {
   getApiKey: (provider: string) => Promise<string | undefined> | string | undefined
   /** test seam: inject a scripted StreamFn (mock provider, no network) */
   streamFn?: StreamFn
+  /**
+   * Tool approval gate (P08.11): when present, every tool execution is
+   * preceded by a bridge round trip; a negative decision blocks the call
+   * and the model receives an error tool result with the reason. Absent →
+   * all registered tools run unguarded (the previous behavior).
+   */
+  approval?: {
+    bridge: ApprovalBridge
+    /** tool name → permission scopes the tool would exercise */
+    scopesByTool: Map<string, string[]>
+  }
 }
 
 /** Map an MDT model policy onto a pi-ai Model object (P08.05). */
@@ -102,7 +114,7 @@ export interface RuntimeAgent {
 }
 
 export function createRuntimeAgent(options: CreateAgentOptions): RuntimeAgent {
-  const { config, tools, getApiKey, streamFn } = options
+  const { config, tools, getApiKey, streamFn, approval } = options
   const model = modelFromPolicy(config.modelPolicy)
   const listeners = new Set<RuntimeEventListener>()
 
@@ -116,6 +128,11 @@ export function createRuntimeAgent(options: CreateAgentOptions): RuntimeAgent {
     streamFn:
       streamFn ?? ((m, ctx, opts) => streamSimple(m, ctx, opts as SimpleStreamOptions | undefined)),
     getApiKey,
+    // Approval gate (P08.11): consult the bridge before every tool call;
+    // a negative decision blocks the call with the given reason.
+    beforeToolCall: approval
+      ? createApprovalHook({ bridge: approval.bridge, scopesByTool: approval.scopesByTool })
+      : undefined,
     toolExecution: 'parallel',
   })
 

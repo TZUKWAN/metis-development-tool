@@ -103,7 +103,8 @@ export function SemanticsInspector(): React.ReactElement {
           </label>
           {(element.role === 'input' ||
             element.role === 'textarea' ||
-            element.role === 'button') && (
+            element.role === 'button' ||
+            element.role === 'chat') && (
             <label>
               <div>Placeholder</div>
               <input
@@ -115,7 +116,7 @@ export function SemanticsInspector(): React.ReactElement {
               />
             </label>
           )}
-          {element.role === 'select' && (
+          {(element.role === 'checkbox' || element.role === 'select' || element.role === 'tabs') && (
             <label>
               <div>Options (one per line)</div>
               <textarea
@@ -126,6 +127,42 @@ export function SemanticsInspector(): React.ReactElement {
                   })
                 }
                 rows={4}
+                style={{ width: '100%' }}
+              />
+            </label>
+          )}
+          {element.role === 'filepicker' && (
+            <>
+              <label>
+                <div>Accept (file types, e.g. ".txt,.md")</div>
+                <input
+                  value={element.semantics.accept ?? ''}
+                  onChange={(e) =>
+                    updateElementSemantics(page.id, element.id, { accept: e.target.value })
+                  }
+                  style={{ width: '100%' }}
+                />
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <input
+                  type="checkbox"
+                  checked={element.semantics.multiple === true}
+                  onChange={(e) =>
+                    updateElementSemantics(page.id, element.id, { multiple: e.target.checked })
+                  }
+                />
+                <div>Allow multiple files</div>
+              </label>
+            </>
+          )}
+          {element.role === 'browserframe' && (
+            <label>
+              <div>URL (http/https)</div>
+              <input
+                value={element.semantics.url ?? ''}
+                onChange={(e) =>
+                  updateElementSemantics(page.id, element.id, { url: e.target.value })
+                }
                 style={{ width: '100%' }}
               />
             </label>

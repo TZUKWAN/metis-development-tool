@@ -163,7 +163,7 @@ function runCommand(
   timeoutMs: number,
 ): Promise<{ code: number | null; text: string }> {
   return new Promise((resolve) => {
-    const child = spawn(command, args, {
+    const child = spawn(process.platform === 'win32' ? `"${command}"` : command, args, {
       cwd,
       shell: process.platform === 'win32',
       env: process.env,

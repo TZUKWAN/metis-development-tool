@@ -20,10 +20,18 @@ import type { WordArtPreset } from '@genoffice/ui'
 import type { ChartPresetDef, IconDef, SmartArtDef } from '../insert-presets'
 import type { SlideThemePreset } from '../themes'
 import type { ChartStyleInfo } from '@genoffice/pptx-render'
+import type { MdtControlRole } from '../mdt/mdt-insert'
 import { useI18n, type StringKey } from '../i18n/locale'
 
 export type InsertDropKey =
-  'shapes' | 'icons' | 'chart' | 'smartart' | 'wordart' | 'zoom' | 'addanim'
+  | 'shapes'
+  | 'icons'
+  | 'chart'
+  | 'smartart'
+  | 'wordart'
+  | 'zoom'
+  | 'addanim'
+  | 'mdtControls'
 
 export const BIG = 28
 
@@ -520,6 +528,8 @@ export interface Props {
   onOpenLink: () => void
   /** Insert a Zoom link (button shape jumping to a given page) */
   onInsertZoom: (slideIndex: number) => void
+  /** Insert an MDT UI control (button/input/chat/… as a marked engine shape with role semantics) */
+  onInsertMdtControl: (role: MdtControlRole) => void
   /** Document page count / current page (for the Zoom dropdown) */
   slideCount: number
   currentSlide: number
@@ -653,6 +663,7 @@ export interface RibbonTabCtx extends Pick<
   | 'onInsertTable'
   | 'onInsertWordArt'
   | 'onInsertZoom'
+  | 'onInsertMdtControl'
   | 'onNewComment'
   | 'onOpenEquation'
   | 'onOpenHeaderFooter'

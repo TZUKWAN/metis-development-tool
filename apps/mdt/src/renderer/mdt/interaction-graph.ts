@@ -10,14 +10,16 @@
  * This module must stay free of React/DOM/app imports so it can be unit
  * tested without jsdom and reused by tooling.
  */
-import type {
-  Element,
-  Interaction,
-  InteractionAction,
-  Page,
-  PageType,
-  ProjectRoot,
-  Trigger,
+import {
+  INTERACTIVE_ROLES,
+  type Element,
+  type ElementRole,
+  type Interaction,
+  type InteractionAction,
+  type Page,
+  type PageType,
+  type ProjectRoot,
+  type Trigger,
 } from '@mdt/schema'
 
 // ---------------------------------------------------------------------------
@@ -26,6 +28,21 @@ import type {
 
 export type GraphNodeKind = PageType | 'agent'
 
+/** A connection-source handle published by an interactive element (P07.06). */
+export interface ElementHandle {
+  elementId: string
+  name: string
+  role: ElementRole
+}
+
+/** Max element handles rendered per page node — keeps the node readable. */
+export const MAX_INTERACTIVE_HANDLES = 8
+/**
+ * Roles whose handles surface first when a page has more interactive
+ * elements than the cap: actions and text entry dominate canvas wiring.
+ */
+const HANDLE_PRIORITY: readonly ElementRole[] = ['button', 'input', 'chat']
+
 export interface GraphNode {
   id: string
   kind: GraphNodeKind
@@ -33,6 +50,11 @@ export interface GraphNode {
   position: { x: number; y: number }
   /** total element count including group children (page nodes only) */
   elementCount?: number
+  /**
+   * Interactive element handles (page nodes only, P07.06): connection
+   * sources rendered along the node's left edge, capped and prioritized.
+   */
+  interactiveHandles?: ElementHandle[]
   /** assigned capability instance count (agent nodes only) */
   capabilityCount?: number
 }
@@ -94,6 +116,29 @@ export function countElements(elements: Element[]): number {
 }
 
 /**
+ * Interactive element handles for a page node (P07.06): every element whose
+ * role is in INTERACTIVE_ROLES, group children included, in document
+ * order. More than the cap are prioritized (button/input/chat first, each
+ * group in encounter order) and truncated so a page never publishes more
+ * than MAX_INTERACTIVE_HANDLES connection sources.
+ */
+export function collectInteractiveHandles(elements: Element[]): ElementHandle[] {
+  const all: ElementHandle[] = []
+  const walk = (els: readonly Element[]): void => {
+    for (const el of els) {
+      if (INTERACTIVE_ROLES.includes(el.role)) {
+        all.push({ elementId: el.id, name: el.name, role: el.role })
+      }
+      walk(el.children)
+    }
+  }
+  walk(elements)
+  const prioritized = all.filter((h) => HANDLE_PRIORITY.includes(h.role))
+  const rest = all.filter((h) => !HANDLE_PRIORITY.includes(h.role))
+  return [...prioritized, ...rest].slice(0, MAX_INTERACTIVE_HANDLES)
+}
+
+/**
  * Derive the canvas view model: one node per page (kind from page type,
  * position from `metadata.canvasPosition` or the deterministic grid) and one
  * per agent (placed right of the page columns), plus one edge per
@@ -106,6 +151,7 @@ export function deriveGraph(project: ProjectRoot): InteractionGraph {
     label: page.name,
     position: page.metadata.canvasPosition ?? pageAutoPosition(i),
     elementCount: countElements(page.elements),
+    interactiveHandles: collectInteractiveHandles(page.elements),
   }))
 
   const pageColumns = Math.ceil(project.pages.length / AUTO_LAYOUT_ROWS_PER_COLUMN)

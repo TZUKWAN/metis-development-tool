@@ -2801,6 +2801,7 @@ export function App() {
         onInsertField={(type) => void insertField(type)}
         onOpenLink={() => void openLinkDialog()}
         onInsertZoom={(index) => void insertZoom(index)}
+        onInsertMdtControl={onInsertMdtControl}
         slideCount={slides.length}
         currentSlide={current}
         onOpenHeaderFooter={() => void openHeaderFooter()}

@@ -112,6 +112,7 @@ import {
   RbCaret,
   RIBBON_SHAPE_STYLES,
   closeSiblingPanels,
+  type InsertDropKey,
   type Props,
   type RibbonPanelKey,
   type RibbonTabCtx,
@@ -1178,6 +1179,7 @@ export function Ribbon({
   onInsertField,
   onOpenLink,
   onInsertZoom,
+  onInsertMdtControl,
   slideCount,
   currentSlide,
   onOpenHeaderFooter,
@@ -1275,9 +1277,7 @@ export function Ribbon({
   const [slideShowOpen, setSlideShowOpen] = useState(false)
   const [slideShowFromStart, setSlideShowFromStart] = useState(false)
   // Insert tab dropdown galleries (at most one open at a time)
-  const [insertDrop, setInsertDrop] = useState<
-    'shapes' | 'icons' | 'chart' | 'smartart' | 'wordart' | 'zoom' | 'addanim' | null
-  >(null)
+  const [insertDrop, setInsertDrop] = useState<InsertDropKey | null>(null)
   // Chart design: dropdown panels (add chart element / change colors, at most one open at a time)
   const [chartDrop, setChartDrop] = useState<'elements' | 'colors' | null>(null)
   // Draw tab pen gallery: per-preset customisations live for the session;
@@ -1596,6 +1596,7 @@ export function Ribbon({
     onInsertTable,
     onInsertWordArt,
     onInsertZoom,
+    onInsertMdtControl,
     onNewComment,
     onOpenEquation,
     onOpenHeaderFooter,

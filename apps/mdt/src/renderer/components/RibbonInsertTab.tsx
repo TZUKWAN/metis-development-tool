@@ -8,6 +8,7 @@ import {
   SHAPE_GALLERY,
   SMARTART_GALLERY,
 } from '../insert-presets'
+import { MDT_CONTROLS } from '../mdt/mdt-insert'
 import type { StringKey } from '../i18n/locale'
 import { ChartKindThumb } from './ChartTypeDialog'
 import { TableInsertDialog } from './InsertDialogs'
@@ -22,6 +23,7 @@ import {
   IconFooter,
   IconIconLib,
   IconLink,
+  IconMdtControls,
   IconNewSlide,
   IconPageNumber,
   IconPicture,
@@ -67,6 +69,7 @@ export function RibbonInsertTab({ rb }: { rb: RibbonTabCtx }) {
     onInsertTable,
     onInsertWordArt,
     onInsertZoom,
+    onInsertMdtControl,
     onNewComment,
     onOpenEquation,
     onOpenHeaderFooter,
@@ -526,6 +529,28 @@ export function RibbonInsertTab({ rb }: { rb: RibbonTabCtx }) {
           </span>
           <span>{recording ? t('ribbonStopRec') : t('ribbonScreenRec')}</span>
         </button>
+      </Group>
+      <div className="ribbon-sep" />
+      <Group label="MDT Controls">
+        {dropBig(
+          'mdtControls',
+          <IconMdtControls size={BIG} />,
+          'MDT Controls',
+          'Insert an MDT UI control (button, input, chat…) with role semantics',
+          <div className="rb-menu rb-menu-scroll">
+            {MDT_CONTROLS.map((spec) => (
+              <button
+                key={spec.role}
+                onClick={() => {
+                  setInsertDrop(null)
+                  onInsertMdtControl(spec.role)
+                }}
+              >
+                {spec.label}
+              </button>
+            ))}
+          </div>,
+        )}
       </Group>
     </>
   )

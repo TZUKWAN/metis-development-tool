@@ -9,6 +9,8 @@ import { registerMdtAppPrefsIpc } from './mdt-app-prefs'
 import { registerMdtCapabilityIpc, registerMdtSecretIpc } from './mdt-capabilities-ipc'
 import { registerMdtIoIpc } from './mdt-io'
 import { registerMdtPreviewIpc } from './mdt-preview-ipc'
+import { registerMdtThumbnailsIpc } from './mdt-thumbnails'
+import { sessions } from './session-state'
 import { startSlidesStandalone } from './slides-main'
 
 // MDT surface: project IO, builder lifecycle (P05/P10). Registered before
@@ -22,6 +24,9 @@ registerMdtCapabilityIpc()
 registerMdtAppPrefsIpc()
 registerMdtSecretIpc()
 registerMdtPreviewIpc()
+// interaction-canvas page thumbnails (P07.03): the sessions map is injected
+// the same way registerSlidesIpc hands it to registerMdtDesignIpc
+registerMdtThumbnailsIpc(sessions)
 registerMdtBuildIpc({
   // the generated workspace lives inside the project directory
   projectsRoot: () => undefined,

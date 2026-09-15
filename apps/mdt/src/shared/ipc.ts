@@ -243,6 +243,9 @@ export interface AddElementOp {
   fillColor?: string
   /** Shape stroke (solid color + point width) */
   stroke?: { color: string; widthPt: number }
+  /** <p:cNvPr name> override (default "TextBox N"/"Shape N"); carries MDT semantic
+   * markers ("MDT:<role>:<uuid>") that persist in the file and drive the design bridge */
+  name?: string
 }
 
 export interface DeleteElementOp {
