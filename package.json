@@ -34,7 +34,8 @@
     "build:mdt": "npm run build -w @mdt/app",
     "dist:win": "npm run notices && npm run build:mdt && npm run dist:win -w @mdt/app",
     "dist:mac": "npm run notices && npm run build:mdt && npm run dist:mac -w @mdt/app",
-    "dist:linux": "npm run notices && npm run build:mdt && npm run dist:linux -w @mdt/app"
+    "dist:linux": "npm run notices && npm run build:mdt && npm run dist:linux -w @mdt/app",
+    "audit:tasks": "node tools/audit-task-status.mjs"
   },
   "dependencies": {
     "ws": "^8.21.1"
