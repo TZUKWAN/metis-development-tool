@@ -1,0 +1,58 @@
+name: E2E
+
+# MDT desktop end-to-end suite (tasklist P14.11, V2 §二十): builds the app,
+# then drives the packaged Electron entry via Playwright's Electron driver.
+# Electron needs a display server on ubuntu, so the run is wrapped in
+# xvfb-run with an auto-allocated server number.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  electron:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install (frozen lockfile)
+        run: npm ci
+
+      - name: Install Playwright chromium + system deps
+        run: npx playwright install chromium --with-deps
+
+      - name: Build MDT app
+        run: npm run build:mdt
+
+      - name: Run MDT Electron E2E (xvfb)
+        run: xvfb-run --auto-servernum npx playwright test --config e2e/mdt/playwright.config.ts
+
+      - name: Upload test results and screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mdt-e2e-results-${{ github.run_id }}
+          path: |
+            e2e/mdt/test-results/
+            e2e/mdt/screenshots/
+          if-no-files-found: ignore
+          retention-days: 7
