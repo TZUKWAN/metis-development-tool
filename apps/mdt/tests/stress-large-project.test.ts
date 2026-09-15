@@ -31,6 +31,7 @@ function buildLargeProject(): ProjectRoot {
   const pages = []
   const pageIds: string[] = []
   const buttonIds: string[] = []
+  const buttonByPage = new Map<string, string>()
 
   for (let p = 0; p < 100; p++) {
     const pageId = createId()
@@ -40,7 +41,10 @@ function buildLargeProject(): ProjectRoot {
     for (let e = 0; e < 50; e++) {
       const id = createId()
       const role = e === 0 ? 'button' : e % 10 === 0 ? 'input' : 'text'
-      if (role === 'button') buttonIds.push(id)
+      if (role === 'button') {
+        buttonIds.push(id)
+        buttonByPage.set(pageId, id)
+      }
       elements.push({
         id,
         name: `el-${p}-${e}`,
@@ -106,7 +110,7 @@ function buildLargeProject(): ProjectRoot {
         enabled: true,
         action: {
           type: 'toggleVisibility',
-          targetElementId: buttonIds[(i + 1) % buttonIds.length],
+          targetElementId: buttonByPage.get(sourcePage) ?? buttonIds[0]!,
         },
       })
     }
@@ -156,7 +160,7 @@ describe('P14.21 — large project (100 pages / 5,000 elements / 300 interaction
 
     const t0 = performance.now()
     const parsed = parseProject(JSON.parse(JSON.stringify(project)))
-    expect(parsed.ok).toBe(true)
+    if (!parsed.ok) throw new Error(`fixture failed to parse: ${parsed.error}`)
     const report = validateRefs(parsed.ok ? parsed.project : ({} as never))
     expect(report.ok).toBe(true)
     const serialized = JSON.stringify(parsed.project)
