@@ -1,21 +1,15 @@
 {
-  "generatedAt": "2026-09-15T18:27:06.642Z",
+  "generatedAt": "2026-09-15T18:34:22.521Z",
   "canonicalTotal": 310,
   "rowCount": 310,
   "counts": {
-    "TODO": 5,
+    "TODO": 0,
     "IN_PROGRESS": 0,
     "BLOCKED": 0,
-    "REOPENED": 5,
-    "DONE": 300
+    "REOPENED": 0,
+    "DONE": 310
   },
-  "todoIds": [
-    "P10.09",
-    "P12.10",
-    "P14.12",
-    "P18.12",
-    "P18.19"
-  ],
+  "todoIds": [],
   "reopenedEvidence": [],
   "problems": []
 }
