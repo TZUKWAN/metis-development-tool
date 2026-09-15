@@ -43,3 +43,13 @@ dominates (9 s). Vite production build of a generated app: ~0.6–0.8 s.
 | apps/mdt unit (574)                              | ~10 s                                                              |
 | @mdt/capabilities (164)                          | ~30 s                                                              |
 | @mdt/generator (61, incl. standalone acceptance) | ~10 min (npm install dominates; opt-out via MDT_SKIP_STANDALONE=1) |
+
+## Packaging artifact smoke (P16.12, Windows)
+
+- `npm run dist:win` → `apps/mdt/release/Metis Development Tool Setup 0.1.0.exe`
+  (NSIS) + `win-unpacked/` — DIST_EXIT=0.
+- Smoke: `win-unpacked/Metis Development Tool.exe` launched, renderer
+  process alive at 12 s (178 MB), then terminated. Recorded 2026-09-15.
+- First attempt hit a transient Windows EPERM on the electron-unpack
+  rename (antivirus/lock class); clean retry succeeded — CI packaging
+  jobs run on clean runners, where this has not been observed.
