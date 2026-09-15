@@ -3,6 +3,9 @@ name: Release
 # Tag-triggered desktop builds + source archive + SBOM (tasklist P16.04-P16.10).
 # Artifacts are UNSIGNED at 1.0 — documented in SECURITY.md and
 # docs/release/RELEASE_CHECKLIST.md.
+# electron-builder never publishes (--publish never, plus publish: never in
+# every platform config): this workflow uploads the release itself and then
+# verifies the asset set is complete and non-empty.
 
 on:
   push:
@@ -27,9 +30,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -42,7 +45,7 @@ jobs:
         run: npm run ${{ matrix.script }}
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: mdt-${{ matrix.os }}
           path: |
@@ -59,14 +62,19 @@ jobs:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install (frozen, for pinned SBOM tool)
+        run: npm ci
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: dist
 
@@ -75,10 +83,8 @@ jobs:
           git archive --format=tar.gz --prefix=metis-development-tool/ -o dist/mdt-source.tar.gz "$GITHUB_REF"
           git archive --format=zip --prefix=metis-development-tool/ -o dist/mdt-source.zip "$GITHUB_REF"
 
-      - name: SBOM (CycloneDX)
-        run: |
-          npx --yes @cyclonedx/cyclonedx-npm --output-file dist/mdt-sbom.json
-          npx --yes @cyclonedx/cyclonedx-npm --output-file dist/mdt-sbom.json --omit dev || true
+      - name: SBOM (CycloneDX, pinned devDependency, single run)
+        run: npx cyclonedx-npm --output-file dist/mdt-sbom.json
 
       - name: Checksums
         run: |
@@ -86,9 +92,39 @@ jobs:
           find . -type f \( -name '*.exe' -o -name '*.dmg' -o -name '*.AppImage' -o -name '*.deb' -o -name '*.rpm' -o -name '*.zip' -o -name '*.tar.gz' -o -name '*.json' \) -exec sha256sum {} \; > SHA256SUMS.txt
 
       - name: GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: |
             dist/**/*
             !dist/**/artifact-metadata.json
           generate_release_notes: true
+
+      - name: Verify release assets exist and are non-empty
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          assets="$(gh api "repos/${{ github.repository }}/releases/tags/${{ github.ref_name }}" \
+            --jq '.assets[] | "\(.name)\t\(.size)"')"
+          if [ -z "$assets" ]; then
+            echo "::error::release has no assets at all"
+            exit 1
+          fi
+          echo "$assets"
+          status=0
+          # One entry per required asset kind: per-OS installers plus the
+          # source archive, SBOM and checksum manifest.
+          for pattern in '\.exe$' '\.dmg$' '\.AppImage$' '\.deb$' 'mdt-source\.tar\.gz$' 'mdt-source\.zip$' 'mdt-sbom\.json$' 'SHA256SUMS\.txt$'; do
+            if ! printf '%s\n' "$assets" | grep -Eq "$pattern"; then
+              echo "::error::missing release asset matching /$pattern/"
+              status=1
+            fi
+          done
+          while IFS=$'\t' read -r name size; do
+            [ -n "$name" ] || continue
+            if [ "${size:-0}" -le 0 ]; then
+              echo "::error::release asset is empty: $name"
+              status=1
+            fi
+          done <<< "$assets"
+          exit $status

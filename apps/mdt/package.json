@@ -13,10 +13,10 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "dist:mac": "electron-vite build && electron-builder --mac",
-    "dist:win": "electron-vite build && electron-builder --win",
+    "dist:mac": "electron-vite build && electron-builder --mac --publish never",
+    "dist:win": "electron-vite build && electron-builder --win --publish never",
     "dist:dir": "electron-vite build && electron-builder --dir",
-    "dist:linux": "electron-vite build && electron-builder --linux"
+    "dist:linux": "electron-vite build && electron-builder --linux --publish never"
   },
   "devDependencies": {
     "@genoffice/i18n": "*",
@@ -53,6 +53,8 @@
   "build": {
     "appId": "com.metis.mdt",
     "productName": "Metis Development Tool",
+    "executableName": "metis-development-tool",
+    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
     "electronVersion": "43.3.0",
     "directories": {
       "output": "release"
@@ -73,7 +75,8 @@
         "dmg"
       ],
       "category": "public.app-category.productivity",
-      "identity": null
+      "identity": null,
+      "publish": "never"
     },
     "win": {
       "target": [
@@ -83,7 +86,25 @@
             "x64"
           ]
         }
-      ]
+      ],
+      "publish": "never"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Development",
+      "maintainer": "MDT Contributors <TZUKWAN@users.noreply.github.com>",
+      "desktop": {
+        "Name": "Metis Development Tool",
+        "Comment": "Design and build Agent applications like making a PowerPoint deck",
+        "Terminal": "false",
+        "Type": "Application",
+        "Categories": "Development;IDE;",
+        "StartupWMClass": "metis-development-tool"
+      },
+      "publish": "never"
     },
     "nsis": {
       "oneClick": false,
