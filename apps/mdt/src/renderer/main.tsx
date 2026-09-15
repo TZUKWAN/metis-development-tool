@@ -1,4 +1,5 @@
 import React from 'react'
+import { ErrorBoundary } from './mdt/ErrorBoundary'
 import { MdtDock } from './mdt/MdtDock'
 import { createRoot } from 'react-dom/client'
 import { htmlLang, type Lang } from '@genoffice/i18n'
@@ -60,11 +61,17 @@ async function bootstrap(): Promise<void> {
   createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
       <LocaleProvider initial={lang}>
-        {mode === 'audience' ? <AudienceView /> : (
-          <>
+        {mode === 'audience' ? (
+          <AudienceView />
+        ) : (
+          <ErrorBoundary area="designer">
             <App />
+          </ErrorBoundary>
+        )}
+        {mode !== 'audience' && (
+          <ErrorBoundary area="mdt-dock">
             <MdtDock />
-          </>
+          </ErrorBoundary>
         )}
       </LocaleProvider>
     </React.StrictMode>,
