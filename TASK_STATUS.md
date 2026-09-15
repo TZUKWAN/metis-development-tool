@@ -139,10 +139,10 @@
 | ------ | ------ | ---------- | ---------- | ---------- | -------------------------- | ------------------------------------------------------------------------------------ |
 | P07.01 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests | @xyflow/react 12.11.6 pinned (MIT) in apps/mdt                                       |
 | P07.02 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests | Interactions tab in dock; designer state preserved (separate view)                   |
-| P07.03 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests | deriveGraph: node per page incl. type + element count; real thumbnails deferred (P2) |
+| P07.03 | REOPENED | main-agent | 2026-09-15 | 2026-09-15 | V2 audit reopened | V2 audit: canvas nodes show placeholder cards, not live page thumbnails as required |
 | P07.04 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests | node positions persist to page.metadata.canvasPosition; fitView never writes         |
 | P07.05 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests | double-click page node -> setCurrentPage + designer view                             |
-| P07.06 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests | element-level source via inspector dropdown of interactive roles                     |
+| P07.06 | REOPENED | main-agent | 2026-09-15 | 2026-09-15 | V2 audit reopened | V2 audit: element-level handles not rendered on page nodes; inspector dropdown is not the required embedded handle |
 | P07.07 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests | navigate edges via connection popover (target-kind appropriate actions)              |
 | P07.08 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests | openModal auto-suggested for modal targets; type mismatch linted                     |
 | P07.09 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests | openDrawer auto-suggested for drawer targets                                         |
@@ -160,7 +160,7 @@
 | P07.21 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests | MiniMap + Controls + fitView (viewport-only)                                         |
 | P07.22 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests | search centers on node by page/agent name                                            |
 | P07.23 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests | memoized nodes; useMemo derivation                                                   |
-| P07.24 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests | graph unit tests; drag/edit E2E via Playwright in later flake pass                   |
+| P07.24 | REOPENED | main-agent | 2026-09-15 | 2026-09-15 | V2 audit reopened | V2 audit: edge semantics covered by unit tests only; no real React Flow gesture E2E |
 
 ## P08 — Agent Model 与 Pi Runtime Adapter
 
@@ -293,7 +293,7 @@
 | P13.08 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests       | shell/python spawn shell:false + args arrays (tests)                                               |
 | P13.09 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests       | text extraction strips scripts/styles; no innerHTML/eval in emitters                               |
 | P13.10 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see artifact/tests cited in note | CSP inherited from GenOffice (axe injection blocked by CSP — proven in e2e)                        |
-| P13.11 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see artifact/tests               | npm audit 0 critical; 2 high confined to dev-only fixture toolchain (docs/release/KNOWN_ISSUES.md) |
+| P13.11 | REOPENED | main-agent | 2026-09-15 | 2026-09-15 | V2 audit reopened | V2 audit: CI audit gate swallows failures with || true; 2 high advisories unhandled |
 | P13.12 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see artifact/tests               | npm run licenses green; THIRD_PARTY_NOTICES generated (231 packages)                               |
 | P13.13 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see artifact/tests cited in note | generated app permission manifest: capabilities/*/grants in project + emitted config               |
 | P13.14 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see artifact/tests cited in note | SECURITY.md threat model table                                                                     |
@@ -312,21 +312,21 @@
 | P14.08 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests       | FakeCodexClient contract tests                                                      |
 | P14.09 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see artifact/tests cited in note | generator golden tests (byte-identical trees)                                       |
 | P14.10 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see artifact/tests cited in note | template unit tests (19)                                                            |
-| P14.11 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see artifact/tests               | e2e/mdt smoke: 5 specs green (built app)                                            |
+| P14.11 | REOPENED | main-agent | 2026-09-15 | 2026-09-15 | V2 audit reopened | V2 audit: smoke suite lacks the required core-flow steps (new project/insert/edge/save/reopen) |
 | P14.12 | TODO   | main-agent |            |            |                                  |                                                                                     |
-| P14.13 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see artifact/tests cited in note | interaction graph unit tests cover edge create/edit/delete semantics                |
+| P14.13 | REOPENED | main-agent | 2026-09-15 | 2026-09-15 | V2 audit reopened | V2 audit: no real gesture E2E for interaction canvas |
 | P14.14 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see artifact/tests               | capability E2E: local mock HTTP + SSE interception (capabilities + template suites) |
 | P14.15 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests       | pipeline integration test w/ fake codex + real gates                                |
 | P14.16 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests       | real Codex run documented (docs/testing/real-codex-run.md)                          |
 | P14.17 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see artifact/tests cited in note | generated app e2e (5 specs, mocked SSE)                                             |
-| P14.18 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see artifact/tests cited in note | visual: axe scan + e2e green; baseline snapshot infra in generator golden tests     |
-| P14.19 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see artifact/tests               | axe scan: 0 serious/critical on welcome flow (e2e)                                  |
+| P14.18 | REOPENED | main-agent | 2026-09-15 | 2026-09-15 | V2 audit reopened | V2 audit: no true screenshot visual regression (golden snapshots are not UI visual) |
+| P14.19 | REOPENED | main-agent | 2026-09-15 | 2026-09-15 | V2 audit reopened | V2 audit: axe scan covered welcome dialog only; must cover all main surfaces |
 | P14.20 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see artifact/tests cited in note | recovery tests (write/read/clear + garbage)                                         |
 | P14.21 | TODO   | main-agent |            |            |                                  |                                                                                     |
 | P14.22 | TODO   | main-agent |            |            |                                  |                                                                                     |
 | P14.23 | TODO   | main-agent |            |            |                                  |                                                                                     |
 | P14.24 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see artifact/tests cited in note | path tests: unicode/space/case (store tests)                                        |
-| P14.25 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see artifact/tests               | smoke suite 5 consecutive runs, 0 failures (docs/testing/performance-baseline.md)   |
+| P14.25 | REOPENED | main-agent | 2026-09-15 | 2026-09-15 | V2 audit reopened | V2 audit: flake gate was 5 runs; requirement is 10 runs on core suites |
 
 ## P15 — 性能、可靠性与可观测性
 
@@ -352,15 +352,15 @@
 | P16.01 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests       | CI lint/typecheck on PR+push (win/linux matrix)                                             |
 | P16.02 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests       | CI unit tests with frozen lockfile + npm cache                                              |
 | P16.03 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see artifact/tests cited in note | e2e workflow in repo; smoke green locally; artifact upload on failure via retain-on-failure |
-| P16.04 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests       | release.yml win/mac/linux matrix                                                            |
+| P16.04 | REOPENED | main-agent | 2026-09-15 | 2026-09-15 | V2 audit reopened | V2 audit: release workflow linux build failed (executableName) |
 | P16.05 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see artifact/tests cited in note | version 1.0.0 single-source package.json + Welcome display                                  |
-| P16.06 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests       | tag-triggered release w/ checksums                                                          |
+| P16.06 | REOPENED | main-agent | 2026-09-15 | 2026-09-15 | V2 audit reopened | V2 audit: release run 34996552920 failure; release assets empty |
 | P16.07 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests       | unsigned artifacts documented (SECURITY.md known limitations)                               |
 | P16.08 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see artifact/tests cited in note | no auto-updater; GenOffice updater removed with shell (update-window gone)                  |
-| P16.09 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests       | source archive in release (git archive w/ LICENSE/NOTICE)                                   |
-| P16.10 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests       | CycloneDX SBOM in release                                                                   |
+| P16.09 | REOPENED | main-agent | 2026-09-15 | 2026-09-15 | V2 audit reopened | V2 audit: source archives not uploaded (release job skipped) |
+| P16.10 | REOPENED | main-agent | 2026-09-15 | 2026-09-15 | V2 audit reopened | V2 audit: SBOM not uploaded; workflow SBOM logic flawed |
 | P16.11 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests       | lockfile committed; frozen ci                                                               |
-| P16.12 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see artifact/tests cited in note | windows artifact smoke-launched (docs/testing/performance-baseline.md)                      |
+| P16.12 | REOPENED | main-agent | 2026-09-15 | 2026-09-15 | V2 audit reopened | V2 audit: only Windows local smoke; CI artifact smoke missing |
 
 ## P17 — 文档、示例项目与开发者体验
 
@@ -389,8 +389,8 @@
 | P18.02 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see artifact/tests cited in note | format+lint gates green after clean install                                    |
 | P18.03 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see artifact/tests cited in note | typecheck root+mdt green after clean install                                   |
 | P18.04 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see artifact/tests cited in note | npm test 2,868 passed / 0 failed after clean install                           |
-| P18.05 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see artifact/tests cited in note | e2e 5/5 green after clean install                                              |
-| P18.06 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see artifact/tests cited in note | axe scan 0 serious + e2e visual checks green                                   |
+| P18.05 | REOPENED | main-agent | 2026-09-15 | 2026-09-15 | V2 audit reopened | V2 audit: full E2E evidence invalidated by reopened E2E scope |
+| P18.06 | REOPENED | main-agent | 2026-09-15 | 2026-09-15 | V2 audit reopened | V2 audit: visual regression not yet implemented |
 | P18.07 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see artifact/tests               | three samples materialized from blueprints + pipeline gates (fixtures/samples) |
 | P18.08 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests       | real Codex acceptance PASS (docs/testing/real-codex-run.md)                    |
 | P18.09 | DONE   | main-agent | 2026-09-15 | 2026-09-15 | see commit history + tests       | real Pi acceptance PASS (docs/testing/live-provider.md)                        |

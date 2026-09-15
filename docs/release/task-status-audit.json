@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-09-15T17:09:13.117Z",
+  "generatedAt": "2026-09-15T17:10:19.926Z",
   "canonicalTotal": 310,
   "rowCount": 310,
   "counts": {
     "TODO": 22,
     "IN_PROGRESS": 0,
     "BLOCKED": 0,
-    "REOPENED": 0,
-    "DONE": 288
+    "REOPENED": 16,
+    "DONE": 272
   },
   "todoIds": [
     "P06.20",
