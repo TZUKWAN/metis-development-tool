@@ -70,14 +70,23 @@
   tokens; vite build gate re-run green; sample restored to pristine state,
   diff archived).
 
+## 6b. Additional gates recorded
+
+- **P14.19 accessibility**: axe-core scan of the welcome flow (wcag2a/aa,
+  serious+critical) — **0 violations** (e2e/mdt smoke suite, 5 specs green).
+- **P14.25 flake gate**: desktop smoke suite 5 consecutive runs — 5 × 4
+  tests, 0 failures.
+- **P15.01 cold start**: median **741 ms** to interactive renderer
+  (e2e/mdt/cold-start.json; docs/testing/performance-baseline.md).
+- **P16.12 packaging smoke**: `npm run dist:win` → NSIS Setup exe built;
+  packaged binary launched and alive (12 s) — P16.12 evidence in
+  performance-baseline.md.
+- **P16.05/P18.18**: version 1.0.0 across root, app, and all `@mdt/*`
+  packages (single source: package.json).
+
 ## 7. Known issues
 
-| Severity | Count | Notes                                                                                                                                                                                                                                                                    |
-| -------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| P0       | 0     | —                                                                                                                                                                                                                                                                        |
-| P1       | 0     | —                                                                                                                                                                                                                                                                        |
-| P2       | 2     | (1) Interaction-canvas page nodes use placeholder cards, not live page thumbnails (documented deferral). (2) `browser`/`mcp` capabilities emit named extension points in generated apps (driver/transport must be registered) — stubs throw honest errors, never silent. |
-| P3       | 1     | E2E cancel-flow spec for generated apps pending (cancel is unit-tested at service level).                                                                                                                                                                                |
+See docs/release/KNOWN_ISSUES.md — **P0 = 0, P1 = 0, P2 = 2, P3 = 2**.
 
 ## 8. Independent generated-app verification (P18.11)
 
