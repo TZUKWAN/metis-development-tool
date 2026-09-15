@@ -1,7 +1,7 @@
-# EXECUTION_STATE=INCOMPLETE_CONTINUE_REQUIRED
+# EXECUTION_STATE=INCOMPLETE_CONTINUE_REQUIRED — triggering new CI/Release with all fixes
 
 final target: MDT 1.0 V2 autonomous completion — 310/310 DONE, all gates PASS, v1.0.1 release
-current commit: b3beb21+ (main, post v1.0.0)
+current commit: ac3b2a3+ (main, post V2 remediation + Agent A fixes)
 date: 2026-09-16
 
 ## OPEN_SET
