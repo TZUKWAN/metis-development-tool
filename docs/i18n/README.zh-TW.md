@@ -13,10 +13,10 @@
 Word、Excel、PowerPoint 與 PDF 檔案，由你與你的 AI 共同編輯，並以原生格式存回。</p>
 
 <p align="center">
-  <a href="../../LICENSE"><img src="https://img.shields.io/github/license/genspark-ai/genoffice" alt="License: Apache-2.0"></a>
-  <a href="https://github.com/genspark-ai/genoffice/releases/latest"><img src="https://img.shields.io/github/v/release/genspark-ai/genoffice" alt="Latest release"></a>
-  <a href="https://github.com/genspark-ai/genoffice/releases"><img src="https://img.shields.io/github/downloads/genspark-ai/genoffice/total" alt="Downloads"></a>
-  <a href="https://github.com/genspark-ai/genoffice/stargazers"><img src="https://img.shields.io/github/stars/genspark-ai/genoffice?style=flat" alt="GitHub stars"></a>
+  <a href="../../LICENSE"><img src="https://img.shields.io/github/license/TZUKWAN/metis-development-tool" alt="License: Apache-2.0"></a>
+  <a href="https://github.com/TZUKWAN/metis-development-tool/releases/latest"><img src="https://img.shields.io/github/v/release/TZUKWAN/metis-development-tool" alt="Latest release"></a>
+  <a href="https://github.com/TZUKWAN/metis-development-tool/releases"><img src="https://img.shields.io/github/downloads/TZUKWAN/metis-development-tool/total" alt="Downloads"></a>
+  <a href="https://github.com/TZUKWAN/metis-development-tool/stargazers"><img src="https://img.shields.io/github/stars/TZUKWAN/metis-development-tool?style=flat" alt="GitHub stars"></a>
 </p>
 
 <p align="center"><a href="../../README.md">English</a> · <a href="README.es.md">Español</a> · <a href="README.pt-BR.md">Português (Brasil)</a> · <a href="README.de.md">Deutsch</a> · <a href="README.fr.md">Français</a> · <a href="README.zh-CN.md">简体中文</a> · <b>繁體中文</b> · <a href="README.ko.md">한국어</a> · <a href="README.ja.md">日本語</a> · <a href="README.ar.md">العربية</a> · <a href="README.ru.md">Русский</a> · <a href="README.it.md">Italiano</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.pl.md">Polski</a> · <a href="README.cs.md">Čeština</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.th.md">ไทย</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.he.md">עברית</a></p>
@@ -52,9 +52,9 @@ Windows 與 Linux。它能開啟並儲存原生的 `.docx`、`.xlsx` 與 `.pptx`
   OpenCode 與 Windsurf 使用的 agent skill，讓程式開發代理不必開啟任何
   視窗，就能在你的裝置上建立、轉換、讀取與編輯真正的 Office 檔案。
 
-**立即取得：** [macOS](https://github.com/genspark-ai/genoffice/releases/latest)（Apple Silicon 與 Intel）·
-[Windows](https://github.com/genspark-ai/genoffice/releases/latest)（x64 與 Arm）·
-[Linux](https://github.com/genspark-ai/genoffice/releases/latest)（deb、rpm、AppImage）——
+**立即取得：** [macOS](https://github.com/TZUKWAN/metis-development-tool/releases/latest)（Apple Silicon 與 Intel）·
+[Windows](https://github.com/TZUKWAN/metis-development-tool/releases/latest)（x64 與 Arm）·
+[Linux](https://github.com/TZUKWAN/metis-development-tool/releases/latest)（deb、rpm、AppImage）——
 詳細內容與系統需求請見[下載](#download)。
 
 ## Demo
@@ -211,7 +211,7 @@ Claude Code、Codex、Cursor、Gemini CLI、GitHub Copilot、OpenCode 或 Windsu
 供你檢視。</td>
 <td><b>在設定 → 整合中一次安裝</b>——GenOffice 會列出在這台電腦上找到的
 程式開發代理，並把 skill 寫入你勾選的每一個。也可以把 skill 下載成 zip
-壓縮檔，或執行 <code>npx skills add genspark-ai/genoffice</code>。命令與完整
+壓縮檔，或執行 <code>npx skills add TZUKWAN/metis-development-tool</code>。命令與完整
 工作流程請見<a href="#command-line-and-agent-skill">命令列與 agent skill</a>。</td>
 </tr>
 </table>
@@ -271,7 +271,7 @@ HTML，用的是同一套引擎，且無需介面。它隨 GenOffice 一起安�
 | -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | 應用程式內的 **設定 → 整合**           | 列出在這台電腦上找到的代理；按一下就把 skill 寫入你選擇的每一個。當 GenOffice 新版本附帶更新的 skill 時，會出現**更新**按鈕。 |
 | 同一頁面上的 **下載為 zip**            | claude.ai、Claude 桌面版應用程式與其他助理可作為上傳 skill 接受的目錄結構。                                                   |
-| `npx skills add genspark-ai/genoffice` | 從本儲存庫安裝到任何相容 skills 的代理。                                                                                      |
+| `npx skills add TZUKWAN/metis-development-tool` | 從本儲存庫安裝到任何相容 skills 的代理。                                                                                      |
 
 接著開一個新的對話，請它幫你做一份文件。這份 skill 會教代理何時該使用
 `genoffice`、編輯前如何先讀取檔案，以及如何檢查自己的成果。
@@ -323,16 +323,16 @@ genoffice open deck/solar-system.pptx
 
 | 平台                                 | 系統需求                                               | 下載                                                                                     |
 | ------------------------------------ | ------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
-| **macOS** — Apple Silicon（arm64）   | macOS 11 以上                                          | [最新版 `.dmg`（arm64）](https://github.com/genspark-ai/genoffice/releases/latest)       |
-| **macOS** — Intel（x64）             | macOS 11 以上                                          | [最新版 `.dmg`（x64）](https://github.com/genspark-ai/genoffice/releases/latest)         |
-| **Windows**（x64，一般 PC）          | Windows 10 以上，Intel/AMD                             | [最新版 `-x64.exe` 安裝程式](https://github.com/genspark-ai/genoffice/releases/latest)   |
-| **Windows** on Arm（ARM64）          | Windows 11 on Arm（Snapdragon X 及同類機型）           | [最新版 `-arm64.exe` 安裝程式](https://github.com/genspark-ai/genoffice/releases/latest) |
-| **Linux** — Debian / Ubuntu          | x86_64，glibc 2.34+（Ubuntu 22.04 或以上）             | [最新版 `.deb`](https://github.com/genspark-ai/genoffice/releases/latest)                |
-| **Linux** — Fedora / RHEL / openSUSE | x86_64，glibc 2.34+（Fedora 35+、RHEL 9+、Leap 15.6+） | [最新版 `.rpm`](https://github.com/genspark-ai/genoffice/releases/latest)                |
-| **Linux** — 其他發行版               | x86_64，glibc 2.34+，FUSE 2                            | [最新版 `.AppImage`](https://github.com/genspark-ai/genoffice/releases/latest)           |
+| **macOS** — Apple Silicon（arm64）   | macOS 11 以上                                          | [最新版 `.dmg`（arm64）](https://github.com/TZUKWAN/metis-development-tool/releases/latest)       |
+| **macOS** — Intel（x64）             | macOS 11 以上                                          | [最新版 `.dmg`（x64）](https://github.com/TZUKWAN/metis-development-tool/releases/latest)         |
+| **Windows**（x64，一般 PC）          | Windows 10 以上，Intel/AMD                             | [最新版 `-x64.exe` 安裝程式](https://github.com/TZUKWAN/metis-development-tool/releases/latest)   |
+| **Windows** on Arm（ARM64）          | Windows 11 on Arm（Snapdragon X 及同類機型）           | [最新版 `-arm64.exe` 安裝程式](https://github.com/TZUKWAN/metis-development-tool/releases/latest) |
+| **Linux** — Debian / Ubuntu          | x86_64，glibc 2.34+（Ubuntu 22.04 或以上）             | [最新版 `.deb`](https://github.com/TZUKWAN/metis-development-tool/releases/latest)                |
+| **Linux** — Fedora / RHEL / openSUSE | x86_64，glibc 2.34+（Fedora 35+、RHEL 9+、Leap 15.6+） | [最新版 `.rpm`](https://github.com/TZUKWAN/metis-development-tool/releases/latest)                |
+| **Linux** — 其他發行版               | x86_64，glibc 2.34+，FUSE 2                            | [最新版 `.AppImage`](https://github.com/TZUKWAN/metis-development-tool/releases/latest)           |
 
 所有版本皆由 `main` 分支建置，macOS 與 Windows 安裝程式皆有簽署。
-較舊版本可在[發行頁面](https://github.com/genspark-ai/genoffice/releases)找到。
+較舊版本可在[發行頁面](https://github.com/TZUKWAN/metis-development-tool/releases)找到。
 
 <details>
 <summary><b>在 Linux 上安裝</b></summary>
@@ -404,7 +404,7 @@ sheets 應用程式還需要 Rust 工具鏈來編譯其 xlsx sidecar
 
 GenOffice 正在積極開發中，你的意見回饋會影響它的方向。
 
-- 在 [GitHub Issues](https://github.com/genspark-ai/genoffice/issues)
+- 在 [GitHub Issues](https://github.com/TZUKWAN/metis-development-tool/issues)
   **回報問題或提出功能需求**。
 - 到 [GenTeam](https://genoffice.ai/join) **加入 GenOffice 群組聊天**，
   和團隊及其他使用者交流。

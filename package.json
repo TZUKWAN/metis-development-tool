@@ -10,8 +10,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/genspark-ai/genoffice.git"
+    "url": "git+https://github.com/TZUKWAN/metis-development-tool.git"
   },
+  "bugs": {
+    "url": "https://github.com/TZUKWAN/metis-development-tool/issues"
+  },
+  "homepage": "https://github.com/TZUKWAN/metis-development-tool#readme",
   "workspaces": [
     "apps/*",
     "packages/*"

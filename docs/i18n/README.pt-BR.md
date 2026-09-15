@@ -13,10 +13,10 @@
 Arquivos do Word, Excel, PowerPoint e PDF, editados por você e sua IA, salvos de volta nos formatos reais.</p>
 
 <p align="center">
-  <a href="../../LICENSE"><img src="https://img.shields.io/github/license/genspark-ai/genoffice" alt="Licença: Apache-2.0"></a>
-  <a href="https://github.com/genspark-ai/genoffice/releases/latest"><img src="https://img.shields.io/github/v/release/genspark-ai/genoffice" alt="Versão mais recente"></a>
-  <a href="https://github.com/genspark-ai/genoffice/releases"><img src="https://img.shields.io/github/downloads/genspark-ai/genoffice/total" alt="Downloads"></a>
-  <a href="https://github.com/genspark-ai/genoffice/stargazers"><img src="https://img.shields.io/github/stars/genspark-ai/genoffice?style=flat" alt="Estrelas no GitHub"></a>
+  <a href="../../LICENSE"><img src="https://img.shields.io/github/license/TZUKWAN/metis-development-tool" alt="Licença: Apache-2.0"></a>
+  <a href="https://github.com/TZUKWAN/metis-development-tool/releases/latest"><img src="https://img.shields.io/github/v/release/TZUKWAN/metis-development-tool" alt="Versão mais recente"></a>
+  <a href="https://github.com/TZUKWAN/metis-development-tool/releases"><img src="https://img.shields.io/github/downloads/TZUKWAN/metis-development-tool/total" alt="Downloads"></a>
+  <a href="https://github.com/TZUKWAN/metis-development-tool/stargazers"><img src="https://img.shields.io/github/stars/TZUKWAN/metis-development-tool?style=flat" alt="Estrelas no GitHub"></a>
 </p>
 
 <p align="center"><a href="../../README.md">English</a> · <a href="README.es.md">Español</a> · <b>Português (Brasil)</b> · <a href="README.de.md">Deutsch</a> · <a href="README.fr.md">Français</a> · <a href="README.zh-CN.md">简体中文</a> · <a href="README.zh-TW.md">繁體中文</a> · <a href="README.ko.md">한국어</a> · <a href="README.ja.md">日本語</a> · <a href="README.ar.md">العربية</a> · <a href="README.ru.md">Русский</a> · <a href="README.it.md">Italiano</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.pl.md">Polski</a> · <a href="README.cs.md">Čeština</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.th.md">ไทย</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.he.md">עברית</a></p>
@@ -56,9 +56,9 @@ lê o arquivo, faz a alteração e mostra exatamente o que foi tocado.
   converter, ler e editar arquivos reais do Office na sua máquina sem abrir
   uma janela.
 
-**Baixe:** [macOS](https://github.com/genspark-ai/genoffice/releases/latest) (Apple Silicon e Intel) ·
-[Windows](https://github.com/genspark-ai/genoffice/releases/latest) (x64 e Arm) ·
-[Linux](https://github.com/genspark-ai/genoffice/releases/latest) (deb, rpm, AppImage) —
+**Baixe:** [macOS](https://github.com/TZUKWAN/metis-development-tool/releases/latest) (Apple Silicon e Intel) ·
+[Windows](https://github.com/TZUKWAN/metis-development-tool/releases/latest) (x64 e Arm) ·
+[Linux](https://github.com/TZUKWAN/metis-development-tool/releases/latest) (deb, rpm, AppImage) —
 detalhes e requisitos em [Download](#download).
 
 ## Demo
@@ -180,7 +180,7 @@ Office com os mesmos mecanismos dos aplicativos, sem abrir uma janela.
 </tr>
 <tr>
 <td><b>Um prompt para o seu agente</b> — "Crie uma apresentação de oito slides sobre o Sistema Solar." O agente lê o skill, escreve uma folha de estilos, um esboço e uma especificação de página por slide, gera as duas fotos com <code>genoffice image</code> e deixa o <code>genoffice slides check</code> rejeitar qualquer coisa que transborde ou se sobreponha antes que o <code>genoffice create</code> monte o <code>.pptx</code> e o <code>slides render</code> devolva um PNG por slide para conferir.</td>
-<td><b>Instale uma vez, em Configurações → Integrações</b> — o GenOffice lista os agentes de programação que encontra neste computador e grava o skill em cada um que você escolher. Ou baixe o skill como zip, ou execute <code>npx skills add genspark-ai/genoffice</code>. Os comandos e o fluxo de trabalho completo estão em <a href="#command-line-and-agent-skill">Linha de comando e skill de agente</a>.</td>
+<td><b>Instale uma vez, em Configurações → Integrações</b> — o GenOffice lista os agentes de programação que encontra neste computador e grava o skill em cada um que você escolher. Ou baixe o skill como zip, ou execute <code>npx skills add TZUKWAN/metis-development-tool</code>. Os comandos e o fluxo de trabalho completo estão em <a href="#command-line-and-agent-skill">Linha de comando e skill de agente</a>.</td>
 </tr>
 </table>
 
@@ -252,7 +252,7 @@ skills.
 | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Configurações → Integrações** no app | Lista os agentes encontrados neste computador; um clique grava o skill em cada um que você escolher. Um botão **Atualizar** aparece quando uma versão do GenOffice traz um skill mais novo. |
 | **Baixar como zip** na mesma página    | O formato que o claude.ai, os aplicativos desktop do Claude e outros assistentes aceitam como skill enviado.                                                                                |
-| `npx skills add genspark-ai/genoffice` | Instala a partir deste repositório em qualquer agente compatível com skills.                                                                                                                |
+| `npx skills add TZUKWAN/metis-development-tool` | Instala a partir deste repositório em qualquer agente compatível com skills.                                                                                                                |
 
 Depois, abra um novo chat e peça um documento. O skill ensina ao agente
 quando recorrer ao `genoffice`, como ler um arquivo antes de editá-lo e como
@@ -307,17 +307,17 @@ como um `.pptx` comum.
 
 | Plataforma                           | Requisitos                                            | Download                                                                                         |
 | ------------------------------------ | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| **macOS** — Apple Silicon (arm64)    | macOS 11+                                             | [`.dmg` mais recente (arm64)](https://github.com/genspark-ai/genoffice/releases/latest)          |
-| **macOS** — Intel (x64)              | macOS 11+                                             | [`.dmg` mais recente (x64)](https://github.com/genspark-ai/genoffice/releases/latest)            |
-| **Windows** (x64, maioria dos PCs)   | Windows 10+, Intel/AMD                                | [Instalador `-x64.exe` mais recente](https://github.com/genspark-ai/genoffice/releases/latest)   |
-| **Windows** no Arm (ARM64)           | Windows 11 no Arm (Snapdragon X e similares)          | [Instalador `-arm64.exe` mais recente](https://github.com/genspark-ai/genoffice/releases/latest) |
-| **Linux** — Debian / Ubuntu          | x86_64, glibc 2.34+ (Ubuntu 22.04 ou mais recente)    | [`.deb` mais recente](https://github.com/genspark-ai/genoffice/releases/latest)                  |
-| **Linux** — Fedora / RHEL / openSUSE | x86_64, glibc 2.34+ (Fedora 35+, RHEL 9+, Leap 15.6+) | [`.rpm` mais recente](https://github.com/genspark-ai/genoffice/releases/latest)                  |
-| **Linux** — outras distribuições     | x86_64, glibc 2.34+, FUSE 2                           | [`.AppImage` mais recente](https://github.com/genspark-ai/genoffice/releases/latest)             |
+| **macOS** — Apple Silicon (arm64)    | macOS 11+                                             | [`.dmg` mais recente (arm64)](https://github.com/TZUKWAN/metis-development-tool/releases/latest)          |
+| **macOS** — Intel (x64)              | macOS 11+                                             | [`.dmg` mais recente (x64)](https://github.com/TZUKWAN/metis-development-tool/releases/latest)            |
+| **Windows** (x64, maioria dos PCs)   | Windows 10+, Intel/AMD                                | [Instalador `-x64.exe` mais recente](https://github.com/TZUKWAN/metis-development-tool/releases/latest)   |
+| **Windows** no Arm (ARM64)           | Windows 11 no Arm (Snapdragon X e similares)          | [Instalador `-arm64.exe` mais recente](https://github.com/TZUKWAN/metis-development-tool/releases/latest) |
+| **Linux** — Debian / Ubuntu          | x86_64, glibc 2.34+ (Ubuntu 22.04 ou mais recente)    | [`.deb` mais recente](https://github.com/TZUKWAN/metis-development-tool/releases/latest)                  |
+| **Linux** — Fedora / RHEL / openSUSE | x86_64, glibc 2.34+ (Fedora 35+, RHEL 9+, Leap 15.6+) | [`.rpm` mais recente](https://github.com/TZUKWAN/metis-development-tool/releases/latest)                  |
+| **Linux** — outras distribuições     | x86_64, glibc 2.34+, FUSE 2                           | [`.AppImage` mais recente](https://github.com/TZUKWAN/metis-development-tool/releases/latest)             |
 
 Todas as builds vêm da `main`; os instaladores de macOS e Windows são
 assinados. Versões mais antigas estão na página de
-[Releases](https://github.com/genspark-ai/genoffice/releases).
+[Releases](https://github.com/TZUKWAN/metis-development-tool/releases).
 
 <details>
 <summary><b>Instalando no Linux</b></summary>
@@ -393,7 +393,7 @@ integrados.
 O GenOffice está em desenvolvimento ativo e o seu feedback ajuda a moldá-lo.
 
 - **Relate um bug ou peça um recurso** em
-  [GitHub Issues](https://github.com/genspark-ai/genoffice/issues).
+  [GitHub Issues](https://github.com/TZUKWAN/metis-development-tool/issues).
 - **Participe do grupo de chat do GenOffice** no
   [GenTeam](https://genoffice.ai/join) para falar com a equipe e outros usuários.
 - **Dê uma estrela no repositório** se o GenOffice for útil para você — é a

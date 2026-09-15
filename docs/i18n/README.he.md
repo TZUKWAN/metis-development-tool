@@ -13,10 +13,10 @@
 קבצי Word, Excel, PowerPoint ו-PDF, נערכים על ידיכם ועל ידי ה-AI שלכם, ונשמרים בחזרה בפורמטים המקוריים.</p>
 
 <p align="center">
-  <a href="../../LICENSE"><img src="https://img.shields.io/github/license/genspark-ai/genoffice" alt="License: Apache-2.0"></a>
-  <a href="https://github.com/genspark-ai/genoffice/releases/latest"><img src="https://img.shields.io/github/v/release/genspark-ai/genoffice" alt="Latest release"></a>
-  <a href="https://github.com/genspark-ai/genoffice/releases"><img src="https://img.shields.io/github/downloads/genspark-ai/genoffice/total" alt="Downloads"></a>
-  <a href="https://github.com/genspark-ai/genoffice/stargazers"><img src="https://img.shields.io/github/stars/genspark-ai/genoffice?style=flat" alt="GitHub stars"></a>
+  <a href="../../LICENSE"><img src="https://img.shields.io/github/license/TZUKWAN/metis-development-tool" alt="License: Apache-2.0"></a>
+  <a href="https://github.com/TZUKWAN/metis-development-tool/releases/latest"><img src="https://img.shields.io/github/v/release/TZUKWAN/metis-development-tool" alt="Latest release"></a>
+  <a href="https://github.com/TZUKWAN/metis-development-tool/releases"><img src="https://img.shields.io/github/downloads/TZUKWAN/metis-development-tool/total" alt="Downloads"></a>
+  <a href="https://github.com/TZUKWAN/metis-development-tool/stargazers"><img src="https://img.shields.io/github/stars/TZUKWAN/metis-development-tool?style=flat" alt="GitHub stars"></a>
 </p>
 
 <p align="center"><a href="../../README.md">English</a> · <a href="README.es.md">Español</a> · <a href="README.pt-BR.md">Português (Brasil)</a> · <a href="README.de.md">Deutsch</a> · <a href="README.fr.md">Français</a> · <a href="README.zh-CN.md">简体中文</a> · <a href="README.zh-TW.md">繁體中文</a> · <a href="README.ko.md">한국어</a> · <a href="README.ja.md">日本語</a> · <a href="README.ar.md">العربية</a> · <a href="README.ru.md">Русский</a> · <a href="README.it.md">Italiano</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.pl.md">Polski</a> · <a href="README.cs.md">Čeština</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.th.md">ไทย</a> · <a href="README.hi.md">हिन्दी</a> · <b>עברית</b></p>
@@ -54,9 +54,9 @@ Windows ו-Linux. היא פותחת ושומרת קבצי `.docx`,‏ `.xlsx` ו
   OpenCode ו-Windsurf, כך שסוכן קוד יכול ליצור, להמיר, לקרוא ולערוך קבצי
   Office אמיתיים על המחשב שלכם בלי לפתוח חלון.
 
-**להורדה:** [macOS](https://github.com/genspark-ai/genoffice/releases/latest) ‏(Apple Silicon ו-Intel) ·
-[Windows](https://github.com/genspark-ai/genoffice/releases/latest) ‏(x64 ו-Arm) ·
-[Linux](https://github.com/genspark-ai/genoffice/releases/latest) ‏(deb,‏ rpm,‏ AppImage) —
+**להורדה:** [macOS](https://github.com/TZUKWAN/metis-development-tool/releases/latest) ‏(Apple Silicon ו-Intel) ·
+[Windows](https://github.com/TZUKWAN/metis-development-tool/releases/latest) ‏(x64 ו-Arm) ·
+[Linux](https://github.com/TZUKWAN/metis-development-tool/releases/latest) ‏(deb,‏ rpm,‏ AppImage) —
 פרטים ודרישות בסעיף [הורדה](#download).
 
 ## הדגמה
@@ -176,7 +176,7 @@ GenOffice מגיעה עם שורת פקודה `genoffice` ועם skill לסוכ�
 </tr>
 <tr>
 <td dir="rtl"><b>פרומפט אחד לסוכן שלכם</b> — ״בנו מצגת בת שמונה שקופיות על מערכת השמש.״ הסוכן קורא את ה-skill, כותב גיליון סטייל, מתווה ומפרט עמוד אחד לכל שקופית, מייצר את שתי התמונות עם <code>genoffice image</code>, ונותן ל-<code>genoffice slides check</code> לדחות כל דבר שגולש או חופף לפני ש-<code>genoffice create</code> מרכיב את ה-<code>.pptx</code> ו-<code>slides render</code> מחזיר PNG לכל שקופית להתרשמות.</td>
-<td dir="rtl"><b>התקינו פעם אחת, מתוך הגדרות → שילובים</b> — GenOffice מציגה את סוכני הקוד שהיא מוצאת על המחשב הזה וכותבת את ה-skill לכל אחד שתבחרו. או הורידו את ה-skill כ-zip, או הריצו <code>npx skills add genspark-ai/genoffice</code>. הפקודות ותהליך העבודה המלא נמצאים ב<a href="#command-line-and-agent-skill">שורת הפקודה וה-skill לסוכנים</a>.</td>
+<td dir="rtl"><b>התקינו פעם אחת, מתוך הגדרות → שילובים</b> — GenOffice מציגה את סוכני הקוד שהיא מוצאת על המחשב הזה וכותבת את ה-skill לכל אחד שתבחרו. או הורידו את ה-skill כ-zip, או הריצו <code>npx skills add TZUKWAN/metis-development-tool</code>. הפקודות ותהליך העבודה המלא נמצאים ב<a href="#command-line-and-agent-skill">שורת הפקודה וה-skill לסוכנים</a>.</td>
 </tr>
 </table>
 
@@ -238,7 +238,7 @@ OpenCode ו-Windsurf ישר מהקופסה, ועם כל סוכן אחר שקור
 | -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **הגדרות → שילובים** באפליקציה         | מציג את הסוכנים שנמצאו על המחשב הזה; לחיצה אחת כותבת את ה-skill לכל אחד שתבחרו. כפתור **Update** מופיע כשגרסת GenOffice חדשה מגיעה עם skill מעודכן. |
 | **הורדה כ-zip** באותו העמוד            | המבנה ש-claude.ai, אפליקציות Claude לדסקטופ ועוזרים אחרים מקבלים כ-skill שהועלה.                                                                    |
-| `npx skills add genspark-ai/genoffice` | מתקין מהמאגר הזה לכל סוכן שתומך ב-skills.                                                                                                           |
+| `npx skills add TZUKWAN/metis-development-tool` | מתקין מהמאגר הזה לכל סוכן שתומך ב-skills.                                                                                                           |
 
 לאחר מכן פתחו צ'אט חדש ובקשו מסמך. ה-skill מלמד את הסוכן מתי לפנות
 ל-`genoffice`, איך לקרוא קובץ לפני שעורכים אותו, ואיך לבדוק את העבודה של
@@ -291,17 +291,17 @@ genoffice open deck/solar-system.pptx
 
 | פלטפורמה                             | דרישות                                                    | הורדה                                                                                           |
 | ------------------------------------ | --------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| **macOS** — Apple Silicon (arm64)    | macOS 11+                                                 | [הגרסה האחרונה של `.dmg` (arm64)](https://github.com/genspark-ai/genoffice/releases/latest)     |
-| **macOS** — Intel (x64)              | macOS 11+                                                 | [הגרסה האחרונה של `.dmg` (x64)](https://github.com/genspark-ai/genoffice/releases/latest)       |
-| **Windows** (x64, רוב המחשבים)       | Windows 10+, Intel/AMD                                    | [הגרסה האחרונה של מתקין `-x64.exe`](https://github.com/genspark-ai/genoffice/releases/latest)   |
-| **Windows** על Arm (ARM64)           | Windows 11 על Arm (Snapdragon X ומעבדים דומים)            | [הגרסה האחרונה של מתקין `-arm64.exe`](https://github.com/genspark-ai/genoffice/releases/latest) |
-| **Linux** — Debian / Ubuntu          | x86_64,‏ glibc 2.34+‎ (Ubuntu 22.04 ואילך)                | [הגרסה האחרונה של `.deb`](https://github.com/genspark-ai/genoffice/releases/latest)             |
-| **Linux** — Fedora / RHEL / openSUSE | x86_64,‏ glibc 2.34+‎ (Fedora 35+,‏ RHEL 9+,‏ Leap 15.6+) | [הגרסה האחרונה של `.rpm`](https://github.com/genspark-ai/genoffice/releases/latest)             |
-| **Linux** — הפצות אחרות              | x86_64,‏ glibc 2.34+‎, FUSE 2                             | [הגרסה האחרונה של `.AppImage`](https://github.com/genspark-ai/genoffice/releases/latest)        |
+| **macOS** — Apple Silicon (arm64)    | macOS 11+                                                 | [הגרסה האחרונה של `.dmg` (arm64)](https://github.com/TZUKWAN/metis-development-tool/releases/latest)     |
+| **macOS** — Intel (x64)              | macOS 11+                                                 | [הגרסה האחרונה של `.dmg` (x64)](https://github.com/TZUKWAN/metis-development-tool/releases/latest)       |
+| **Windows** (x64, רוב המחשבים)       | Windows 10+, Intel/AMD                                    | [הגרסה האחרונה של מתקין `-x64.exe`](https://github.com/TZUKWAN/metis-development-tool/releases/latest)   |
+| **Windows** על Arm (ARM64)           | Windows 11 על Arm (Snapdragon X ומעבדים דומים)            | [הגרסה האחרונה של מתקין `-arm64.exe`](https://github.com/TZUKWAN/metis-development-tool/releases/latest) |
+| **Linux** — Debian / Ubuntu          | x86_64,‏ glibc 2.34+‎ (Ubuntu 22.04 ואילך)                | [הגרסה האחרונה של `.deb`](https://github.com/TZUKWAN/metis-development-tool/releases/latest)             |
+| **Linux** — Fedora / RHEL / openSUSE | x86_64,‏ glibc 2.34+‎ (Fedora 35+,‏ RHEL 9+,‏ Leap 15.6+) | [הגרסה האחרונה של `.rpm`](https://github.com/TZUKWAN/metis-development-tool/releases/latest)             |
+| **Linux** — הפצות אחרות              | x86_64,‏ glibc 2.34+‎, FUSE 2                             | [הגרסה האחרונה של `.AppImage`](https://github.com/TZUKWAN/metis-development-tool/releases/latest)        |
 
 כל הבנייות (builds) מגיעות מ-`main`; מתקיני macOS ו-Windows חתומים
 דיגיטלית. גרסאות ישנות יותר נמצאות בעמוד
-[Releases](https://github.com/genspark-ai/genoffice/releases).
+[Releases](https://github.com/TZUKWAN/metis-development-tool/releases).
 
 <details>
 <summary><b>התקנה ב-Linux</b></summary>
@@ -375,7 +375,7 @@ npm run dist:linux   # אריזת AppImage + deb + rpm עבור Linux
 GenOffice נמצאת בפיתוח פעיל, והמשוב שלכם מעצב אותה.
 
 - **דווחו על באג או בקשו פיצ'ר** ב-
-  [GitHub Issues](https://github.com/genspark-ai/genoffice/issues).
+  [GitHub Issues](https://github.com/TZUKWAN/metis-development-tool/issues).
 - **הצטרפו לצ'אט הקבוצתי של GenOffice** ב-
   [GenTeam](https://genoffice.ai/join) כדי לדבר עם הצוות ועם משתמשים אחרים.
 - **תנו כוכב (star) למאגר** אם GenOffice שימושית לכם — זו הדרך הטובה ביותר
