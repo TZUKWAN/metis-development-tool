@@ -3,7 +3,7 @@
  * generated app screenshot at stable viewports, using pixelmatch.
  * Baselines are explicit; CI never auto-updates.
  */
-import { mkdtempSync, existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs'
+import { mkdtempSync, readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
