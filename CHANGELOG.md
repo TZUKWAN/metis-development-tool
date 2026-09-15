@@ -4,7 +4,9 @@ All notable changes to MDT are documented here. Format based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versioning follows
 [SemVer](https://semver.org/).
 
-## [Unreleased]
+## [1.0.0] — 2026-09-15
+
+First stable release. All P18 acceptance gates green (see MDT_1.0_ACCEPTANCE_REPORT.md).
 
 ### Added
 
