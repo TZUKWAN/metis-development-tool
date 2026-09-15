@@ -58,7 +58,74 @@ export interface DerivedElement {
 }
 
 export type ElementRoleGuess =
-  'text' | 'shape' | 'image' | 'icon' | 'group' | 'button' | 'input' | 'chat' | 'custom'
+  | 'text'
+  | 'shape'
+  | 'image'
+  | 'icon'
+  | 'group'
+  | 'button'
+  | 'input'
+  | 'chat'
+  | 'textarea'
+  | 'checkbox'
+  | 'select'
+  | 'tabs'
+  | 'list'
+  | 'datatable'
+  | 'filepicker'
+  | 'codeblock'
+  | 'browserframe'
+  | 'custom'
+
+/**
+ * MDT UI-control roles that can be INSERTED from the ribbon as marked engine
+ * shapes (tasklist P06.19–P06.26). Each matches a `@mdt/schema` ElementRole.
+ */
+export const MDT_CONTROL_ROLES = [
+  'button',
+  'input',
+  'textarea',
+  'checkbox',
+  'select',
+  'tabs',
+  'list',
+  'datatable',
+  'chat',
+  'filepicker',
+  'codeblock',
+  'browserframe',
+] as const satisfies readonly ElementRoleGuess[]
+
+/** The roles insertable from the ribbon's MDT Controls group. */
+export type MdtControlRole = (typeof MDT_CONTROL_ROLES)[number]
+
+/**
+ * Semantic marker carried in an engine element's <p:cNvPr name>:
+ * "MDT:<role>:<uuid>". The marker survives save→reopen (the name is persisted
+ * in the slide part XML), so the design bridge can re-derive the control role
+ * even with an empty overlay.
+ */
+export const MDT_MARKER_PREFIX = 'MDT:'
+
+const MDT_MARKER_RE = /^MDT:([a-z]+):([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/
+
+/** Build a marker name for an inserted MDT control ("MDT:button:<uuid>"). */
+export function mdtControlMarker(role: string, uid: string): string {
+  return `${MDT_MARKER_PREFIX}${role}:${uid}`
+}
+
+/** Parse a marker name → its control role; null when the name is not a valid MDT marker. */
+export function parseMdtMarker(name: string): ElementRoleGuess | null {
+  const m = MDT_MARKER_RE.exec(name.trim())
+  if (!m) return null
+  const role = m[1] as ElementRoleGuess
+  return (MDT_CONTROL_ROLES as readonly string[]).includes(role) ? role : null
+}
+
+/** True when the engine element name carries an MDT control marker. */
+export function isMdtMarker(name: string): boolean {
+  return parseMdtMarker(name) !== null
+}
 
 /**
  * Map engine kind → MDT role. Buttons/text placeholders are recognized from
@@ -68,6 +135,9 @@ export type ElementRoleGuess =
 export function guessRole(kind: string, name: string, text?: string): ElementRoleGuess {
   const k = kind.toLowerCase()
   const n = name.toLowerCase()
+  // Inserted MDT controls: the bridge maps the marker name to the control kind,
+  // and the control kind IS the role (P06.19–P06.26)
+  if ((MDT_CONTROL_ROLES as readonly string[]).includes(k)) return k as ElementRoleGuess
   if (k === 'button' || n.startsWith('button') || n.includes('按钮')) return 'button'
   if (k === 'input' || k === 'textbox' || n.startsWith('input') || n.includes('输入'))
     return 'input'

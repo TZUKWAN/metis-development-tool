@@ -89,6 +89,9 @@ register({
         'op "addElement": "bodyPr.autoFit" must be "shrink" (fit text on overflow) or "resize" (grow the shape).',
       )
     }
+    if (op.name !== undefined && (typeof op.name !== 'string' || op.name.trim() === '')) {
+      throw new GuidedError('op "addElement": "name" must be a non-empty string when given.')
+    }
   },
   apply(op, ctx): OpRecord {
     const { slide } = resolveSlide(ctx, op)
@@ -104,6 +107,7 @@ register({
       ...(op.adjustments
         ? { adjustments: op.adjustments as NewElementOptions['adjustments'] }
         : {}),
+      ...(typeof op.name === 'string' && op.name ? { name: op.name } : {}),
     })
     return { op, created: [el.id] }
   },

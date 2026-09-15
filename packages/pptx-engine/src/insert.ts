@@ -52,6 +52,10 @@ export interface NewElementOptions {
   bodyPr?: NewElementBodyPr
   /** prstGeom adjustment values (<a:avLst><a:gd name fmla="val N"/>), e.g. {adj: 25000} for roundRect radius */
   adjustments?: Record<string, number>
+  /** <p:cNvPr name> override (default "TextBox N" / "Shape N"); carries durable
+   * semantic markers such as the MDT control marker ("MDT:button:<uuid>") that
+   * survive save→reopen (the name is persisted in the part XML). */
+  name?: string
 }
 
 /**
@@ -156,7 +160,7 @@ export function nextCNvPrId(slide: Slide): number {
 export function buildSpXml(slide: Slide, opts: NewElementOptions): string {
   const id = nextCNvPrId(slide)
   const isTextbox = opts.kind === 'textbox'
-  const name = isTextbox ? `TextBox ${id}` : `Shape ${id}`
+  const name = opts.name ?? (isTextbox ? `TextBox ${id}` : `Shape ${id}`)
   const o = opts.offset
   const xfrm = `<a:xfrm><a:off x="${o.x}" y="${o.y}"/><a:ext cx="${o.cx}" cy="${o.cy}"/></a:xfrm>`
   // Parser convention: has txBody and no prstGeom → 'text'; textbox omits prstGeom
@@ -212,6 +216,7 @@ export function addElement(slide: Slide, opts: NewElementOptions): TextElement {
     type: opts.kind === 'textbox' ? 'text' : 'shape',
     anchor: { spIndex: slide.elements.length, originalXml: xml, range: [0, 0] },
     transform: { offset: { ...opts.offset }, rot: 0, flipH: false, flipV: false },
+    ...(opts.name ? { name: opts.name } : {}),
     ...(opts.kind !== 'textbox' ? { presetGeometry: opts.kind } : {}),
     ...(opts.kind !== 'textbox' && opts.adjustments ? { adjust: { ...opts.adjustments } } : {}),
     ...(opts.fillColor ? { fill: { type: 'solid' as const, color: opts.fillColor } } : {}),
