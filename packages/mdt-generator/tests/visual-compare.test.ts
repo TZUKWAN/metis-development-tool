@@ -49,6 +49,13 @@ describe('P12.10 + P14.18 — visual comparison', () => {
     expect(homePage!.content).toContain('MdtInput')
   })
 
+  it('visual baselines: all viewports defined, threshold in valid range', () => {
+    expect(VIEWPORTS).toHaveLength(3)
+    expect(VIEWPORTS.map((v) => v.name)).toEqual(['desktop', 'tablet', 'mobile'])
+    expect(THRESHOLD).toBeGreaterThan(0)
+    expect(THRESHOLD).toBeLessThan(1)
+  })
+
   it('visual baselines directory exists with documented update procedure', () => {
     // baselines are updated via the explicit UPDATE_VISUALS=1 env var
     expect(baselineDir.startsWith(join(__dirname, '../../e2e'))).toBe(true)

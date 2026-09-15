@@ -75,8 +75,7 @@
         "dmg"
       ],
       "category": "public.app-category.productivity",
-      "identity": null,
-      "publish": "never"
+      "identity": null
     },
     "win": {
       "target": [
@@ -86,25 +85,13 @@
             "x64"
           ]
         }
-      ],
-      "publish": "never"
+      ]
     },
     "linux": {
       "target": [
         "AppImage",
         "deb"
-      ],
-      "category": "Development",
-      "maintainer": "MDT Contributors <TZUKWAN@users.noreply.github.com>",
-      "desktop": {
-        "Name": "Metis Development Tool",
-        "Comment": "Design and build Agent applications like making a PowerPoint deck",
-        "Terminal": "false",
-        "Type": "Application",
-        "Categories": "Development;IDE;",
-        "StartupWMClass": "metis-development-tool"
-      },
-      "publish": "never"
+      ]
     },
     "nsis": {
       "oneClick": false,
