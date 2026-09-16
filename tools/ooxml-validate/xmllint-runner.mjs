@@ -9,12 +9,17 @@
  * consume: { status, stdout, stderr }.
  */
 import { spawnSync } from 'node:child_process'
-import { readFileSync } from 'node:fs'
+import { readFileSync, readdirSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const here = dirname(fileURLToPath(import.meta.url))
+
+/** The wasm FS is POSIX: virtual file paths must use forward slashes. */
+function toVirtualPath(p) {
+  return p.replace(/\\/g, '/')
+}
 
 // Resolve the xmllint-wasm node entry through normal Node resolution (the
 // package's main is index-node.js; there is no index.js), falling back to the
@@ -79,12 +84,30 @@ export async function runXmllint(args) {
     }
   }
 
+  // The wasm libxml2 resolves xsd import/include relative to the schema
+  // document's location inside its in-memory FS, so the schema must be
+  // materialized at a real-looking directory path together with its sibling
+  // .xsd files (pml.xsd imports dml-main.xsd and the shared-* schemas).
+  // XML parts keep their exact caller path as fileName so error lines echo
+  // the same string the validators compare against.
   const schemaFiles = []
+  const preloads = []
   const xmlArgs = []
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--schema') {
       i += 1
-      schemaFiles.push(readFileSync(args[i], 'utf8'))
+      const schemaPath = args[i]
+      const schemaDir = dirname(schemaPath)
+      schemaFiles.push({
+        fileName: toVirtualPath(schemaPath),
+        contents: readFileSync(schemaPath, 'utf8'),
+      })
+      for (const entry of readdirSync(schemaDir)) {
+        if (!entry.endsWith('.xsd')) continue
+        const sibling = join(schemaDir, entry)
+        if (sibling === schemaPath) continue
+        preloads.push({ fileName: toVirtualPath(sibling), contents: readFileSync(sibling, 'utf8') })
+      }
       continue
     }
     if (args[i] === '--noout' || args[i] === '--nonet' || args[i] === '--version') continue
@@ -95,6 +118,7 @@ export async function runXmllint(args) {
     const result = await validateXML({
       xml: xmlArgs,
       schema: schemaFiles.length > 0 ? schemaFiles : undefined,
+      preload: preloads.length > 0 ? preloads : undefined,
     })
     if (result.valid) return { status: 0, stdout: '', stderr: '' }
     return { status: 1, stdout: '', stderr: wasmErrorText(result) }
@@ -103,7 +127,10 @@ export async function runXmllint(args) {
     // for unexpected failures, a plain Error message — both are fine to hand
     // to callers that expect xmllint-shaped stderr text.
     const text =
-      err.rawOutput ?? (err.rawMessages?.length || err.errors?.length ? wasmErrorText(err) : null) ?? err.message ?? String(err)
+      err.rawOutput ??
+      (err.rawMessages?.length || err.errors?.length ? wasmErrorText(err) : null) ??
+      err.message ??
+      String(err)
     return { status: 1, stdout: '', stderr: text }
   }
 }

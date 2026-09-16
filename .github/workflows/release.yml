@@ -119,10 +119,13 @@ jobs:
           fi
           echo "$assets"
           status=0
+          # Patterns must match the NAME column: each assets line is
+          # "name\tsize", so $-anchored patterns can never match the line.
+          names="$(printf '%s\n' "$assets" | cut -f1)"
           # One entry per required asset kind: per-OS installers plus the
           # source archive, SBOM and checksum manifest.
           for pattern in '\.exe$' '\.dmg$' '\.AppImage$' '\.deb$' 'mdt-source\.tar\.gz$' 'mdt-source\.zip$' 'mdt-sbom\.json$' 'SHA256SUMS\.txt$'; do
-            if ! printf '%s\n' "$assets" | grep -Eq "$pattern"; then
+            if ! printf '%s\n' "$names" | grep -Eq "$pattern"; then
               echo "::error::missing release asset matching /$pattern/"
               status=1
             fi
