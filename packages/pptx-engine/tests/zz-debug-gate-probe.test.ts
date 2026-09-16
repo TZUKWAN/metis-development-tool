@@ -3,6 +3,7 @@
  * Captures what the xmllint runner actually sees on CI (both the system
  * binary and the wasm fallback) for a malformed XML part.
  */
+// @ts-nocheck
 import { describe, it } from 'vitest'
 import os from 'node:os'
 import path from 'node:path'
