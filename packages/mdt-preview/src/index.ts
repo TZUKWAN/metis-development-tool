@@ -35,6 +35,8 @@ export interface PreviewInfo {
 export class PreviewManager {
   private child: ChildProcess | undefined
   private info: PreviewInfo | undefined
+  /** Port of the most recent spawn (even one that never became healthy), so stop() can wait for its release. */
+  private lastPort: number | undefined
   private tail: string[] = []
 
   get current(): PreviewInfo | undefined {
@@ -57,8 +59,13 @@ export class PreviewManager {
       shell: process.platform === 'win32',
       stdio: ['ignore', 'pipe', 'pipe'],
       windowsHide: true,
+      // POSIX: make the child its own process-group leader so killTree's
+      // `kill(-pid)` takes down the whole `npm run dev` tree (npm AND the
+      // dev-server grandchild), not just npm. Windows uses taskkill /T.
+      detached: process.platform !== 'win32',
     })
     this.child = child
+    this.lastPort = port
     const collect = (chunk: Buffer | string) => {
       this.tail.push(String(chunk).trimEnd())
       if (this.tail.length > 500) this.tail.splice(0, this.tail.length - 500)
@@ -86,11 +93,19 @@ export class PreviewManager {
 
   async stop(): Promise<void> {
     const child = this.child
-    if (!child || child.pid === undefined) return
+    const port = this.info?.port ?? this.lastPort
     this.child = undefined
+    if (!child || child.pid === undefined) return
     await killTree(child.pid)
-    // give the port a moment to close so restarts are reliable
-    await new Promise((r) => setTimeout(r, 150))
+    // SIGKILL teardown is fast but not instantaneous (and a killed listener's
+    // port can linger briefly on Linux): poll until the OS actually lets a
+    // listener bind again so restart() sticks to the same port and stopped
+    // previews never hold it, with a bounded wait as a safety net.
+    const deadline = Date.now() + 5_000
+    while (port !== undefined && !(await isFree(port))) {
+      if (Date.now() > deadline) break
+      await new Promise((r) => setTimeout(r, 100))
+    }
   }
 
   async restart(options: PreviewOptions): Promise<PreviewInfo> {

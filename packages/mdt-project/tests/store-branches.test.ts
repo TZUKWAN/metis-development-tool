@@ -112,8 +112,12 @@ describe('ProjectStoreError reasons', () => {
       expect(existsSync(paths.projectFile)).toBe(true)
       return
     }
-    // POSIX: read-only directory → mkdir of assets/ fails → typed "disk" error
+    // POSIX: read-only directory → mkdir of a pruned subdirectory fails →
+    // typed "disk" error. createProject() above already made every layout
+    // dir, and mkdirSync(recursive) no-ops on existing dirs — drop .mdt so
+    // saveProject must genuinely create it inside the read-only root.
     chmodSync(root, 0o500)
+    rmSync(paths.mdtDir, { recursive: true, force: true })
     try {
       saveProject(root, project)
       expect.unreachable('saveProject should have thrown')

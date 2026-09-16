@@ -10,11 +10,22 @@
  */
 import { spawnSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
+import { createRequire } from 'node:module'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const here = dirname(fileURLToPath(import.meta.url))
-const wasmEntry = join(here, '..', '..', 'node_modules', 'xmllint-wasm', 'index.js')
+
+// Resolve the xmllint-wasm node entry through normal Node resolution (the
+// package's main is index-node.js; there is no index.js), falling back to the
+// hoisted-workspace location when resolution is unavailable.
+function resolveWasmEntry() {
+  try {
+    return createRequire(import.meta.url).resolve('xmllint-wasm')
+  } catch {
+    return join(here, '..', '..', 'node_modules', 'xmllint-wasm', 'index-node.js')
+  }
+}
 
 let systemOk
 function systemAvailable() {
@@ -27,8 +38,10 @@ let wasmValidate
 async function loadWasm() {
   if (wasmValidate === undefined) {
     try {
-      const mod = await import(wasmEntry)
-      wasmValidate = mod.validateXML ?? null
+      // index-node.js is CommonJS; cover both named-export detection and the
+      // default-interop shape.
+      const mod = await import(resolveWasmEntry())
+      wasmValidate = mod.validateXML ?? mod.default?.validateXML ?? null
     } catch {
       wasmValidate = null
     }
@@ -36,9 +49,15 @@ async function loadWasm() {
   return wasmValidate
 }
 
+/**
+ * libxml2's own stderr for a failed run — byte-for-byte the text system
+ * xmllint would print (`file:line: message`, `<file> fails to validate`),
+ * which is the format the validators in validate-pptx.mjs parse.
+ */
 function wasmErrorText(result) {
+  if (typeof result.rawOutput === 'string' && result.rawOutput.trim()) return result.rawOutput
   if (result.rawMessages?.length) return result.rawMessages.join('\n')
-  return (result.errors ?? []).map((e) => e.message ?? String(e)).join('\n')
+  return (result.errors ?? []).map((e) => e.rawMessage ?? e.message ?? String(e)).join('\n')
 }
 
 /**
@@ -80,7 +99,11 @@ export async function runXmllint(args) {
     if (result.valid) return { status: 0, stdout: '', stderr: '' }
     return { status: 1, stdout: '', stderr: wasmErrorText(result) }
   } catch (err) {
-    const text = err.rawMessages?.length ? err.rawMessages.join('\n') : (err.message ?? String(err))
+    // Rejections carry libxml2's stderr verbatim (worker Error message) or,
+    // for unexpected failures, a plain Error message — both are fine to hand
+    // to callers that expect xmllint-shaped stderr text.
+    const text =
+      err.rawOutput ?? (err.rawMessages?.length || err.errors?.length ? wasmErrorText(err) : null) ?? err.message ?? String(err)
     return { status: 1, stdout: '', stderr: text }
   }
 }
@@ -89,7 +112,7 @@ export async function runXmllint(args) {
 export function xmllintRunnerAvailable() {
   if (systemAvailable()) return true
   try {
-    readFileSync(wasmEntry)
+    readFileSync(resolveWasmEntry())
     return true
   } catch {
     return false

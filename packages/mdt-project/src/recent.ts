@@ -14,10 +14,19 @@ export interface RecentEntry {
   lastOpenedAt: string
 }
 
-/** Canonicalize a path for identity comparison (case-insensitive on win32). */
+/**
+ * Canonicalize a path for identity comparison.
+ *
+ * Windows spellings (drive-letter paths) fold case on every host: NTFS is
+ * case-insensitive, so `C:\a` and `c:\A` are the same directory — including
+ * entries recorded on Windows and later compared on a POSIX machine (the
+ * resolved form keeps the drive-letter segment, hence the embedded check).
+ * POSIX paths stay case-sensitive.
+ */
 function identityPath(p: string): string {
   const resolved = path.resolve(p)
-  return process.platform === 'win32' ? resolved.toLowerCase() : resolved
+  const windowsish = process.platform === 'win32' || /(?:^|[/\\])[a-zA-Z]:/.test(resolved)
+  return windowsish ? resolved.toLowerCase() : resolved
 }
 
 export class RecentProjects {
