@@ -1,15 +1,16 @@
 /**
  * TEMPORARY CI diagnostic probe — delete before final commit.
- * Captures what the xmllint runner actually sees on CI (both the system
- * binary and the wasm fallback) for a malformed XML part.
+ * Captures what the gate actually sees on CI: the system xmllint presence,
+ * its raw stderr format for a malformed part, and whether validatePptx
+ * (wasm-first runner) maps the parse errors back to parts.
  */
-// @ts-nocheck
 import { describe, it } from 'vitest'
 import os from 'node:os'
 import path from 'node:path'
 import fs from 'node:fs'
 import { spawnSync } from 'node:child_process'
-import { runXmllint, xmllintRunnerAvailable } from '../../../tools/ooxml-validate/xmllint-runner.mjs'
+import JSZip from 'jszip'
+import { validatePptx } from '../../../tools/ooxml-validate/validate-pptx.mjs'
 
 describe('CI xmllint probe', () => {
   it('reports raw xmllint behavior for malformed xml', async () => {
@@ -22,32 +23,44 @@ describe('CI xmllint probe', () => {
     )
 
     const version = spawnSync('xmllint', ['--version'], { encoding: 'utf8' })
-    log('spawn xmllint --version status=%j error=%j stdout=%j stderr=%j', version.status, version.error, version.stdout, version.stderr)
     const where = spawnSync('where', ['xmllint'], { encoding: 'utf8' })
-    log('where xmllint status=%j stdout=%j stderr=%j', where.status, where.stdout, where.stderr)
-    log('xmllintRunnerAvailable=%j PATH=%j TMP=%j TEMP=%j', xmllintRunnerAvailable(), process.env.PATH, process.env.TMP, process.env.TEMP)
-
     const direct = spawnSync('xmllint', ['--noout', '--nonet', bad], { encoding: 'utf8' })
-    log('direct system run status=%j error=%j stdout=%j stderr=%j', direct.status, direct.error, direct.stdout, direct.stderr)
 
-    const runner = await runXmllint(['--noout', '--nonet', bad])
-    log('runXmllint result status=%j stdout=%j stderr=%j', runner.status, runner.stdout, runner.stderr)
-
-    const m = /^(.*?):(\d+): (.*)$/.exec((runner.stderr ?? '').split(/\r?\n/)[0] ?? '')
-    log('first-line regex match=%j', m)
-
+    const zip = new JSZip()
+    zip.file(
+      '[Content_Types].xml',
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="xml" ContentType="application/xml"/></Types>',
+    )
+    zip.file(
+      'ppt/slides/slide1.xml',
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><p:sld xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"><p:cSld/></p:sld>'.replace(
+        '</p:sld>',
+        '</p:cSld></p:sld></p:oops>',
+      ),
+    )
+    zip.file(
+      'ppt/slides/_rels/slide1.xml.rels',
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Target="x<y"/></Relationships>',
+    )
+    const problems = await validatePptx(await zip.generateAsync({ type: 'uint8array' }))
     fs.rmSync(tmp, { recursive: true, force: true })
-    // Deliberate failure so the diagnostics above are always printed in CI logs.
+
+    log('probe data follows')
+    // Deliberate failure so the diagnostics are always printed in CI logs.
     throw new Error(
       'GATE-PROBE ' +
         JSON.stringify({
           versionStatus: version.status,
-          versionErr: version.error?.['code'] ?? null,
-          whereStdout: where.stdout,
-          available: xmllintRunnerAvailable(),
-          direct: { status: direct.status, error: direct.error?.['code'] ?? null, stderr: direct.stderr },
-          runner: { status: runner.status, stderr: runner.stderr },
-          regexMatch: m,
+          versionError: version.error?.message ?? null,
+          versionOut: [version.stdout, version.stderr],
+          whereStatus: where.status,
+          whereOut: where.stdout,
+          direct: {
+            status: direct.status,
+            error: direct.error?.message ?? null,
+            stderr: direct.stderr,
+          },
+          problems,
         }),
     )
   })
