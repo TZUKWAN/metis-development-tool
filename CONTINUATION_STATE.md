@@ -11,11 +11,16 @@ Upload: actions/upload-artifact@v4, path: dist/*, name: mdt-${{ matrix.os }}
 Download: actions/download-artifact@v4, path: dist, merge-multiple: true
 Verify: find dist -type f → empty
 
-FIX NEEDED: Check what the "Stage artifacts" step actually produces on CI.
-Add `ls -la dist/` AND `ls -la apps/mdt/release/` to the staging step to see
-if electron-builder output exists. The electron-builder output dir is
-"release" relative to apps/mdt. Verify the glob matches the actual filenames
-(which use artifactName template: "Metis Development Tool-1.0.0-${os}-${arch}.${ext}").
+FIX NEEDED (verified locally: dist:win DOES produce .exe in apps/mdt/release/):
+1. The CI staging step runs from repo root but electron-builder runs via
+   -w @mdt/app so output is at apps/mdt/release/. The find path IS correct.
+2. Check if npm run notices fails on CI after clean install (the notices
+   tool reads apps/mdt/src files that were pruned — might crash).
+3. Check if the CI ubuntu build has icusource/xvfb deps for AppImage.
+4. Alternative: use electron-builder's --dir flag in CI to skip NSIS/DMG
+   (faster + fewer deps), then find the unpacked app instead.
+5. Or: simplify by uploading the ENTIRE apps/mdt/release/ directory
+   (not just specific extensions) and doing file selection in the release job.
 
 ### 2. CI pptx-engine test failure on Windows+Ubuntu
 "the gate sees malformed raw parts and .rels" — expected false to be true.
