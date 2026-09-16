@@ -54,6 +54,8 @@ jobs:
 
       - name: Unit tests (all workspaces, incl. MDT app)
         run: npm test
+        env:
+          MDT_SKIP_STANDALONE: '1'
 
   security:
     runs-on: ubuntu-latest
