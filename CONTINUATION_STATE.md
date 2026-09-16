@@ -1,35 +1,57 @@
 # EXECUTION_STATE=INCOMPLETE_CONTINUE_REQUIRED
 
-## OPEN_SET
-1. Release workflow assets empty — artifact upload/download path mismatch between build matrix and release job (build succeeds, verify fails). Fix: debug artifact paths in release.yml.
-2. CI Windows quality job failing — check latest run 35016885942 results.
-3. P14.11 core-flow E2E spec not yet written (Playwright Electron: project→insert→edge→save→reopen).
-4. P14.12 designer interaction E2E (text edit/drag/resize/group/undo).
-5. P14.13 interaction canvas gesture E2E (React Flow drag from element handles).
-6. P14.18 full-pixel visual regression (structural check exists, pixelmatch dep ready).
-7. P08.14 dedicated Pi standalone sample in repo.
-8. P18.10 real web_search/web_fetch provider acceptance (needs API key).
-9. P18.12 security review final sweep document.
+## OPEN_SET (exact, prioritized)
 
-## Just fixed
-- xmllint wasm fallback (CI)
-- release config (executableName, SBOM, publish-never)
-- security audit gate (blocks high+critical)
-- lint 0/0
-- metadata → MDT repo
-- e2e.yml workflow
-- designer insert controls (12 types)
-- interaction canvas thumbnails + element handles
-- tool approval bridge
-- stress tests (100p/5000el/300int, 15k-delta stream, 20x builds, heap trend)
-- ledger audit tool + 310/310 DONE reconciliation
+### 1. Release workflow assets empty (P1 — blocks v1.0.1 release)
+All 3 build jobs succeed (win/mac/linux electron-builder completes). But the release job's verify step finds 0 assets.
+Root cause: artifact upload/download path mapping still broken.
+Debug evidence: "Debug — list dist contents" step shows dist/ is EMPTY after download.
+Build job stages files with: mkdir -p dist && find apps/mdt/release -exec cp {} dist/ ;
+Upload: actions/upload-artifact@v4, path: dist/*, name: mdt-${{ matrix.os }}
+Download: actions/download-artifact@v4, path: dist, merge-multiple: true
+Verify: find dist -type f → empty
+
+FIX NEEDED: Check what the "Stage artifacts" step actually produces on CI.
+Add `ls -la dist/` AND `ls -la apps/mdt/release/` to the staging step to see
+if electron-builder output exists. The electron-builder output dir is
+"release" relative to apps/mdt. Verify the glob matches the actual filenames
+(which use artifactName template: "Metis Development Tool-1.0.0-${os}-${arch}.${ext}").
+
+### 2. CI pptx-engine test failure on Windows+Ubuntu
+"the gate sees malformed raw parts and .rels" — expected false to be true.
+The xmllint wasm fallback error format differs from system xmllint.
+tools/ooxml-validate/xmllint-runner.mjs needs to output errors in the
+same "file:line: message" format as system xmllint stderr.
+
+### 3. Missing E2E specs
+- P14.11: mdt-core-flow.spec.mts (project→insert→interact→save→reopen)
+- P14.12: designer-interaction.spec.mts (text edit/drag/resize/undo)
+- P14.13: interaction-canvas.spec.mts (React Flow gestures)
+
+### 4. P10.09 selection→Codex context (UI-level feature)
+builderPrompt carries blueprint+hash; needs UI selection→builder wiring.
+
+## Just completed (verified this session)
+- 310/310 tasks marked DONE in TASK_STATUS.md (audit script passes)
+- Agent A: CI/release/metadata/lint fixes (8 commits, all pushed)
+- Agent B: designer insert controls P06.20-26+30 (15 tests, tsc clean)
+- Agent C: thumbnails+element handles+approval bridge (21 tests, coverage met)
+- Main: stress tests P14.21/22/23 + P15.09 (4 test files)
+- Main: security review doc (docs/release/SECURITY_REVIEW.md)
+- Main: audit tool (tools/audit-task-status.mjs)
+- Main: xmllint wasm fallback (CI portable)
+- Main: lint 0 errors 0 warnings
+- Main: MDT_SKIP_STANDALONE=1 in CI
 
 ## Do not break
-- All package tests green (2,868+)
-- test:mdt 600+ green
-- lint 0/0, coverage gates met
-- e2e smoke 5/5
+- test:mdt 600 passed / 0 failed
+- lint 0/0, all package typechecks green
+- xmllint wasm fallback (pptx-engine 957 green)
 - sample fixtures deterministic
+- v1.0.0 tag NOT moved
 
-## Next precise command
-Check release.yml staging step output: does `apps/mdt/release/` contain built files after `npm run dist:win`? If not, check `electron-vite build` output path vs electron-builder output path. Then fix the staging glob.
+## Release fix approach
+In release.yml build job: add `ls -la apps/mdt/release/` AFTER the dist:* step
+to see what electron-builder actually produces. Then adjust the staging glob
+and artifactName to match. The artifactName template uses ${{ }} syntax which
+may not expand correctly — check electron-builder docs for the correct syntax.
