@@ -15,7 +15,10 @@ test('measure cold start', async () => {
   const runs: number[] = []
   for (let i = 0; i < 3; i++) {
     const t0 = Date.now()
-    const app = await electron.launch({ args: [path.join(appDir, 'out', 'main', 'index.js')], cwd: appDir })
+    const app = await electron.launch({
+      args: [path.join(appDir, 'out', 'main', 'index.js')],
+      cwd: appDir,
+    })
     const win = await app.firstWindow()
     await win.waitForLoadState('domcontentloaded')
     await win.waitForSelector('#root *', { timeout: 60_000 })
