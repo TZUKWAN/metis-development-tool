@@ -116,8 +116,9 @@ describe('ProjectStoreError reasons', () => {
     // typed "disk" error. createProject() above already made every layout
     // dir, and mkdirSync(recursive) no-ops on existing dirs — drop .mdt so
     // saveProject must genuinely create it inside the read-only root.
-    chmodSync(root, 0o500)
+    // (Prune while root is still writable: rmdir needs write on the parent.)
     rmSync(paths.mdtDir, { recursive: true, force: true })
+    chmodSync(root, 0o500)
     try {
       saveProject(root, project)
       expect.unreachable('saveProject should have thrown')
