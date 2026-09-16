@@ -1,12 +1,15 @@
 /**
- * Cross-platform xmllint runner (V2 audit fix: CI has no system xmllint).
+ * Cross-platform xmllint runner (V2 audit fix: CI has no usable xmllint).
  *
- * Strategy: prefer the system xmllint binary (fast, matches local dev);
- * when it is not on PATH — e.g. GitHub CI runners — fall back to the
- * version-locked `xmllint-wasm` devDependency, which embeds the same
- * libxml2 and supports the exact flags used here (--noout/--nonet/
- * --schema). Both paths return the spawnSync-like shape the validators
- * consume: { status, stdout, stderr }.
+ * Strategy: prefer the version-locked `xmllint-wasm` devDependency, which
+ * embeds a known libxml2 and supports the exact flags used here (--noout/
+ * --nonet/--schema) with `file:line: message` diagnostics on every host.
+ * System xmllint is only a fallback (when the wasm bundle is missing):
+ * its version is uncontrolled — old libxml2 builds emit filename-less
+ * `Entity: line N:` diagnostics and stop early on fatal parse errors in
+ * multi-file runs, which defeats the raw well-formedness gate.
+ * Both paths return the spawnSync-like shape the validators consume:
+ * { status, stdout, stderr }.
  */
 import { spawnSync } from 'node:child_process'
 import { readFileSync, readdirSync } from 'node:fs'
@@ -67,23 +70,25 @@ function wasmErrorText(result) {
 
 /**
  * Run xmllint with the given argument list. Returns { status, stdout, stderr }
- * mirroring spawnSync(encoding:'utf8'). Async because the wasm fallback loads
+ * mirroring spawnSync(encoding:'utf8'). Async because the wasm path loads
  * dynamically; callers are already async.
  */
 export async function runXmllint(args) {
+  const validateXML = await loadWasm()
+  if (validateXML) return runWasm(validateXML, args)
   if (systemAvailable()) {
     const sys = spawnSync('xmllint', args, { encoding: 'utf8', maxBuffer: 256 << 20 })
     if (!sys.error && sys.status !== null) return sys
   }
-  const validateXML = await loadWasm()
-  if (!validateXML) {
-    return {
-      status: 127,
-      stdout: '',
-      stderr: 'xmllint not found on PATH and xmllint-wasm fallback unavailable',
-    }
+  return {
+    status: 127,
+    stdout: '',
+    stderr: 'xmllint not found on PATH and xmllint-wasm fallback unavailable',
   }
+}
 
+/** Validate with the version-locked wasm libxml2. */
+async function runWasm(validateXML, args) {
   // The wasm libxml2 resolves xsd import/include relative to the schema
   // document's location inside its in-memory FS, so the schema must be
   // materialized at a real-looking directory path together with its sibling
@@ -120,6 +125,11 @@ export async function runXmllint(args) {
       schema: schemaFiles.length > 0 ? schemaFiles : undefined,
       preload: preloads.length > 0 ? preloads : undefined,
     })
+    if (process.env.XMLLINT_RUNNER_DEBUG) {
+      console.error('[xmllint-runner debug] resolved valid=%s', result.valid)
+      console.error('[xmllint-runner debug] rawOutput=%j', result.rawOutput)
+      console.error('[xmllint-runner debug] errors=%j', result.errors)
+    }
     if (result.valid) return { status: 0, stdout: '', stderr: '' }
     return { status: 1, stdout: '', stderr: wasmErrorText(result) }
   } catch (err) {
@@ -131,17 +141,19 @@ export async function runXmllint(args) {
       (err.rawMessages?.length || err.errors?.length ? wasmErrorText(err) : null) ??
       err.message ??
       String(err)
+    if (process.env.XMLLINT_RUNNER_DEBUG) {
+      console.error('[xmllint-runner debug] rejected err=%j text=%j', err, text)
+    }
     return { status: 1, stdout: '', stderr: text }
   }
 }
 
-/** Synchronous availability probe (system binary or wasm bundle present). */
+/** Synchronous availability probe (wasm bundle or system binary present). */
 export function xmllintRunnerAvailable() {
-  if (systemAvailable()) return true
   try {
     readFileSync(resolveWasmEntry())
     return true
   } catch {
-    return false
+    return systemAvailable()
   }
 }
