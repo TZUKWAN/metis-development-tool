@@ -1,36 +1,26 @@
 # EXECUTION_STATE=INCOMPLETE_CONTINUE_REQUIRED
 
-## OPEN_SET — 1 item remaining
-### CI pptx-engine test: "the gate sees malformed raw parts and .rels"
-The xmllint wasm fallback (tools/ooxml-validate/xmllint-runner.mjs) returns
-error output in a different format than system xmllint's stderr. The
-validate-pptx.mjs parser expects `file:line: message` lines. The wasm
-validateXML() returns errors via rawMessages which may lack the filename
-prefix.
+## OPEN_SET — 1 item remaining (PRECISE)
 
-FIX: In xmllint-runner.mjs's wasm path, after validateXML returns invalid,
-format the error text to match system xmllint's stderr format:
-`${fileName}:${line}: ${message}` for each error. The fileName is known
-from the xml entries passed to validateXML.
+### CI pptx-engine: schema-safe-patches-wave2.test.ts "the gate sees malformed raw parts and .rels"
+Fails on CI (Windows + Ubuntu) because the wasm xmllint fallback reports errors differently from system xmllint.
 
-OR: modify validate-pptx.mjs's parser to handle both formats.
+DEBUG: The test calls validatePptx(bytes) on a pptx with malformed XML and expects problems.length > 0. With the wasm fallback, validatePptx returns an empty problems array. This means the wasm validateXML either:
+a) Returns valid=true for XML that system xmllint considers invalid (different libxml2 version/strictness)
+b) Returns errors but the stderr format doesn't match the parser regex
 
-## Release v1.0.1-rc.11 — SUCCESS ✅
-All assets verified: win exe, mac dmg, linux AppImage+deb, SBOM,
-SHA256SUMS, source archives. Release URL:
-https://github.com/TZUKWAN/metis-development-tool/releases/tag/v1.0.1-rc.11
+FIX APPROACH:
+1. Add a debug log in runXmllint's wasm path: console.log('WASM_RESULT', JSON.stringify(result))
+2. Run npm run test -w @genoffice/pptx-engine locally with system xmllint hidden (PATH stripped)
+3. Compare the wasm error output to system xmllint's output for the same input
+4. Adapt the format in wasmErrorText or the parser in validate-pptx.mjs
+5. If the wasm libxml2 version has different validation strictness, consider upgrading xmllint-wasm or embedding a newer libxml2
 
-## All other gates green
-- 310/310 tasks DONE in TASK_STATUS.md
-- lint 0 errors 0 warnings
-- e2e 5/5 specs green
-- coverage thresholds met for all @mdt packages
-- security review: docs/release/SECURITY_REVIEW.md
-- metadata: all pointed at TZUKWAN/metis-development-tool
-
-## After fixing the wasm error format
-1. Push → CI should go green
-2. Tag v1.0.1 (final) → Release workflow runs → all assets verified
-3. Update v1.0.0 release description to note it's superseded by v1.0.1
-4. Write final report per V2 §二十六
-5. Set EXECUTION_STATE=COMPLETE
+## ALL OTHER GATES GREEN
+- Release v1.0.1-rc.11: SUCCESS with 8 assets (win exe, mac dmg, linux AppImage+deb, SBOM, checksums, source archives)
+- E2E: 5 specs green
+- lint: 0/0
+- 310/310 tasks DONE
+- Security review: docs/release/SECURITY_REVIEW.md
+- Metadata: MDT repo
+- Real Pi + real Codex acceptance: PASS
